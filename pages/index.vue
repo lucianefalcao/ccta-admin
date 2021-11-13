@@ -26,7 +26,7 @@
         </v-card-text>
 
         <v-card-text>
-          <v-form>
+          <v-form @submit.prevent="login">
             <v-text-field
               v-model="email"
               outlined
@@ -49,6 +49,7 @@
               block
               color="primary"
               class="mt-6"
+              @click="login"
             >
               Login
             </v-btn>
@@ -63,17 +64,41 @@
 
 import { Vue, Component } from 'vue-property-decorator'
 import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'
+import { FirebaseError } from '@firebase/util'
+import { userStore } from '@/store/index'
 
 @Component({
   layout: 'empty'
 })
 export default class Index extends Vue {
-  email: string = ''
-  password: string = ''
+  email: String = ''
+  password: String = ''
   isPasswordVisible: Boolean = false
   icons: Object = {
     mdiEyeOffOutline,
     mdiEyeOutline
+  }
+
+  errorMessage: String = ''
+
+  async login (): Promise<void> {
+    // adicionar usuário no vuex
+
+    try {
+      const authUser = await this.$fire.auth.signInWithEmailAndPassword(this.email, this.password)
+      const user = await this.$fire.firestore.collection('users').doc(authUser.user.uid).get()
+      userStore.setAuthUser(user.data())
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        if (e.code === 'auth/invalid-email') {
+          this.errorMessage = 'Seu email é inválido'
+        } else if (e.code === 'auth/user-not-found') {
+          this.errorMessage = 'Seu usuário não encontrado'
+        } else if (e.code === 'auth/wrong-password') {
+          this.errorMessage = 'Sua senha está errada.'
+        }
+      }
+    }
   }
 }
 </script>
