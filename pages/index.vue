@@ -82,12 +82,8 @@ export default class Index extends Vue {
   errorMessage: String = ''
 
   async login (): Promise<void> {
-    // adicionar usuário no vuex
-
     try {
-      const authUser = await this.$fire.auth.signInWithEmailAndPassword(this.email, this.password)
-      const user = await this.$fire.firestore.collection('users').doc(authUser.user.uid).get()
-      userStore.setAuthUser(user.data())
+      await userStore.signIn({ email: this.email, password: this.password })
     } catch (e) {
       if (e instanceof FirebaseError) {
         if (e.code === 'auth/invalid-email') {
