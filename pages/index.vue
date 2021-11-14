@@ -138,12 +138,10 @@ export default class Index extends Vue {
       }
     } catch (e) {
       if (e instanceof FirebaseError) {
-        if (e.code === 'auth/invalid-email') {
-          this.errorMessage = 'Seu email é inválido'
-        } else if (e.code === 'auth/user-not-found') {
-          this.errorMessage = 'Seu usuário não encontrado'
+        if (e.code === 'auth/user-not-found') {
+          this.errorMessage = 'Usuário não encontrado. Entre em contato com o administrador do sistema.'
         } else if (e.code === 'auth/wrong-password') {
-          this.errorMessage = 'Sua senha está errada.'
+          this.errorMessage = 'Senha incorreta.'
         }
       }
     }

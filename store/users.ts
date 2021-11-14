@@ -22,7 +22,7 @@ export default class Users extends VuexModule {
     this.authUser.name = name
   }
 
-  @Action({ commit: 'setAuthUser' })
+  @Action({ commit: 'setAuthUser', rawError: true })
   async signIn ({ email, password }: { email: String, password: String }): Promise<User> {
     const authUser = await $fire.auth.signInWithEmailAndPassword(email, password)
     const user = await $fire.firestore.collection('users').doc(authUser.user.uid).get()
