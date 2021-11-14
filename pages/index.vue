@@ -137,7 +137,15 @@ export default class Index extends Vue {
         this.errorMessage = 'Os dados inseridos são inválidos.'
       }
     } catch (e) {
-      console.log(e)
+      if (e instanceof FirebaseError) {
+        if (e.code === 'auth/invalid-email') {
+          this.errorMessage = 'Seu email é inválido'
+        } else if (e.code === 'auth/user-not-found') {
+          this.errorMessage = 'Seu usuário não encontrado'
+        } else if (e.code === 'auth/wrong-password') {
+          this.errorMessage = 'Sua senha está errada.'
+        }
+      }
     }
   }
 }
