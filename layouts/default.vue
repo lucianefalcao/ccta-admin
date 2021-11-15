@@ -19,6 +19,12 @@
         </v-avatar>
       </v-row>
     </v-app-bar>
+
+    <v-main>
+      <v-container class="boxed-container pa-6">
+        <Nuxt />
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 

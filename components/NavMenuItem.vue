@@ -1,7 +1,12 @@
 <template>
-  <v-list-item class="ps-5" active-class="primary text--white" link>
+  <v-list-item
+    class="ps-6"
+    :to="to"
+    active-class="primary white--text"
+    link
+  >
     <v-list-item-icon class="mr-5">
-      <v-icon>
+      <v-icon class="mx-auto">
         {{ icon }}
       </v-icon>
     </v-list-item-icon>
@@ -23,5 +28,8 @@ export default class NavMenuItem extends Vue {
 
   @Prop({ type: String, required: true })
   icon!: String
+
+  @Prop({ type: String })
+  to!: String
 }
 </script>

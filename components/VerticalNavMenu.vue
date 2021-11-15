@@ -3,7 +3,7 @@
     :value="isDrawerOpen"
     app
     floating
-    width="300px"
+    width="280px"
   >
     <div class="align-center ps-6 pe-5 pt-5 pb-2">
       <nuxt-link
@@ -17,7 +17,7 @@
           max-height="30px"
           class="me-3"
         />
-        <h2 class="app-title text--primary">
+        <h2 class="app-title">
           CCTA
         </h2>
       </nuxt-link>
@@ -33,6 +33,7 @@
         :key="item.icon"
         :icon="item.icon"
         :title="item.title"
+        :to="item.to"
       />
 
       <v-divider class="my-5" />
@@ -42,6 +43,7 @@
         :key="item.icon"
         :icon="item.icon"
         :title="item.title"
+        :to="item.to"
       />
     </v-list>
   </v-navigation-drawer>
@@ -69,45 +71,54 @@ import NavMenuItem from '@/components/NavMenuItem.vue'
   }
 })
 export default class VerticalNavMenu extends Vue {
-  primaryMenu: {icon: String, title: String}[] = [
+  primaryMenu: {icon: String, title: String, to: String}[] = [
     {
       icon: mdiNewspaperVariantOutline,
-      title: 'Notícia'
+      title: 'Notícias',
+      to: '/noticias'
     },
     {
       icon: mdiCalendar,
-      title: 'Eventos'
+      title: 'Eventos',
+      to: '/eventos'
     },
     {
       icon: mdiBullhornOutline,
-      title: 'Editais'
+      title: 'Editais',
+      to: '/editais'
     },
     {
       icon: mdiChatAlertOutline,
-      title: 'Atendimento'
+      title: 'Atendimento',
+      to: '/chat'
     },
     {
       icon: mdiOfficeBuildingOutline,
-      title: 'Informações do centro'
+      title: 'Informações do centro',
+      to: '/info-centro'
     }
   ]
 
-  subMenu: {icon: String, title: String}[] = [
+  subMenu: {icon: String, title: String, to: String}[] = [
     {
       icon: mdiAccountOutline,
-      title: 'Perfil'
+      title: 'Perfil',
+      to: '/perfil'
     },
     {
       icon: mdiTuneVariant,
-      title: 'Gerenciar usuários'
+      title: 'Gerenciar usuários',
+      to: '/usuarios'
     },
     {
       icon: mdiCogOutline,
-      title: 'Configurações do site'
+      title: 'Configurações do site',
+      to: '/configuracoes'
     },
     {
       icon: mdiLogout,
-      title: 'Sair'
+      title: 'Sair',
+      to: '/'
     }
   ]
 
