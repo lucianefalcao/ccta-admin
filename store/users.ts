@@ -15,17 +15,32 @@ export default class Users extends VuexModule {
     name: undefined
   }
 
+  isAuthenticated: Boolean = false
+
   @Mutation
-  setAuthUser ({ uid, email, name }: { uid: String, email: String, name: String}): void {
-    this.authUser.uid = uid
-    this.authUser.email = email
-    this.authUser.name = name
+  setAuthUser (user: User): void {
+    console.log(this)
+    this.authUser.uid = user.uid
+    this.authUser.email = user.email
+    this.authUser.name = user.name
+
+    this.isAuthenticated = true
+  }
+
+  @Action({ rawError: true })
+  async signIn ({ email, password }: { email: String, password: String }): Promise<void> {
+    await $fire.auth.signInWithEmailAndPassword(email, password)
+  }
+
+  @Action({ rawError: true })
+  async getUserByUid (uid: String): Promise<User> {
+    const user = await $fire.firestore.collection('users').doc(uid).get()
+    return { uid: user.id, email: user.data().email, name: user.data().name }
   }
 
   @Action({ commit: 'setAuthUser', rawError: true })
-  async signIn ({ email, password }: { email: String, password: String }): Promise<User> {
-    const authUser = await $fire.auth.signInWithEmailAndPassword(email, password)
-    const user = await $fire.firestore.collection('users').doc(authUser.user.uid).get()
-    return { uid: user.id, email: user.data().email, name: user.data().name }
+  async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<User> {
+    const user = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get('name')
+    return { uid: authUser.uid, email: user.data().email, name: user.data().name }
   }
 }

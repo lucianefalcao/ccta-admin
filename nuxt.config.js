@@ -1,6 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  mode: 'spa',
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - ccta-admin',
@@ -33,6 +34,10 @@ export default {
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
+  router: {
+    middleware: ['auth-middleware']
+  },
+
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/typescript
@@ -63,9 +68,16 @@ export default {
     },
     services: {
       auth: {
+        initialize: {
+          onAuthStateChangedAction: 'users/onAuthStateChanged',
+          subscribeManually: false
+        },
         emulatorPort: process.env.NODE_ENV === 'development' ? 9099 : undefined
       },
-      firestore: true
+      firestore: {
+        enablePersistence: true,
+        emulatorPort: 8080
+      }
     }
   },
 
