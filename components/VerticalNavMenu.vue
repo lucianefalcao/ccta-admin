@@ -118,7 +118,7 @@ export default class VerticalNavMenu extends Vue {
     {
       icon: mdiLogout,
       title: 'Sair',
-      to: '/'
+      to: '/auth/signIn'
     }
   ]
 
