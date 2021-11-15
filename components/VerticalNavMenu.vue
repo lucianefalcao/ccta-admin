@@ -4,7 +4,6 @@
     app
     floating
     width="300px"
-    @input="val => $emit('update:is-drawer-open', val)"
   >
     <div class="align-center ps-6 pe-5 pt-5 pb-2">
       <nuxt-link
