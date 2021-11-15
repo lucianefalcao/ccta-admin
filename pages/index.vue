@@ -122,16 +122,19 @@ export default class Index extends Vue {
   email: String = ''
   password: String = ''
   isPasswordVisible: Boolean = false
+  errorMessage: String = ''
   icons: Object = {
     mdiEyeOffOutline,
     mdiEyeOutline
   }
 
-  errorMessage: String = ''
+  $refs!: {
+    observer: InstanceType<typeof ValidationObserver>
+  }
 
   async login (): Promise<void> {
     try {
-      if (this.$refs.observer?.validate()) {
+      if (await this.$refs.observer.validate()) {
         await userStore.signIn({ email: this.email, password: this.password })
       } else {
         this.errorMessage = 'Os dados inseridos são inválidos.'
