@@ -1,8 +1,12 @@
 <template>
   <v-app>
-    <vertical-nav-menu />
+    <vertical-nav-menu :is-drawer-open.sync="isDrawerOpen" />
 
     <v-app-bar app flat absolute color="transparent">
+      <v-app-bar-nav-icon
+        class="d-block d-lg-none me-2"
+        @click="isDrawerOpen = !isDrawerOpen"
+      />
       <v-spacer />
       <v-avatar size="40" color="#ff4c51">
         <span class="white--text text-h5">{{ userName[0] }}</span>
@@ -26,6 +30,8 @@ export default class Default extends Vue {
   get userName (): String {
     return userStore.authUser?.name!
   }
+
+  isDrawerOpen: Boolean = false
 }
 </script>
 

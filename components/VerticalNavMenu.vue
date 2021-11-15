@@ -1,8 +1,10 @@
 <template>
   <v-navigation-drawer
+    :value="isDrawerOpen"
     app
     floating
     width="300px"
+    @input="val => $emit('update:is-drawer-open', val)"
   >
     <div class="align-center ps-6 pe-5 pt-5 pb-2">
       <nuxt-link
@@ -48,7 +50,7 @@
 
 <script lang="ts">
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import {
   mdiNewspaperVariantOutline,
   mdiCalendar,
@@ -121,6 +123,9 @@ export default class VerticalNavMenu extends Vue {
       title: 'Sair'
     }
   ]
+
+  @Prop({ type: Boolean })
+  isDrawerOpen!: Boolean
 }
 </script>
 
