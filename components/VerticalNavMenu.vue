@@ -75,7 +75,7 @@ export default class VerticalNavMenu extends Vue {
     {
       icon: mdiNewspaperVariantOutline,
       title: 'Notícias',
-      to: '/noticias'
+      to: '/news'
     },
     {
       icon: mdiCalendar,
@@ -108,7 +108,7 @@ export default class VerticalNavMenu extends Vue {
     {
       icon: mdiTuneVariant,
       title: 'Gerenciar usuários',
-      to: '/usuarios'
+      to: '/users'
     },
     {
       icon: mdiCogOutline,
