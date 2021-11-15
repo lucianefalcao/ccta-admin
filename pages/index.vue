@@ -152,7 +152,7 @@ export default class Index extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 .auth-card {
   padding: 0.9375rem 0.875rem;
 }

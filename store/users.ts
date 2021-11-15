@@ -15,16 +15,9 @@ export default class Users extends VuexModule {
     name: undefined
   }
 
-  isAuthenticated: Boolean = false
-
   @Mutation
   setAuthUser (user: User): void {
-    console.log(this)
-    this.authUser.uid = user.uid
-    this.authUser.email = user.email
-    this.authUser.name = user.name
-
-    this.isAuthenticated = true
+    this.authUser = user
   }
 
   @Action({ rawError: true })
@@ -38,9 +31,13 @@ export default class Users extends VuexModule {
     return { uid: user.id, email: user.data().email, name: user.data().name }
   }
 
-  @Action({ commit: 'setAuthUser', rawError: true })
-  async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<User> {
-    const user = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get('name')
-    return { uid: authUser.uid, email: user.data().email, name: user.data().name }
+  @Action({ rawError: true })
+  async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<void> {
+    if (authUser) {
+      const user = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get('name')
+      this.context.commit('setAuthUser', { uid: authUser.uid, email: user.data().email, name: user.data().name })
+    } else {
+      this.context.commit('setAuthUser', null)
+    }
   }
 }
