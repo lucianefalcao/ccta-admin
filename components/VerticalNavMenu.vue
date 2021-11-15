@@ -69,56 +69,44 @@ import NavMenuItem from '@/components/NavMenuItem.vue'
   }
 })
 export default class VerticalNavMenu extends Vue {
-  icons: Any = {
-    mdiNewspaperVariantOutline,
-    mdiCalendar,
-    mdiBullhornOutline,
-    mdiChatAlertOutline,
-    mdiOfficeBuildingOutline,
-    mdiAccountOutline,
-    mdiTuneVariant,
-    mdiCogOutline,
-    mdiLogout
-  }
-
   primaryMenu: {icon: String, title: String}[] = [
     {
-      icon: this.icons.mdiNewspaperVariantOutline,
+      icon: mdiNewspaperVariantOutline,
       title: 'Notícia'
     },
     {
-      icon: this.icons.mdiCalendar,
+      icon: mdiCalendar,
       title: 'Eventos'
     },
     {
-      icon: this.icons.mdiBullhornOutline,
+      icon: mdiBullhornOutline,
       title: 'Editais'
     },
     {
-      icon: this.icons.mdiChatAlertOutline,
+      icon: mdiChatAlertOutline,
       title: 'Atendimento'
     },
     {
-      icon: this.icons.mdiOfficeBuildingOutline,
+      icon: mdiOfficeBuildingOutline,
       title: 'Informações do centro'
     }
   ]
 
   subMenu: {icon: String, title: String}[] = [
     {
-      icon: this.icons.mdiAccountOutline,
+      icon: mdiAccountOutline,
       title: 'Perfil'
     },
     {
-      icon: this.icons.mdiTuneVariant,
+      icon: mdiTuneVariant,
       title: 'Gerenciar usuários'
     },
     {
-      icon: this.icons.mdiCogOutline,
+      icon: mdiCogOutline,
       title: 'Configurações do site'
     },
     {
-      icon: this.icons.mdiLogout,
+      icon: mdiLogout,
       title: 'Sair'
     }
   ]
