@@ -1,5 +1,155 @@
 <template>
-  <v-container class="auth-wrapper pa-0">
-    <p>Notícias</p>
+  <v-container>
+    <v-card>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="primary">
+          <v-icon left>
+            {{ icons.mdiPlus }}
+          </v-icon>
+          Cadastrar notícia
+        </v-btn>
+      </v-card-actions>
+      <v-card-text>
+        <v-data-table
+          :headers="headers"
+          :items="news"
+          items-per-page="5"
+          :footer-props="{
+            itemsPerPageAllText: 'Todas',
+            itemsPerPageText: 'Items por página'
+          }"
+        >
+          <template #item.status="{ item }">
+            <v-chip
+              small
+              :color="statusColor[item.status]"
+            >
+              {{ item.status }}
+            </v-chip>
+          </template>
+
+          <template #item.actions="{ item }">
+            <div class="text-end">
+              <v-btn
+                small
+                depressed
+                outlined
+                color="secondary"
+              >
+                Ver
+              </v-btn>
+
+              <v-btn
+                icon
+                color="secondary"
+              >
+                <v-icon>
+                  {{ icons.mdiPencil }}
+                </v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                class="text-right"
+                color="red"
+              >
+                <v-icon>
+                  {{ icons.mdiDelete }}
+                </v-icon>
+              </v-btn>
+            </div>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
+
+<script lang="ts">
+
+import { Component, Vue } from 'vue-property-decorator'
+import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+
+@Component
+export default class News extends Vue {
+  news: {uid: String, title: String, status: String, actions: String}[] = [
+    {
+      uid: '1',
+      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
+      status: 'rascunho',
+      actions: ''
+    },
+    {
+      uid: '2',
+      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
+      status: 'publicado',
+      actions: ''
+    },
+    {
+      uid: '3',
+      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
+      status: 'rascunho',
+      actions: ''
+    },
+    {
+      uid: '4',
+      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
+      status: 'rascunho',
+      actions: ''
+    },
+    {
+      uid: '5',
+      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
+      status: 'rascunho',
+      actions: ''
+    },
+    {
+      uid: '6',
+      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
+      status: 'rascunho',
+      actions: ''
+    }
+  ]
+
+  statusColor = {
+    rascunho: 'info',
+    publicado: 'success'
+  }
+
+  icons = {
+    mdiDelete,
+    mdiPencil,
+    mdiPlus
+  }
+
+  headers = [
+    {
+      text: 'Título',
+      align: 'start',
+      value: 'title'
+    },
+    {
+      text: 'Status',
+      align: 'center',
+      value: 'status'
+    },
+    {
+      text: 'Opções',
+      value: 'actions',
+      align: 'center',
+      class: 'v-data-table-header',
+      sortable: false,
+      width: '170px'
+    }
+  ]
+
+  currentPage: Number = 1
+  newsPerPage: Number = 5
+}
+</script>
+
+<style lang="scss" scoped>
+.v-data-table-header th {
+  white-space: nowrap;
+}
+</style>
