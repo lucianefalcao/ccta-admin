@@ -3,7 +3,7 @@ import User from '@/models/domain/User'
 import { $fire } from '~/utils/firebase-accessor'
 
 @Module({ name: 'users', stateFactory: true, namespaced: true })
-export default class Users extends VuexModule {
+export default class UsersModule extends VuexModule {
   authUser: User = {
     uid: undefined,
     email: undefined,
