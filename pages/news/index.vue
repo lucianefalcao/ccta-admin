@@ -33,9 +33,9 @@
           <template #item.status="{ item }">
             <v-chip
               small
-              :color="statusColor[item.status]"
+              :color="statusColor[item.state]"
             >
-              {{ item.status }}
+              {{ statusMap[item.state] }}
             </v-chip>
           </template>
 
@@ -46,7 +46,7 @@
                 depressed
                 outlined
                 color="secondary"
-                @click="showNews(item.uid)"
+                @click="showNews(item)"
               >
                 Ver
               </v-btn>
@@ -81,24 +81,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
 import { newsStore } from '@/store'
-
-interface StatusTranslateMap {
-  draft: String,
-  published: String
-}
-
-interface StatusColorMap {
-  rascunho: String,
-  publicado: String
-}
+import StatusTranslateMap from '@/models/helpers/StatusTranslateMap'
+import StatusColorMap from '@/models/helpers/StatusColorMap'
+import News from '@/models/domain/News'
 
 @Component
-export default class News extends Vue {
-  news: {uid: String, title: String, status: String, actions: String}[] = []
+export default class Index extends Vue {
+  news: News[] = []
 
   statusColor: StatusColorMap = {
-    rascunho: 'info',
-    publicado: 'success'
+    draft: 'info',
+    published: 'success'
   }
 
   statusMap: StatusTranslateMap = {
@@ -134,33 +127,20 @@ export default class News extends Vue {
   ]
 
   fetchingNews: Boolean = false
-  message: String = ''
+  message: String = 'Nenhuma notícia cadastrada'
 
   createNews (): void {
     this.$router.push('/news/create')
   }
 
-  showNews (itemUID: String): void {
-    this.$router.push('/news/' + itemUID)
+  showNews (item: News): void {
+    this.$router.push('/news/' + item.uid)
   }
 
   async mounted (): Promise<void> {
     try {
       this.fetchingNews = true
-      const newsPosts = await newsStore.getAllNews()
-
-      if (newsPosts.length === 0) {
-        this.message = 'Nenhuma notícia cadastrada'
-      }
-
-      newsPosts.forEach((news) => {
-        this.news.push({
-          uid: news.uid!,
-          title: news.title,
-          status: this.statusMap[news.state],
-          actions: ''
-        })
-      })
+      this.news = await newsStore.getAllNews()
     } catch (error) {
       this.message = 'Ocorreu um erro ao buscar as notícias. Por favor, tente novamento mais tarde.'
     } finally {

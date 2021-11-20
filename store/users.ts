@@ -1,14 +1,9 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import User from '@/models/domain/User'
 import { $fire } from '~/utils/firebase-accessor'
 
-interface User {
-  uid?: String,
-  email?: String,
-  name?: String
-}
-
 @Module({ name: 'users', stateFactory: true, namespaced: true })
-export default class Users extends VuexModule {
+export default class UsersModule extends VuexModule {
   authUser: User = {
     uid: undefined,
     email: undefined,

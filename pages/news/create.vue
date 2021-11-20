@@ -1,6 +1,9 @@
 <template>
   <v-col align-self="start">
     <v-card class="pa-5">
+      <v-card-actions>
+        <back-button />
+      </v-card-actions>
       <v-card-title>
         Cadastrar notícia
       </v-card-title>
@@ -13,7 +16,7 @@
           counter
           required
           outlined
-          class="pb-5"
+          class="mb-5"
         />
 
         <editor
@@ -49,11 +52,13 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import Editor from '@tinymce/tinymce-vue'
+import BackButton from '@/components/BackButton.vue'
 import { newsStore, userStore } from '@/store'
 
 @Component({
   components: {
-    Editor
+    Editor,
+    BackButton
   }
 })
 export default class Create extends Vue {
@@ -91,9 +96,8 @@ export default class Create extends Vue {
       title: this.title,
       newsText: this.newsText,
       state: 'draft',
-      dateCreated: Date.now(),
-      datePublished: 0,
-      user: '/users/' + userStore.authUser.uid
+      lastModified: Date.now(),
+      user: userStore.authUser
     })
 
     this.$router.push('/news/' + news.uid)
@@ -105,9 +109,8 @@ export default class Create extends Vue {
       title: this.title,
       newsText: this.newsText,
       state: 'published',
-      dateCreated: Date.now(),
-      datePublished: Date.now(),
-      user: '/users/' + userStore.authUser.uid
+      lastModified: Date.now(),
+      user: userStore.authUser
     })
 
     this.$router.push('/news/' + news.uid)
