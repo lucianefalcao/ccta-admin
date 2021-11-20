@@ -1,5 +1,5 @@
 <template>
   <v-container class="auth-wrapper pa-0">
-    <p>oi</p>
+    <p>Editais</p>
   </v-container>
 </template>
