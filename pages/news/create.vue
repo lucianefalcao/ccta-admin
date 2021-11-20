@@ -8,35 +8,7 @@
         <h3>Cadastrar notícia</h3>
       </v-card-title>
       <v-card-text>
-        <div class="mb-5">
-          <v-btn
-            color="primary"
-            class="text-none"
-            :loading="isSelectingFile"
-            depressed
-            rounded
-            @click="chooseCover"
-          >
-            <v-icon left>
-              {{ icons.mdiUpload }}
-            </v-icon>
-            {{ buttonText }}
-          </v-btn>
-
-          <v-btn icon small>
-            <v-icon v-if="cover" right @click="clearFileSelection">
-              {{ icons.mdiClose }}
-            </v-icon>
-          </v-btn>
-
-          <input
-            ref="uploader"
-            class="d-none"
-            type="file"
-            accept="image/jpeg, image/png"
-            @change="onFileChanged"
-          >
-        </div>
+        <upload-image-button @cover="getCover" />
 
         <v-text-field
           v-model="title"
@@ -82,20 +54,20 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import Editor from '@tinymce/tinymce-vue'
-import { mdiUpload, mdiClose } from '@mdi/js'
 import BackButton from '@/components/BackButton.vue'
+import UploadImageButton from '@/components/UploadImageButton.vue'
 import { newsStore, userStore } from '@/store'
 
 @Component({
   components: {
     Editor,
-    BackButton
+    BackButton,
+    UploadImageButton
   }
 })
 export default class Create extends Vue {
   title: String = ''
   newsText: String = ''
-  isSelectingFile: Boolean = false
   cover: File | null = null
 
   editorConfig = {
@@ -117,19 +89,10 @@ export default class Create extends Vue {
     return this.title.length > 0 && this.newsText.length > 0
   }
 
-  get buttonText (): String {
-    return this.cover ? this.cover.name : 'Capa'
-  }
-
   rules = {
     title: {
       required: (value: String) => !!value || 'Por favor, adicione um título.'
     }
-  }
-
-  icons = {
-    mdiUpload,
-    mdiClose
   }
 
   async saveAsDraft (): Promise<void> {
@@ -178,24 +141,8 @@ export default class Create extends Vue {
     this.newsText = this.newsText.split('&nbsp;').join(' ')
   }
 
-  chooseCover (): void {
-    this.isSelectingFile = true
-    window.addEventListener('focus', () => {
-      this.isSelectingFile = false
-    }, { once: true })
-
-    const uploader = this.$refs.uploader as HTMLInputElement
-
-    uploader.click()
-  }
-
-  onFileChanged (e: Event): void {
-    const target = e.target as HTMLInputElement
-    this.cover = target.files![0]
-  }
-
-  clearFileSelection (): void {
-    this.cover = null
+  getCover (cover: File): void {
+    this.cover = cover
   }
 }
 </script>
