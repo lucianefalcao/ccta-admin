@@ -8,8 +8,12 @@
         <v-text-field
           v-model="title"
           label="Título"
+          :rules="[rules.title.required]"
+          maxlength="120"
+          counter
           required
           outlined
+          class="pb-5"
         />
 
         <editor
@@ -23,12 +27,14 @@
         <v-btn
           depressed
           color="secondary"
+          :disabled="!canSave"
           @click="saveAsDraft"
         >
           Salvar como rascunho
         </v-btn>
         <v-btn
           depressed
+          :disabled="!canSave"
           color="primary"
         >
           Publicar
@@ -67,6 +73,16 @@ export default class Create extends Vue {
     link_assume_external_targets: 'https',
     paste_postprocess: (_: any, args: any): void => {
       console.log(args.node)
+    }
+  }
+
+  get canSave (): Boolean {
+    return this.title.length > 0 && this.newsText.length > 0
+  }
+
+  rules = {
+    title: {
+      required: (value: String) => !!value || 'Por favor, adicione um título.'
     }
   }
 
