@@ -8,7 +8,7 @@
         <h3>{{ pageTitle }}</h3>
       </v-card-title>
       <v-card-text>
-        <upload-image-button @cover="getCover" />
+        <upload-image-button :cover-name="coverName" @cover="getCover" />
 
         <v-text-field
           v-model="title"
@@ -57,7 +57,7 @@ import Editor from '@tinymce/tinymce-vue'
 import BackButton from '@/components/BackButton.vue'
 import UploadImageButton from '@/components/UploadImageButton.vue'
 import { newsStore, userStore } from '@/store'
-import News from '~/models/domain/News'
+import News from '@/models/domain/News'
 
 @Component({
   components: {
@@ -69,6 +69,11 @@ import News from '~/models/domain/News'
 export default class NewsCreate extends Vue {
   @Prop({ type: String, required: true })
   pageTitle!: String
+
+  coverName: String = ''
+
+  @Prop({ type: News!, default: null })
+  news!: News
 
   title: String = ''
   newsText: String = ''
@@ -147,6 +152,15 @@ export default class NewsCreate extends Vue {
 
   getCover (cover: File): void {
     this.cover = cover
+  }
+
+  mounted () {
+    if (this.news) {
+      this.title = this.news.title!
+      this.newsText = this.news.newsText!
+      this.coverName = this.news.coverPath?.split('/')[1]!
+      console.log(this.news)
+    }
   }
 }
 </script>

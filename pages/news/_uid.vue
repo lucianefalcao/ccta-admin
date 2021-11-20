@@ -53,8 +53,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { newsStore } from '@/store'
 import News from '~/models/domain/News'
-import StatusColorMap from '~/models/helpers/StatusColorMap'
-import StatusTranslateMap from '~/models/helpers/StatusTranslateMap'
 import BackButton from '@/components/BackButton.vue'
 
 @Component({
@@ -73,17 +71,6 @@ export default class NewsUid extends Vue {
   }
 
   coverURL: String = ''
-
-  statusColor: StatusColorMap = {
-    draft: 'info',
-    published: 'success'
-  }
-
-  statusMap: StatusTranslateMap = {
-    draft: 'rascunho',
-    published: 'publicado'
-  }
-
   fetchingNews: Boolean = true
   isPublished: Boolean = false
 

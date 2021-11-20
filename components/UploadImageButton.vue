@@ -14,7 +14,7 @@
       {{ buttonText }}
     </v-btn>
 
-    <v-btn v-if="cover" icon small @click="clearFileSelection">
+    <v-btn v-if="cover || coverName.length > 0" icon small @click="clearFileSelection">
       <v-icon right>
         {{ icons.mdiClose }}
       </v-icon>
@@ -32,12 +32,15 @@
 
 <script lang="ts">
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { mdiUpload, mdiClose } from '@mdi/js'
 
 @Component
 export default class UploadImageButton extends Vue {
   isSelectingFile: Boolean = false
+
+  @Prop({ type: String, default: '' })
+  coverName!: String
 
   cover: File | null = null
 
@@ -47,6 +50,9 @@ export default class UploadImageButton extends Vue {
   }
 
   get buttonText (): String {
+    if (this.coverName.length > 0) {
+      return this.coverName
+    }
     return this.cover ? this.cover.name : 'Capa'
   }
 
@@ -70,6 +76,7 @@ export default class UploadImageButton extends Vue {
 
   clearFileSelection (): void {
     this.cover = null
+    this.coverName = ''
     this.$emit('cover', null)
   }
 }
