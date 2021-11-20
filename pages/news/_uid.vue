@@ -8,9 +8,7 @@
     </div>
     <v-card v-else class="pa-5">
       <v-card-actions>
-        <v-btn icon @click="back">
-          <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
-        </v-btn>
+        <back-button />
         <v-spacer />
         <v-btn
           depressed
@@ -55,13 +53,17 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { mdiArrowLeft } from '@mdi/js'
 import { newsStore } from '@/store'
 import News from '~/models/domain/News'
 import StatusColorMap from '~/models/helpers/StatusColorMap'
 import StatusTranslateMap from '~/models/helpers/StatusTranslateMap'
+import BackButton from '@/components/BackButton.vue'
 
-@Component
+@Component({
+  components: {
+    BackButton
+  }
+})
 export default class NewsUid extends Vue {
   news: News = {
     uid: undefined,
@@ -83,10 +85,6 @@ export default class NewsUid extends Vue {
     published: 'publicado'
   }
 
-  icons = {
-    mdiArrowLeft
-  }
-
   fetchingNews: Boolean = true
   isPublished: Boolean = false
 
@@ -100,10 +98,6 @@ export default class NewsUid extends Vue {
 
   editar (): void {
     this.$router.push('/news/edit/' + this.news.uid)
-  }
-
-  back (): void {
-    this.$router.go(-1)
   }
 
   async publish (): Promise<void> {
