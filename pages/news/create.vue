@@ -36,6 +36,7 @@
           depressed
           :disabled="!canSave"
           color="primary"
+          @click="publish"
         >
           Publicar
         </v-btn>
@@ -48,6 +49,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import Editor from '@tinymce/tinymce-vue'
+import { newsStore, userStore } from '@/store'
 
 @Component({
   components: {
@@ -87,15 +89,27 @@ export default class Create extends Vue {
   }
 
   saveAsDraft (): void {
-    console.log('save as draft')
     this.cleanText()
-    console.log(this.title, this.newsText)
+    newsStore.save({
+      title: this.title,
+      newsText: this.newsText,
+      state: 'draft',
+      dateCreated: Date.now(),
+      datePublished: 0,
+      user: '/users/' + userStore.authUser.uid
+    })
   }
 
   publish (): void {
-    console.log('publish')
     this.cleanText()
-    console.log(this.title, this.newsText)
+    newsStore.save({
+      title: this.title,
+      newsText: this.newsText,
+      state: 'published',
+      dateCreated: Date.now(),
+      datePublished: Date.now(),
+      user: '/users/' + userStore.authUser.uid
+    })
   }
 
   cleanText (): void {
