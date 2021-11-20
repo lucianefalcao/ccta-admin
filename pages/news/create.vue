@@ -1,6 +1,9 @@
 <template>
   <v-col align-self="start">
     <v-card class="pa-5">
+      <v-card-actions>
+        <back-button />
+      </v-card-actions>
       <v-card-title>
         Cadastrar notícia
       </v-card-title>
@@ -49,11 +52,13 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import Editor from '@tinymce/tinymce-vue'
+import BackButton from '@/components/BackButton.vue'
 import { newsStore, userStore } from '@/store'
 
 @Component({
   components: {
-    Editor
+    Editor,
+    BackButton
   }
 })
 export default class Create extends Vue {
