@@ -40,4 +40,13 @@ export default class NewsModule extends VuexModule {
       user
     }
   }
+
+  @Action({ rawError: true })
+  async updateNews (news: News): Promise<News> {
+    const newsFirebase = NewsTransformer.transformModelToInfra(news)
+    const newsRef = await this.store.$fire.firestore.collection('news').doc(news.uid)
+    await newsRef.update(newsFirebase)
+
+    return news
+  }
 }

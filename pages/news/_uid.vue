@@ -108,7 +108,7 @@ export default class NewsUid extends Vue {
 
   async publish (): Promise<void> {
     this.news.state = 'published'
-    await newsStore.save(this.news)
+    this.news = await newsStore.updateNews(this.news)
     this.isPublished = true
   }
 
