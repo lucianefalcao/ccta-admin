@@ -109,13 +109,16 @@ export default class NewsCreate extends Vue {
 
     this.addCover()
 
+    const coverPath = this.getCoverPath()
+
     const news: News = {
+      uid: this.news.uid ?? undefined,
       title: this.title,
       newsText: this.newsText,
       state: 'draft',
       lastModified: Date.now(),
       user: userStore.authUser,
-      coverPath: this.cover ? `newsPostsImages/${this.cover?.name}` : ''
+      coverPath
     }
 
     this.$emit('saveAsDraft', news)
@@ -126,13 +129,16 @@ export default class NewsCreate extends Vue {
 
     this.addCover()
 
+    const coverPath = this.getCoverPath()
+
     const news: News = {
+      uid: this.news.uid ?? undefined,
       title: this.title,
       newsText: this.newsText,
       state: 'published',
       lastModified: Date.now(),
       user: userStore.authUser,
-      coverPath: this.cover ? `newsPostsImages/${this.cover?.name}` : ''
+      coverPath
     }
 
     this.$emit('publishNews', news)
@@ -154,12 +160,22 @@ export default class NewsCreate extends Vue {
     this.cover = cover
   }
 
+  getCoverPath (): String {
+    const bucket = 'newsPostsImages'
+    if (this.cover) {
+      return `${bucket}/${this.cover?.name}`
+    } else if (this.coverName.length > 0) {
+      return `${bucket}/${this.coverName}`
+    }
+
+    return ''
+  }
+
   mounted () {
     if (this.news) {
       this.title = this.news.title!
       this.newsText = this.news.newsText!
-      this.coverName = this.news.coverPath?.split('/')[1]!
-      console.log(this.news)
+      this.coverName = this.news.coverPath?.split('/')[1]! ?? ''
     }
   }
 }
