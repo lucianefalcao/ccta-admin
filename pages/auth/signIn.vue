@@ -136,7 +136,7 @@ export default class Index extends Vue {
     try {
       if (await this.$refs.observer.validate()) {
         await userStore.signIn({ email: this.email, password: this.password })
-        this.$router.push('/news')
+        this.$router.push('/')
       } else {
         this.errorMessage = 'Os dados inseridos são inválidos.'
       }

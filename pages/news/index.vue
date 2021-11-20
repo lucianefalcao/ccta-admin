@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-card>
+  <v-col align-self="start">
+    <v-card class="pa-5">
       <v-card-actions>
         <v-spacer />
         <v-btn color="primary">
@@ -14,10 +14,12 @@
         <v-data-table
           :headers="headers"
           :items="news"
-          items-per-page="5"
+          items-per-page="10"
+          no-data-text="Nenhuma notícia cadastrada"
           :footer-props="{
             itemsPerPageAllText: 'Todas',
-            itemsPerPageText: 'Items por página'
+            itemsPerPageText: 'Items por página',
+            itemsPerPageOptions: [10, 15, 20, -1]
           }"
         >
           <template #item.status="{ item }">
@@ -62,7 +64,7 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-  </v-container>
+  </v-col>
 </template>
 
 <script lang="ts">
@@ -73,42 +75,7 @@ import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
 @Component
 export default class News extends Vue {
   news: {uid: String, title: String, status: String, actions: String}[] = [
-    {
-      uid: '1',
-      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
-      status: 'rascunho',
-      actions: ''
-    },
-    {
-      uid: '2',
-      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
-      status: 'publicado',
-      actions: ''
-    },
-    {
-      uid: '3',
-      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
-      status: 'rascunho',
-      actions: ''
-    },
-    {
-      uid: '4',
-      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
-      status: 'rascunho',
-      actions: ''
-    },
-    {
-      uid: '5',
-      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
-      status: 'rascunho',
-      actions: ''
-    },
-    {
-      uid: '6',
-      title: 'Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd Lorem ipsum sadfsdfasdfsdafsdafadsfdsfasd',
-      status: 'rascunho',
-      actions: ''
-    }
+
   ]
 
   statusColor = {
