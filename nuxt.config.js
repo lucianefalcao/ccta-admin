@@ -75,7 +75,7 @@ export default {
         emulatorPort: process.env.NODE_ENV === 'development' ? 9099 : undefined
       },
       firestore: {
-        enablePersistence: true,
+        enablePersistence: false,
         emulatorPort: 8080
       }
     }

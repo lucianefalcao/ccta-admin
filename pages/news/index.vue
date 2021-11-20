@@ -38,6 +38,7 @@
                 depressed
                 outlined
                 color="secondary"
+                @click="showNews(item.uid)"
               >
                 Ver
               </v-btn>
@@ -73,15 +74,28 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
 import { newsStore } from '@/store'
 
+interface StatusTranslateMap {
+  draft: String,
+  published: String
+}
+
+interface StatusColorMap {
+  rascunho: String,
+  publicado: String
+}
+
 @Component
 export default class News extends Vue {
-  news: {uid: String, title: String, status: String, actions: String}[] = [
+  news: {uid: String, title: String, status: String, actions: String}[] = []
 
-  ]
-
-  statusColor = {
+  statusColor: StatusColorMap = {
     rascunho: 'info',
     publicado: 'success'
+  }
+
+  statusMap: StatusTranslateMap = {
+    draft: 'rascunho',
+    published: 'publicado'
   }
 
   icons = {
@@ -118,8 +132,20 @@ export default class News extends Vue {
     this.$router.push('/news/create')
   }
 
+  showNews (itemUID: String): void {
+    this.$router.push('/news/' + itemUID)
+  }
+
   async mounted (): Promise<void> {
-    console.log(await newsStore.getAllNews())
+    const newsPosts = await newsStore.getAllNews()
+    newsPosts.forEach((news) => {
+      this.news.push({
+        uid: news.uid!,
+        title: news.title,
+        status: this.statusMap[news.state],
+        actions: ''
+      })
+    })
   }
 }
 </script>
