@@ -29,7 +29,7 @@ export default class NewsModule extends VuexModule {
   @Action({ rawError: true })
   async getNewsByUid (uid: String): Promise<News> {
     const news = await this.store.$fire.firestore.collection('news').doc(uid).get()
-    const user = await userStore.getUserByUid(news.data().userUID)
+    const user = await userStore.getUserByUid(news.data().userUid)
     return {
       uid: news.id,
       title: news.data().title,

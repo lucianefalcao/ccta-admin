@@ -1,4 +1,4 @@
 export default interface StatusColorMap {
-  rascunho: String,
-  publicado: String
+  draft: String,
+  published: String
 }

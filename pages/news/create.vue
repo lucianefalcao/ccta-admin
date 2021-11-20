@@ -13,7 +13,7 @@
           counter
           required
           outlined
-          class="pb-5"
+          class="mb-5"
         />
 
         <editor
