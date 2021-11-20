@@ -3,5 +3,6 @@ export default interface NewsFirebase {
   newsText: String,
   state: String,
   lastModified: number,
-  userUid: String
+  userUid: String,
+  coverPath: String
 }
