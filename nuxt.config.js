@@ -77,6 +77,9 @@ export default {
       firestore: {
         enablePersistence: false,
         emulatorPort: 8080
+      },
+      storage: {
+        emulatorPort: 9199
       }
     }
   },

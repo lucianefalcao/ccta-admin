@@ -36,7 +36,8 @@ export default class NewsModule extends VuexModule {
       newsText: news.data().newsText,
       state: news.data().state,
       lastModified: news.data().lastModified,
-      user
+      user,
+      coverPath: news.data().coverPath
     }
   }
 
@@ -47,5 +48,19 @@ export default class NewsModule extends VuexModule {
     await newsRef.update(newsFirebase)
 
     return news
+  }
+
+  @Action({ rawError: true })
+  async addCover (cover: File): Promise<String> {
+    const storageRef = this.store.$fire.storage.ref().child(`/newsPostsImages/${cover.name}`)
+    await storageRef.put(cover)
+
+    return await storageRef.getDownloadURL()
+  }
+
+  @Action({ rawError: true })
+  async getCover (coverPath: String): Promise<String> {
+    const storageRef = this.store.$fire.storage.ref().child(coverPath)
+    return await storageRef.getDownloadURL()
   }
 }

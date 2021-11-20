@@ -7,7 +7,7 @@
       />
     </div>
     <v-card v-else class="pa-5">
-      <v-card-actions>
+      <v-card-actions class="mb-10">
         <back-button />
         <v-spacer />
         <v-btn
@@ -26,6 +26,10 @@
           Publicar
         </v-btn>
       </v-card-actions>
+
+      <v-card-text class="text-center">
+        <v-img contain :src="coverURL" max-height="600" />
+      </v-card-text>
 
       <v-card-title style="word-break: break-word;">
         <h2>
@@ -74,6 +78,8 @@ export default class NewsUid extends Vue {
     user: undefined
   }
 
+  coverURL: String = ''
+
   statusColor: StatusColorMap = {
     draft: 'info',
     published: 'success'
@@ -103,6 +109,7 @@ export default class NewsUid extends Vue {
 
   async beforeCreate (): Promise<void> {
     this.news = await newsStore.getNewsByUid(this.$route.params.uid)
+    this.coverURL = await newsStore.getCover(this.news.coverPath!)
 
     if (this.news.state === 'published') {
       this.isPublished = true

@@ -6,5 +6,6 @@ export default interface News {
   newsText?: String,
   state?: String,
   lastModified?: number,
-  user?: User
+  user?: User,
+  coverPath?: String
 }

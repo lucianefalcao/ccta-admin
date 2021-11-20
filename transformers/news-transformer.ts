@@ -11,7 +11,8 @@ export default class NewsTransformer {
       newsText: news.newsText,
       state: news.state,
       lastModified: news.lastModified,
-      user
+      user,
+      coverPath: news.coverPath
     }
   }
 
@@ -21,7 +22,8 @@ export default class NewsTransformer {
       newsText: news.newsText!,
       state: news.state!,
       lastModified: news.lastModified!,
-      userUid: news.user!.uid!
+      userUid: news.user!.uid!,
+      coverPath: news.coverPath!
     }
   }
 }
