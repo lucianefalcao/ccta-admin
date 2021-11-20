@@ -72,10 +72,7 @@ export default class Create extends Vue {
     advlist_bullet_styles: 'circle',
     advlist_number_styles: 'default,lower-alpha,lower-roman',
     default_link_target: '_blank',
-    link_assume_external_targets: 'https',
-    paste_postprocess: (_: any, args: any): void => {
-      console.log(args.node)
-    }
+    link_assume_external_targets: 'https'
   }
 
   get canSave (): Boolean {
@@ -88,9 +85,9 @@ export default class Create extends Vue {
     }
   }
 
-  saveAsDraft (): void {
+  async saveAsDraft (): Promise<void> {
     this.cleanText()
-    newsStore.save({
+    const news = await newsStore.save({
       title: this.title,
       newsText: this.newsText,
       state: 'draft',
@@ -98,11 +95,13 @@ export default class Create extends Vue {
       datePublished: 0,
       user: '/users/' + userStore.authUser.uid
     })
+
+    this.$router.push('/news/' + news.uid)
   }
 
-  publish (): void {
+  async publish (): Promise<void> {
     this.cleanText()
-    newsStore.save({
+    const news = await newsStore.save({
       title: this.title,
       newsText: this.newsText,
       state: 'published',
@@ -110,6 +109,8 @@ export default class Create extends Vue {
       datePublished: Date.now(),
       user: '/users/' + userStore.authUser.uid
     })
+
+    this.$router.push('/news/' + news.uid)
   }
 
   cleanText (): void {
