@@ -81,16 +81,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
 import { newsStore } from '@/store'
-
-interface StatusTranslateMap {
-  draft: String,
-  published: String
-}
-
-interface StatusColorMap {
-  rascunho: String,
-  publicado: String
-}
+import StatusTranslateMap from '@/models/helpers/StatusTranslateMap'
+import StatusColorMap from '@/models/helpers/StatusColorMap'
 
 @Component
 export default class News extends Vue {
