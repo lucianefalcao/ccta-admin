@@ -10,20 +10,18 @@ export default class NewsTransformer {
       title: news.title,
       newsText: news.newsText,
       state: news.state,
-      dateCreated: news.dateCreated,
-      datePublished: news.datePublished,
+      lastModified: news.lastModified,
       user
     }
   }
 
   static transformModelToInfra (news: News): NewsFirebase {
     return {
-      title: news.title,
-      newsText: news.newsText,
-      state: news.state,
-      dateCreated: news.dateCreated,
-      datePublished: news.datePublished,
-      userUid: news.user.uid!
+      title: news.title!,
+      newsText: news.newsText!,
+      state: news.state!,
+      lastModified: news.lastModified!,
+      userUid: news.user!.uid!
     }
   }
 }
