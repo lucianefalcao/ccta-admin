@@ -103,7 +103,10 @@ export default class NewsUid extends Vue {
 
   async beforeCreate (): Promise<void> {
     this.news = await newsStore.getNewsByUid(this.$route.params.uid)
-    this.coverURL = await newsStore.getCover(this.news.coverPath!)
+
+    if (this.news.coverPath!.length > 0) {
+      this.coverURL = await newsStore.getCover(this.news.coverPath!)
+    }
 
     if (this.news.state === 'published') {
       this.isPublished = true
