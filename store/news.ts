@@ -48,4 +48,12 @@ export default class NewsModule extends VuexModule {
 
     return news
   }
+
+  @Action({ rawError: true })
+  async addCover (cover: File): Promise<String> {
+    const storageRef = this.store.$fire.storage.ref().child(`/newsPostsImages/${cover.name}`)
+    await storageRef.put(cover)
+
+    return await storageRef.getDownloadURL()
+  }
 }

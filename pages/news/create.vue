@@ -134,12 +134,16 @@ export default class Create extends Vue {
 
   async saveAsDraft (): Promise<void> {
     this.cleanText()
+
+    this.addCover()
+
     const news = await newsStore.save({
       title: this.title,
       newsText: this.newsText,
       state: 'draft',
       lastModified: Date.now(),
-      user: userStore.authUser
+      user: userStore.authUser,
+      coverPath: this.cover ? `newsPostsImage/${this.cover?.name}` : ''
     })
 
     this.$router.push('/news/' + news.uid)
@@ -147,15 +151,26 @@ export default class Create extends Vue {
 
   async publish (): Promise<void> {
     this.cleanText()
+
+    this.addCover()
+
     const news = await newsStore.save({
       title: this.title,
       newsText: this.newsText,
       state: 'published',
       lastModified: Date.now(),
-      user: userStore.authUser
+      user: userStore.authUser,
+      coverPath: this.cover ? `newsPostsImage/${this.cover?.name}` : ''
     })
 
     this.$router.push('/news/' + news.uid)
+  }
+
+  async addCover (): Promise<String> {
+    if (this.cover) {
+      return await newsStore.addCover(this.cover)
+    }
+    return ''
   }
 
   cleanText (): void {
@@ -174,7 +189,7 @@ export default class Create extends Vue {
     uploader.click()
   }
 
-  onFileChanged (e: Event) {
+  onFileChanged (e: Event): void {
     const target = e.target as HTMLInputElement
     this.cover = target.files![0]
   }
