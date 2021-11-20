@@ -23,7 +23,7 @@
           :headers="headers"
           :items="news"
           :items-per-page="10"
-          no-data-text="Nenhuma notícia cadastrada"
+          :no-data-text="message"
           :footer-props="{
             itemsPerPageAllText: 'Todas',
             itemsPerPageText: 'Items por página',
@@ -134,7 +134,7 @@ export default class News extends Vue {
   ]
 
   fetchingNews: Boolean = false
-  errorMessage: String = ''
+  message: String = ''
 
   createNews (): void {
     this.$router.push('/news/create')
@@ -148,6 +148,11 @@ export default class News extends Vue {
     try {
       this.fetchingNews = true
       const newsPosts = await newsStore.getAllNews()
+
+      if (newsPosts.length === 0) {
+        this.message = 'Nenhuma notícia cadastrada'
+      }
+
       newsPosts.forEach((news) => {
         this.news.push({
           uid: news.uid!,
@@ -157,7 +162,7 @@ export default class News extends Vue {
         })
       })
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao buscar as notícias. Por favor, tente novamento mais tarde.'
+      this.message = 'Ocorreu um erro ao buscar as notícias. Por favor, tente novamento mais tarde.'
     } finally {
       this.fetchingNews = false
     }
