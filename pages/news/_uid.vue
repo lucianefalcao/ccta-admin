@@ -7,6 +7,28 @@
       />
     </div>
     <v-card v-else class="pa-5">
+      <v-card-actions>
+        <v-btn icon @click="back">
+          <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
+        </v-btn>
+        <v-spacer />
+        <v-btn
+          depressed
+          color="secondary"
+          @click="editar"
+        >
+          Editar
+        </v-btn>
+        <v-btn
+          v-if="!isPublished"
+          depressed
+          color="primary"
+          @click="publish"
+        >
+          Publicar
+        </v-btn>
+      </v-card-actions>
+
       <v-card-title>
         <h2>
           {{ news.title }}
@@ -22,6 +44,7 @@
         </v-chip>
         Escrito por {{ news.user.name }} • última atualização {{ dateCreated }}
       </v-card-text>
+
       <v-card-text class="black--text">
         <div v-html="news.newsText" />
       </v-card-text>
@@ -32,6 +55,7 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
+import { mdiArrowLeft } from '@mdi/js'
 import { newsStore } from '@/store'
 import News from '~/models/domain/News'
 import StatusColorMap from '~/models/helpers/StatusColorMap'
@@ -59,7 +83,12 @@ export default class NewsUid extends Vue {
     published: 'publicado'
   }
 
+  icons = {
+    mdiArrowLeft
+  }
+
   fetchingNews: Boolean = true
+  isPublished: Boolean = false
 
   get dateCreated (): String {
     return new Date(this.news.dateCreated as number).toLocaleDateString('pt-BR')
@@ -69,8 +98,27 @@ export default class NewsUid extends Vue {
     return new Date(this.news.datePublished as number).toLocaleDateString('pt-BR')
   }
 
+  editar (): void {
+    this.$router.push('/news/edit/' + this.news.uid)
+  }
+
+  back (): void {
+    this.$router.go(-1)
+  }
+
+  async publish (): Promise<void> {
+    this.news.state = 'published'
+    await newsStore.save(this.news)
+    this.isPublished = true
+  }
+
   async beforeCreate (): Promise<void> {
     this.news = await newsStore.getNewsByUid(this.$route.params.uid)
+
+    if (this.news.state === 'published') {
+      this.isPublished = true
+    }
+
     this.fetchingNews = false
   }
 }
