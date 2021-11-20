@@ -49,6 +49,7 @@
               <v-btn
                 icon
                 color="secondary"
+                @click="editar(item)"
               >
                 <v-icon>
                   {{ icons.mdiPencil }}
@@ -135,6 +136,10 @@ export default class Index extends Vue {
 
   showNews (item: News): void {
     this.$router.push('/news/' + item.uid)
+  }
+
+  editar (item: News): void {
+    this.$router.push('/news/edit/' + item.uid)
   }
 
   async mounted (): Promise<void> {
