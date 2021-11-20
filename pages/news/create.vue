@@ -93,7 +93,7 @@ export default class Create extends Vue {
       state: 'draft',
       dateCreated: Date.now(),
       datePublished: 0,
-      user: '/users/' + userStore.authUser.uid
+      user: userStore.authUser
     })
 
     this.$router.push('/news/' + news.uid)
@@ -107,7 +107,7 @@ export default class Create extends Vue {
       state: 'published',
       dateCreated: Date.now(),
       datePublished: Date.now(),
-      user: '/users/' + userStore.authUser.uid
+      user: userStore.authUser
     })
 
     this.$router.push('/news/' + news.uid)
