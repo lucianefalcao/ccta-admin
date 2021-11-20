@@ -27,7 +27,7 @@
         </v-btn>
       </v-card-actions>
 
-      <v-card-title>
+      <v-card-title style="word-break: break-word;">
         <h2>
           {{ news.title }}
         </h2>
