@@ -143,7 +143,7 @@ export default class Create extends Vue {
       state: 'draft',
       lastModified: Date.now(),
       user: userStore.authUser,
-      coverPath: this.cover ? `newsPostsImage/${this.cover?.name}` : ''
+      coverPath: this.cover ? `newsPostsImages/${this.cover?.name}` : ''
     })
 
     this.$router.push('/news/' + news.uid)
