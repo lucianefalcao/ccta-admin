@@ -3,7 +3,7 @@
     <v-card class="pa-5">
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary">
+        <v-btn color="primary" @click="createNews">
           <v-icon left>
             {{ icons.mdiPlus }}
           </v-icon>
@@ -112,6 +112,10 @@ export default class News extends Vue {
 
   currentPage: Number = 1
   newsPerPage: Number = 5
+
+  createNews (): void {
+    this.$router.push('/news/create')
+  }
 }
 </script>
 
