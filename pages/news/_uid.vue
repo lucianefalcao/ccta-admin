@@ -37,13 +37,7 @@
         </h2>
       </v-card-title>
       <v-card-text class="mb-5">
-        <v-chip
-          outlined
-          small
-          :color="statusColor[news.state]"
-        >
-          {{ statusMap[news.state] }}
-        </v-chip>
+        <news-status-chip :item-state="news.state" :is-outlined="true" />
         Escrito por {{ news.user.name }} • última atualização {{ lastModified }}
       </v-card-text>
 
