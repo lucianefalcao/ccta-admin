@@ -40,7 +40,7 @@
         >
           {{ statusMap[news.state] }}
         </v-chip>
-        Escrito por {{ news.user.name }} • última atualização {{ dateCreated }}
+        Escrito por {{ news.user.name }} • última atualização {{ lastModified }}
       </v-card-text>
 
       <v-card-text class="black--text">
@@ -70,8 +70,7 @@ export default class NewsUid extends Vue {
     title: undefined,
     newsText: undefined,
     state: undefined,
-    dateCreated: undefined,
-    datePublished: undefined,
+    lastModified: undefined,
     user: undefined
   }
 
@@ -88,12 +87,8 @@ export default class NewsUid extends Vue {
   fetchingNews: Boolean = true
   isPublished: Boolean = false
 
-  get dateCreated (): String {
-    return new Date(this.news.dateCreated as number).toLocaleDateString('pt-BR')
-  }
-
-  get datePublished (): String {
-    return new Date(this.news.datePublished as number).toLocaleDateString('pt-BR')
+  get lastModified (): String {
+    return new Date(this.news.lastModified as number).toLocaleDateString('pt-BR')
   }
 
   editar (): void {

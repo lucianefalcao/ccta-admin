@@ -35,8 +35,7 @@ export default class NewsModule extends VuexModule {
       title: news.data().title,
       newsText: news.data().newsText,
       state: news.data().state,
-      dateCreated: news.data().dateCreated,
-      datePublished: news.data().datePublished,
+      lastModified: news.data().lastModified,
       user
     }
   }

@@ -127,7 +127,7 @@ export default class Index extends Vue {
   ]
 
   fetchingNews: Boolean = false
-  message: String = ''
+  message: String = 'Nenhuma notícia cadastrada'
 
   createNews (): void {
     this.$router.push('/news/create')

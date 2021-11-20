@@ -96,8 +96,7 @@ export default class Create extends Vue {
       title: this.title,
       newsText: this.newsText,
       state: 'draft',
-      dateCreated: Date.now(),
-      datePublished: 0,
+      lastModified: Date.now(),
       user: userStore.authUser
     })
 
@@ -110,8 +109,7 @@ export default class Create extends Vue {
       title: this.title,
       newsText: this.newsText,
       state: 'published',
-      dateCreated: Date.now(),
-      datePublished: Date.now(),
+      lastModified: Date.now(),
       user: userStore.authUser
     })
 

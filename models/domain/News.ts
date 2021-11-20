@@ -5,7 +5,6 @@ export default interface News {
   title?: String,
   newsText?: String,
   state?: String,
-  dateCreated?: number,
-  datePublished?: number,
+  lastModified?: number,
   user?: User
 }
