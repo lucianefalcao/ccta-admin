@@ -11,7 +11,15 @@
         </v-btn>
       </v-card-actions>
       <v-card-text>
+        <div v-if="fetchingNews" class="text-center">
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </div>
+
         <v-data-table
+          v-else
           :headers="headers"
           :items="news"
           :items-per-page="10"
@@ -125,8 +133,8 @@ export default class News extends Vue {
     }
   ]
 
-  currentPage: Number = 1
-  newsPerPage: Number = 5
+  fetchingNews: Boolean = false
+  errorMessage: String = ''
 
   createNews (): void {
     this.$router.push('/news/create')
@@ -137,15 +145,22 @@ export default class News extends Vue {
   }
 
   async mounted (): Promise<void> {
-    const newsPosts = await newsStore.getAllNews()
-    newsPosts.forEach((news) => {
-      this.news.push({
-        uid: news.uid!,
-        title: news.title,
-        status: this.statusMap[news.state],
-        actions: ''
+    try {
+      this.fetchingNews = true
+      const newsPosts = await newsStore.getAllNews()
+      newsPosts.forEach((news) => {
+        this.news.push({
+          uid: news.uid!,
+          title: news.title,
+          status: this.statusMap[news.state],
+          actions: ''
+        })
       })
-    })
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao buscar as notícias. Por favor, tente novamento mais tarde.'
+    } finally {
+      this.fetchingNews = false
+    }
   }
 }
 </script>
