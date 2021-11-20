@@ -19,4 +19,22 @@ export default class NewsModule extends VuexModule {
     news.uid = newsRef.id
     return news
   }
+
+  @Action({ rawError: true })
+  async getAllNews (): Promise<News[]> {
+    const news = await this.store.$fire.firestore.collection('news').get()
+    const newsPosts: News[] = []
+    news.forEach((doc: any) => {
+      newsPosts.push({
+        uid: doc.id,
+        title: doc.data().title,
+        state: doc.data().state,
+        newsText: doc.data().newsText,
+        user: doc.data().user,
+        dateCreated: doc.data().dateCreated,
+        datePublished: doc.data().datePublished
+      })
+    })
+    return newsPosts
+  }
 }

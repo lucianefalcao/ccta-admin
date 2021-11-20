@@ -14,7 +14,7 @@
         <v-data-table
           :headers="headers"
           :items="news"
-          items-per-page="10"
+          :items-per-page="10"
           no-data-text="Nenhuma notícia cadastrada"
           :footer-props="{
             itemsPerPageAllText: 'Todas',
@@ -71,6 +71,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import { newsStore } from '@/store'
 
 @Component
 export default class News extends Vue {
@@ -115,6 +116,10 @@ export default class News extends Vue {
 
   createNews (): void {
     this.$router.push('/news/create')
+  }
+
+  async mounted (): Promise<void> {
+    console.log(await newsStore.getAllNews())
   }
 }
 </script>
