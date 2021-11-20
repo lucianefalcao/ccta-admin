@@ -13,10 +13,27 @@
         />
 
         <editor
+          v-model="newsText"
           api-key="no-api-key"
           :init="editorConfig"
         />
       </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          depressed
+          color="secondary"
+          @click="saveAsDraft"
+        >
+          Salvar como rascunho
+        </v-btn>
+        <v-btn
+          depressed
+          color="primary"
+        >
+          Publicar
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-col>
 </template>
@@ -33,6 +50,7 @@ import Editor from '@tinymce/tinymce-vue'
 })
 export default class Create extends Vue {
   title: String = ''
+  newsText: String = ''
 
   editorConfig = {
     language: 'pt_BR',
@@ -50,6 +68,23 @@ export default class Create extends Vue {
     paste_postprocess: (_: any, args: any): void => {
       console.log(args.node)
     }
+  }
+
+  saveAsDraft (): void {
+    console.log('save as draft')
+    this.cleanText()
+    console.log(this.title, this.newsText)
+  }
+
+  publish (): void {
+    console.log('publish')
+    this.cleanText()
+    console.log(this.title, this.newsText)
+  }
+
+  cleanText (): void {
+    this.newsText = this.newsText.split('<p>&nbsp;</p>').join('<br>')
+    this.newsText = this.newsText.split('&nbsp;').join(' ')
   }
 }
 </script>
