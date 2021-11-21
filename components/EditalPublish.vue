@@ -93,6 +93,7 @@ export default class EditalPublish extends Vue {
 
   getDocument (document: File): void {
     this.document = document
+    this.documentName = document ? document.name : ''
   }
 
   getDocumentPath (): String {
