@@ -67,6 +67,11 @@ export default class NewsModule extends VuexModule {
   @Action({ rawError: true })
   async deleteNews (news: News): Promise<News[]> {
     const newsFirebase = NewsTransformer.transformModelToInfra(news)
+
+    if (news.coverPath!.length > 0) {
+      await this.deleteImage(news.coverPath!)
+    }
+
     const newsRef = await this.store.$fire.firestore.collection('news').doc(news.uid)
     await newsRef.delete(newsFirebase)
     return await this.getAllNews()
