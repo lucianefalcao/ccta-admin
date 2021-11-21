@@ -31,12 +31,7 @@
           }"
         >
           <template #item.status="{ item }">
-            <v-chip
-              small
-              :color="statusColor[item.state]"
-            >
-              {{ statusMap[item.state] }}
-            </v-chip>
+            <news-status-chip :item-state="item.state" />
           </template>
 
           <template #item.actions="{ item }">
@@ -54,6 +49,7 @@
               <v-btn
                 icon
                 color="secondary"
+                @click="editar(item)"
               >
                 <v-icon>
                   {{ icons.mdiPencil }}
@@ -84,8 +80,13 @@ import { newsStore } from '@/store'
 import StatusTranslateMap from '@/models/helpers/StatusTranslateMap'
 import StatusColorMap from '@/models/helpers/StatusColorMap'
 import News from '@/models/domain/News'
+import NewsStatusChip from '@/components/NewsStatusChip.vue'
 
-@Component
+@Component({
+  components: {
+    NewsStatusChip
+  }
+})
 export default class Index extends Vue {
   news: News[] = []
 
@@ -135,6 +136,10 @@ export default class Index extends Vue {
 
   showNews (item: News): void {
     this.$router.push('/news/' + item.uid)
+  }
+
+  editar (item: News): void {
+    this.$router.push('/news/edit/' + item.uid)
   }
 
   async mounted (): Promise<void> {
