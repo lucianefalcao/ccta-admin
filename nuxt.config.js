@@ -28,6 +28,9 @@ export default {
   plugins: [
     {
       src: '@/plugins/firebase.ts'
+    },
+    {
+      src: '@/plugins/datetime-picker.ts'
     }
   ],
 

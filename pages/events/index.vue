@@ -20,7 +20,7 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="editais"
+          :items="events"
           :items-per-page="10"
           :no-data-text="message"
           :footer-props="{
@@ -126,7 +126,7 @@ export default class Index extends Vue {
       this.fetchingData = true
       this.events = await eventsStore.getAll()
     } catch (error) {
-      this.message = 'Ocorreu um erro ao buscar os editais. Por favor, tente novamento mais tarde.'
+      this.message = 'Ocorreu um erro ao buscar os eventos. Por favor, tente novamento mais tarde.'
     } finally {
       this.fetchingData = false
     }
