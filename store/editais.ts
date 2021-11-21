@@ -65,8 +65,19 @@ export default class EditaisModule extends VuexModule {
   @Action({ rawError: true })
   async delete (edital: Edital): Promise<Edital[]> {
     const editalFirebase = EditalTransformer.transformModelToInfra(edital)
+
+    if (edital.documentPath!.length > 0) {
+      await this.deleteDocument(edital.documentPath!)
+    }
+
     const editalRef = await this.store.$fire.firestore.collection('editais').doc(edital.uid)
     await editalRef.delete(editalFirebase)
     return await this.getAll()
+  }
+
+  @Action({ rawError: true })
+  async deleteDocument (documentPath: String): Promise<void> {
+    const storageRef = this.store.$fire.storage.ref().child(documentPath)
+    return await storageRef.delete()
   }
 }
