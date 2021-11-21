@@ -1,9 +1,10 @@
 import User from './User'
 
-export default interface Edital {
+export default interface Event {
   uid?: String,
   title?: String,
-  documentPath?: String,
+  description?: String,
+  date?: number,
   lastModified?: number,
   user?: User,
 }

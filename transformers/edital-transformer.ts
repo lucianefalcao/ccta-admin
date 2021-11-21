@@ -2,7 +2,7 @@ import Edital from '@/models/domain/Edital'
 import EditalFirebase from '@/models/firebase/EditalFirebase'
 import { userStore } from '@/store'
 
-export default class NewsTransformer {
+export default class EditalTransformer {
   static async transformInfraToModel (edital: EditalFirebase, editalUid: String): Promise<Edital> {
     const user = await userStore.getUserByUid(edital.userUid)
     return {
