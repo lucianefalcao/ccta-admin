@@ -19,8 +19,8 @@ export default class EventsModule extends VuexModule {
     const events = await this.store.$fire.firestore.collection('events').get()
     const eventsPosts: Event[] = []
     for (const editalData of events.docs) {
-      const news = await EventTransformer.transformInfraToModel(editalData.data(), editalData.id)
-      eventsPosts.push(news)
+      const event = await EventTransformer.transformInfraToModel(editalData.data(), editalData.id)
+      eventsPosts.push(event)
     }
 
     return eventsPosts
