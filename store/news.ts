@@ -63,4 +63,12 @@ export default class NewsModule extends VuexModule {
     const storageRef = this.store.$fire.storage.ref().child(coverPath)
     return await storageRef.getDownloadURL()
   }
+
+  @Action({ rawError: true })
+  async deleteNews (news: News): Promise<News[]> {
+    const newsFirebase = NewsTransformer.transformModelToInfra(news)
+    const newsRef = await this.store.$fire.firestore.collection('news').doc(news.uid)
+    await newsRef.delete(newsFirebase)
+    return await this.getAllNews()
+  }
 }

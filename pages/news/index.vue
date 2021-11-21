@@ -1,6 +1,12 @@
 <template>
   <v-col align-self="start">
-    <v-card class="pa-5">
+    <div v-if="fetchingNews" class="text-center">
+      <v-progress-circular
+        color="primary"
+        indeterminate
+      />
+    </div>
+    <v-card v-else class="pa-5">
       <v-card-actions>
         <v-spacer />
         <v-btn color="primary" @click="createNews">
@@ -11,15 +17,7 @@
         </v-btn>
       </v-card-actions>
       <v-card-text>
-        <div v-if="fetchingNews" class="text-center">
-          <v-progress-circular
-            color="primary"
-            indeterminate
-          />
-        </div>
-
         <v-data-table
-          v-else
           :headers="headers"
           :items="news"
           :items-per-page="10"
@@ -59,6 +57,8 @@
                 icon
                 class="text-right"
                 color="red"
+                :loading="isDeleting && item.uid === uid"
+                @click="deleteNews(item)"
               >
                 <v-icon>
                   {{ icons.mdiDelete }}
@@ -129,6 +129,9 @@ export default class Index extends Vue {
 
   fetchingNews: Boolean = false
   message: String = 'Nenhuma notícia cadastrada'
+  errorMessage: String = ''
+  isDeleting: Boolean = false
+  uid: String = ''
 
   createNews (): void {
     this.$router.push('/news/create')
@@ -140,6 +143,19 @@ export default class Index extends Vue {
 
   editar (item: News): void {
     this.$router.push('/news/edit/' + item.uid)
+  }
+
+  async deleteNews (item: News): Promise<void> {
+    try {
+      this.uid = item.uid!
+      this.isDeleting = true
+      this.news = await newsStore.deleteNews(item)
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao deletar a notícia.'
+    } finally {
+      this.uid = ''
+      this.isDeleting = false
+    }
   }
 
   async mounted (): Promise<void> {
