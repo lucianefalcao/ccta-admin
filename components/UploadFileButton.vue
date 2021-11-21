@@ -81,6 +81,7 @@ export default class UploadFileButton extends Vue {
   }
 
   clearFileSelection (): void {
+    console.log('aqui')
     this.file = null
     this.$emit('file', null)
   }

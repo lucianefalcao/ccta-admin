@@ -138,6 +138,7 @@ export default class NewsCreate extends Vue {
   }
 
   getCover (cover: File): void {
+    this.coverName = ''
     this.cover = cover
   }
 

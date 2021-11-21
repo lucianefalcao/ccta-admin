@@ -71,4 +71,10 @@ export default class NewsModule extends VuexModule {
     await newsRef.delete(newsFirebase)
     return await this.getAllNews()
   }
+
+  @Action({ rawError: true })
+  async deleteImage (coverPath: String): Promise<void> {
+    const storageRef = this.store.$fire.storage.ref().child(coverPath)
+    return await storageRef.delete()
+  }
 }

@@ -58,6 +58,10 @@ export default class Edit extends Vue {
 
   async updateNews (news: News): Promise<void> {
     try {
+      if ((this.news.coverPath!.length > 0) && (this.news.coverPath !== news.coverPath)) {
+        await newsStore.deleteImage(this.news.coverPath!)
+      }
+
       const newsSaved = await newsStore.updateNews(news)
       this.$router.push('/news/' + newsSaved.uid)
     } catch (error) {
