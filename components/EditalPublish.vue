@@ -66,12 +66,15 @@ export default class EditalPublish extends Vue {
   document: File | null = null
 
   get canSave (): Boolean {
-    return this.title.length > 0 && (document !== null || this.documentName.length > 0)
+    return (this.title.length > 0) && (this.document !== null || this.documentName.length > 0)
   }
 
   rules = {
     title: {
       required: (value: String) => !!value || 'Por favor, adicione um título.'
+    },
+    document: {
+      required: (value: File) => !!value || 'Por favor, adicione um documento.'
     }
   }
 

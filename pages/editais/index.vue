@@ -96,11 +96,12 @@ export default class Index extends Vue {
       align: 'center',
       class: 'v-data-table-header',
       sortable: false,
-      width: '170px'
+      width: '220px'
     }
   ]
 
   fetchingData: Boolean = false
+  isDeleting: Boolean = false
   editais: Edital[] = []
   message: String = 'Nenhuma notícia cadastrada'
 
