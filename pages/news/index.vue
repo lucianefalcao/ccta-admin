@@ -69,6 +69,13 @@
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
   </v-col>
 </template>
 
@@ -81,10 +88,12 @@ import StatusTranslateMap from '@/models/helpers/StatusTranslateMap'
 import StatusColorMap from '@/models/helpers/StatusColorMap'
 import News from '@/models/domain/News'
 import NewsStatusChip from '@/components/NewsStatusChip.vue'
+import Snackbar from '@/components/Snackbar.vue'
 
 @Component({
   components: {
-    NewsStatusChip
+    NewsStatusChip,
+    Snackbar
   }
 })
 export default class Index extends Vue {
@@ -132,6 +141,11 @@ export default class Index extends Vue {
   errorMessage: String = ''
   isDeleting: Boolean = false
   uid: String = ''
+  snackbar: Boolean = false
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
+  }
 
   createNews (): void {
     this.$router.push('/news/create')
@@ -152,6 +166,7 @@ export default class Index extends Vue {
       this.news = await newsStore.deleteNews(item)
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao deletar a notícia.'
+      this.snackbar = true
     } finally {
       this.uid = ''
       this.isDeleting = false
