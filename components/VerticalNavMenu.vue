@@ -80,7 +80,7 @@ export default class VerticalNavMenu extends Vue {
     {
       icon: mdiCalendar,
       title: 'Eventos',
-      to: '/eventos'
+      to: '/events'
     },
     {
       icon: mdiBullhornOutline,
