@@ -102,8 +102,11 @@ export default class Index extends Vue {
 
   fetchingData: Boolean = false
   isDeleting: Boolean = false
+  snackbar: Boolean = false
   editais: Edital[] = []
   message: String = 'Nenhuma notícia cadastrada'
+  uid: String = ''
+  errorMessage: String = ''
 
   publishEdital () {
     this.$router.push('/editais/publish')
@@ -113,8 +116,18 @@ export default class Index extends Vue {
     this.$router.push(`/editais/edit/${uid}`)
   }
 
-  deleteEdital () {
-    console.log('delete')
+  async deleteEdital (item: Edital) {
+    try {
+      this.uid = item.uid!
+      this.isDeleting = true
+      this.editais = await editaisStore.delete(item)
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao deletar a notícia.'
+      this.snackbar = true
+    } finally {
+      this.uid = ''
+      this.isDeleting = false
+    }
   }
 
   download () {
