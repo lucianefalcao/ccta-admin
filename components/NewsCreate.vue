@@ -7,7 +7,12 @@
       <h3>{{ pageTitle }}</h3>
     </v-card-title>
     <v-card-text>
-      <upload-image-button :cover-name="coverName" @cover="getCover" />
+      <upload-file-button
+        :file-name="coverName"
+        :default-title="'Capa'"
+        :accept-types="'image/jpeg, image/png'"
+        @file="getCover"
+      />
 
       <v-text-field
         v-model="title"
@@ -53,7 +58,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Editor from '@tinymce/tinymce-vue'
 import BackButton from '@/components/BackButton.vue'
-import UploadImageButton from '@/components/UploadImageButton.vue'
+import UploadFileButton from '~/components/UploadFileButton.vue'
 import { newsStore, userStore } from '@/store'
 import News from '@/models/domain/News'
 
@@ -61,7 +66,7 @@ import News from '@/models/domain/News'
   components: {
     Editor,
     BackButton,
-    UploadImageButton
+    UploadFileButton
   }
 })
 export default class NewsCreate extends Vue {
