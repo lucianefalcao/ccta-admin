@@ -36,6 +36,7 @@
                 depressed
                 outlined
                 color="secondary"
+                :loading="downloadingDocument && item.uid === uid"
                 @click="download(item)"
               >
                 Donwload
@@ -73,6 +74,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import Edit from '../news/edit/_uid.vue'
 import { editaisStore } from '@/store'
 import Edital from '@/models/domain/Edital'
 
@@ -102,27 +104,28 @@ export default class Index extends Vue {
 
   fetchingData: Boolean = false
   isDeleting: Boolean = false
+  downloadingDocument: Boolean = false
   snackbar: Boolean = false
   editais: Edital[] = []
   message: String = 'Nenhuma notícia cadastrada'
   uid: String = ''
   errorMessage: String = ''
 
-  publishEdital () {
+  publishEdital (): void {
     this.$router.push('/editais/publish')
   }
 
-  editar (uid: String) {
+  editar (uid: String): void {
     this.$router.push(`/editais/edit/${uid}`)
   }
 
-  async deleteEdital (item: Edital) {
+  async deleteEdital (item: Edital): Promise<void> {
     try {
       this.uid = item.uid!
       this.isDeleting = true
       this.editais = await editaisStore.delete(item)
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao deletar a notícia.'
+      this.errorMessage = 'Ocorreu um erro ao deletar o edital.'
       this.snackbar = true
     } finally {
       this.uid = ''
@@ -130,8 +133,24 @@ export default class Index extends Vue {
     }
   }
 
-  download () {
-    console.log('download')
+  async download (item: Edital): Promise<void> {
+    try {
+      this.uid = item.uid!
+      this.downloadingDocument = true
+      const documentUrl = await editaisStore.getDocument(item.documentPath!)
+
+      const link = document.createElement('a') as HTMLAnchorElement
+      link.href = documentUrl as string
+      link.download = item.documentPath!.split('/')[1]
+      link.target = '_blank'
+      link.click()
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro baixar o edital.'
+      this.snackbar = true
+    } finally {
+      this.uid = ''
+      this.downloadingDocument = false
+    }
   }
 
   async mounted (): Promise<void> {
