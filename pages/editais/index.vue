@@ -44,7 +44,7 @@
               <v-btn
                 icon
                 color="secondary"
-                @click="editar(item)"
+                @click="editar(item.uid)"
               >
                 <v-icon>
                   {{ icons.mdiPencil }}
@@ -109,8 +109,8 @@ export default class Index extends Vue {
     this.$router.push('/editais/publish')
   }
 
-  editar () {
-    console.log('editar')
+  editar (uid: String) {
+    this.$router.push(`/editais/edit/${uid}`)
   }
 
   deleteEdital () {

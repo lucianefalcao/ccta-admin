@@ -41,7 +41,7 @@ export default class Publish extends Vue {
       await editaisStore.save(edital)
       this.$router.push('/editais')
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao atualizar a notícia. Por favor, tente novamente.'
+      this.errorMessage = 'Ocorreu um erro ao publicar o edital. Por favor, tente novamente.'
       this.snackbar = true
     }
   }

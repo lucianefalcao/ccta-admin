@@ -43,7 +43,8 @@ export default class Edit extends Vue {
     newsText: undefined,
     state: undefined,
     lastModified: undefined,
-    user: undefined
+    user: undefined,
+    coverPath: undefined
   }
 
   coverURL: String = ''
