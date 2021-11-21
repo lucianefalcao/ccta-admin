@@ -14,7 +14,7 @@
       <v-card-text>
         <v-data-table
           :headers="headers"
-          :items="news"
+          :items="editais"
           :items-per-page="10"
           :no-data-text="message"
           :footer-props="{
@@ -67,6 +67,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import Edital from '@/models/domain/Edital'
 
 @Component
 export default class Index extends Vue {
@@ -92,6 +93,7 @@ export default class Index extends Vue {
     }
   ]
 
+  editais: Edital[] = []
   message: String = 'Nenhuma notícia cadastrada'
 
   publishEdital () {
