@@ -150,7 +150,7 @@ export default class EventPublish extends Vue {
       title: this.title,
       lastModified: Date.now(),
       user: userStore.authUser,
-      date: new Date(this.datetime).getTime(),
+      date: Date.parse(this.datetime.toString()),
       description: this.description
     }
   }
