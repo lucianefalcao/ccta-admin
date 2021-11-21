@@ -153,7 +153,7 @@ export default class NewsCreate extends Vue {
     const coverPath = this.getCoverPath()
 
     return {
-      uid: this.news.uid ?? undefined,
+      uid: this.news?.uid ?? undefined,
       title: this.title,
       newsText: this.newsText,
       state,
