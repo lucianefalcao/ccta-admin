@@ -1,8 +1,7 @@
 <template>
   <news-create
     :page-title="'Cadastrar notícia'"
-    @saveAsDraft="saveAsDraft"
-    @publishNews="publish"
+    @updateNews="saveNews"
   />
 </template>
 
@@ -19,14 +18,15 @@ import News from '~/models/domain/News'
   }
 })
 export default class Create extends Vue {
-  async saveAsDraft (news: News): Promise<void> {
-    const newsSaved = await newsStore.save(news)
-    this.$router.push('/news/' + newsSaved.uid)
-  }
+  errorMessage: String = ''
 
-  async publish (news: News): Promise<void> {
-    const newsSaved = await newsStore.save(news)
-    this.$router.push('/news/' + newsSaved.uid)
+  async saveNews (news: News): Promise<void> {
+    try {
+      const newsSaved = await newsStore.save(news)
+      this.$router.push('/news/' + newsSaved.uid)
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao atualizar a notícia. Por favor, tente novamente.'
+    }
   }
 }
 </script>

@@ -9,8 +9,7 @@
     v-else
     :page-title="'Editar notícia'"
     :news="news"
-    @saveAsDraft="saveAsDraft"
-    @publishNews="publish"
+    @updateNews="updateNews"
   />
 </template>
 
@@ -38,25 +37,29 @@ export default class Edit extends Vue {
 
   coverURL: String = ''
   fetchingNews: Boolean = true
+  errorMessage: String = ''
 
-  async saveAsDraft (news: News): Promise<void> {
-    const newsSaved = await newsStore.updateNews(news)
-    this.$router.push('/news/' + newsSaved.uid)
-  }
-
-  async publish (news: News): Promise<void> {
-    const newsSaved = await newsStore.updateNews(news)
-    this.$router.push('/news/' + newsSaved.uid)
+  async updateNews (news: News): Promise<void> {
+    try {
+      const newsSaved = await newsStore.updateNews(news)
+      this.$router.push('/news/' + newsSaved.uid)
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao atualizar a notícia. Por favor, tente novamente.'
+    }
   }
 
   async beforeCreate (): Promise<void> {
-    this.news = await newsStore.getNewsByUid(this.$route.params.uid)
+    try {
+      this.news = await newsStore.getNewsByUid(this.$route.params.uid)
 
-    if (this.news.coverPath!.length > 0) {
-      this.coverURL = await newsStore.getCover(this.news.coverPath!)
+      if (this.news.coverPath!.length > 0) {
+        this.coverURL = await newsStore.getCover(this.news.coverPath!)
+      }
+
+      this.fetchingNews = false
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao buscar a notícia. Por favor, tente novamente.'
     }
-
-    this.fetchingNews = false
   }
 }
 </script>

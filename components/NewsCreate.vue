@@ -110,7 +110,7 @@ export default class NewsCreate extends Vue {
 
     const news = this.createNews('draft')
 
-    this.$emit('saveAsDraft', news)
+    this.$emit('updateNews', news)
   }
 
   publish (): void {
@@ -119,7 +119,7 @@ export default class NewsCreate extends Vue {
 
     const news = this.createNews('published')
 
-    this.$emit('publishNews', news)
+    this.$emit('updateNews', news)
   }
 
   async addCover (): Promise<String> {
