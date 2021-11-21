@@ -14,7 +14,7 @@
       {{ buttonText }}
     </v-btn>
 
-    <v-btn v-if="cover || coverName.length > 0" icon small @click="clearFileSelection">
+    <v-btn v-if="file || fileName.length > 0" icon small @click="clearFileSelection">
       <v-icon right>
         {{ icons.mdiClose }}
       </v-icon>
@@ -24,7 +24,7 @@
       ref="uploader"
       class="d-none"
       type="file"
-      accept="image/jpeg, image/png"
+      :accept="acceptTypes"
       @change="onFileChanged"
     >
   </div>
@@ -36,13 +36,19 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { mdiUpload, mdiClose } from '@mdi/js'
 
 @Component
-export default class UploadImageButton extends Vue {
+export default class UploadFileButton extends Vue {
   isSelectingFile: Boolean = false
 
   @Prop({ type: String, default: '' })
-  coverName!: String
+  fileName!: String
 
-  cover: File | null = null
+  @Prop({ type: String, required: true })
+  defaultTitle!: String
+
+  @Prop({ type: String, required: true })
+  acceptTypes!: String
+
+  file: File | null = null
 
   icons = {
     mdiUpload,
@@ -50,10 +56,10 @@ export default class UploadImageButton extends Vue {
   }
 
   get buttonText (): String {
-    if (this.coverName.length > 0) {
-      return this.coverName
+    if (this.fileName.length > 0) {
+      return this.fileName
     }
-    return this.cover ? this.cover.name : 'Capa'
+    return this.file ? this.file.name : this.defaultTitle
   }
 
   chooseCover (): void {
@@ -69,15 +75,15 @@ export default class UploadImageButton extends Vue {
 
   onFileChanged (e: Event): void {
     const target = e.target as HTMLInputElement
-    this.cover = target.files![0]
+    this.file = target.files![0]
 
-    this.$emit('cover', this.cover)
+    this.$emit('file', this.file)
   }
 
   clearFileSelection (): void {
-    this.cover = null
-    this.coverName = ''
-    this.$emit('cover', null)
+    this.file = null
+    this.fileName = ''
+    this.$emit('file', null)
   }
 }
 </script>

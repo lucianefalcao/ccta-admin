@@ -105,7 +105,7 @@ export default class Index extends Vue {
   message: String = 'Nenhuma notícia cadastrada'
 
   publishEdital () {
-    console.log('aqu')
+    this.$router.push('/editais/publish')
   }
 
   editar () {
