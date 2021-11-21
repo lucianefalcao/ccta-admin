@@ -106,40 +106,18 @@ export default class NewsCreate extends Vue {
 
   saveAsDraft (): void {
     this.cleanText()
-
     this.addCover()
 
-    const coverPath = this.getCoverPath()
-
-    const news: News = {
-      uid: this.news.uid ?? undefined,
-      title: this.title,
-      newsText: this.newsText,
-      state: 'draft',
-      lastModified: Date.now(),
-      user: userStore.authUser,
-      coverPath
-    }
+    const news = this.createNews('draft')
 
     this.$emit('saveAsDraft', news)
   }
 
   publish (): void {
     this.cleanText()
-
     this.addCover()
 
-    const coverPath = this.getCoverPath()
-
-    const news: News = {
-      uid: this.news.uid ?? undefined,
-      title: this.title,
-      newsText: this.newsText,
-      state: 'published',
-      lastModified: Date.now(),
-      user: userStore.authUser,
-      coverPath
-    }
+    const news = this.createNews('published')
 
     this.$emit('publishNews', news)
   }
@@ -169,6 +147,20 @@ export default class NewsCreate extends Vue {
     }
 
     return ''
+  }
+
+  createNews (state: String): News {
+    const coverPath = this.getCoverPath()
+
+    return {
+      uid: this.news.uid ?? undefined,
+      title: this.title,
+      newsText: this.newsText,
+      state,
+      lastModified: Date.now(),
+      user: userStore.authUser,
+      coverPath
+    }
   }
 
   mounted () {
