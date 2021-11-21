@@ -27,12 +27,13 @@ export default class EventsModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async getEditalByUid (uid: String): Promise<Event> {
+  async getEventByUid (uid: String): Promise<Event> {
     const event = await this.store.$fire.firestore.collection('events').doc(uid).get()
     const user = await userStore.getUserByUid(event.data().userUid)
     return {
       uid: event.id,
       title: event.data().title,
+      date: event.data().date,
       lastModified: event.data().lastModified,
       user,
       description: event.data().description

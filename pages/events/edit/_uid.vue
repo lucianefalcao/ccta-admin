@@ -6,11 +6,11 @@
         indeterminate
       />
     </div>
-    <edital-publish
+    <event-publish
       v-else
-      :page-title="'Editar Edital'"
-      :edital="edital"
-      @saveEdital="saveEdital"
+      :page-title="'Editar Evento'"
+      :event="event"
+      @saveEvent="saveEvent"
     />
 
     <snackbar
@@ -25,14 +25,14 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { editaisStore } from '@/store'
-import EditalPublish from '@/components/EditalPublish.vue'
+import { eventsStore } from '@/store'
+import EventPublish from '@/components/EventPublish.vue'
 import Snackbar from '@/components/Snackbar.vue'
-import Edital from '~/models/domain/Edital'
+import Event from '@/models/domain/Event'
 
 @Component({
   components: {
-    EditalPublish,
+    EventPublish,
     Snackbar
   }
 })
@@ -41,41 +41,34 @@ export default class Edit extends Vue {
   snackbar: Boolean = false
   fetchingData: Boolean = true
 
-  edital: Edital = {
+  event: Event = {
     uid: undefined,
     title: undefined,
+    date: undefined,
     lastModified: undefined,
     user: undefined,
-    documentPath: undefined
+    description: undefined
   }
 
   setSnackbar (snackbar: Boolean): void {
     this.snackbar = snackbar
   }
 
-  async saveEdital (edital: Edital): Promise<void> {
+  async saveEvent (event: Event): Promise<void> {
     try {
-      if ((this.edital.documentPath!.length > 0) && (this.edital.documentPath !== edital.documentPath)) {
-        await editaisStore.deleteDocument(this.edital.documentPath!)
-      }
-
-      await editaisStore.update(edital)
-      this.$router.push('/editais')
+      await eventsStore.update(event)
+      this.$router.push('/events')
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao atualizar o edital. Por favor, tente novamente.'
+      this.errorMessage = 'Ocorreu um erro ao atualizar o evento. Por favor, tente novamente.'
       this.snackbar = true
     }
   }
 
   async beforeCreate (): Promise<void> {
     try {
-      this.edital = await editaisStore.getEditalByUid(this.$route.params.uid)
-
-      if (this.edital.documentPath!.length > 0) {
-        await editaisStore.getDocument(this.edital.documentPath!)
-      }
+      this.event = await eventsStore.getEventByUid(this.$route.params.uid)
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao buscar a notícia. Por favor, tente novamente.'
+      this.errorMessage = 'Ocorreu um erro ao buscar o evento. Por favor, tente novamente.'
       this.snackbar = true
     } finally {
       this.fetchingData = false
