@@ -106,7 +106,7 @@ export default class Index extends Vue {
   downloadingDocument: Boolean = false
   snackbar: Boolean = false
   editais: Edital[] = []
-  message: String = 'Nenhuma notícia cadastrada'
+  message: String = 'Nenhum edital cadastrado'
   uid: String = ''
   errorMessage: String = ''
 

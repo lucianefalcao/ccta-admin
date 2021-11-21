@@ -32,17 +32,6 @@
           <template #item.actions="{ item }">
             <div class="text-end">
               <v-btn
-                small
-                depressed
-                outlined
-                color="secondary"
-                :loading="downloadingDocument && item.uid === uid"
-                @click="download(item)"
-              >
-                Donwload
-              </v-btn>
-
-              <v-btn
                 icon
                 color="secondary"
                 @click="editar(item.uid)"
@@ -105,24 +94,24 @@ export default class Index extends Vue {
   isDeleting: Boolean = false
   downloadingDocument: Boolean = false
   snackbar: Boolean = false
-  editais: Edital[] = []
-  message: String = 'Nenhuma notícia cadastrada'
+  events: Edital[] = []
+  message: String = 'Nenhum evento cadastrado'
   uid: String = ''
   errorMessage: String = ''
 
   publishEvent (): void {
-    this.$router.push('/editais/publish')
+    this.$router.push('/events/publish')
   }
 
   editar (uid: String): void {
-    this.$router.push(`/editais/edit/${uid}`)
+    this.$router.push(`/events/edit/${uid}`)
   }
 
   async deleteEvent (item: Edital): Promise<void> {
     try {
       this.uid = item.uid!
       this.isDeleting = true
-      this.editais = await editaisStore.delete(item)
+      this.events = await eventsStore.delete(item)
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao deletar o edital.'
       this.snackbar = true
@@ -135,7 +124,7 @@ export default class Index extends Vue {
   async mounted (): Promise<void> {
     try {
       this.fetchingData = true
-      this.editais = await editaisStore.getAll()
+      this.events = await eventsStore.getAll()
     } catch (error) {
       this.message = 'Ocorreu um erro ao buscar os editais. Por favor, tente novamento mais tarde.'
     } finally {
