@@ -55,6 +55,10 @@ export default class Publish extends Vue {
 
   async saveEdital (edital: Edital): Promise<void> {
     try {
+      if ((this.edital.documentPath!.length > 0) && (this.edital.documentPath !== edital.documentPath)) {
+        await editaisStore.deleteDocument(this.edital.documentPath!)
+      }
+
       await editaisStore.update(edital)
       this.$router.push('/editais')
     } catch (error) {
