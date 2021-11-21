@@ -1,5 +1,11 @@
 <template>
   <v-col align-self="start">
+    <div v-if="fetchingData" class="text-center">
+      <v-progress-circular
+        color="primary"
+        indeterminate
+      />
+    </div>
     <v-card class="pa-5">
       <v-card-actions>
         <v-spacer />
@@ -67,6 +73,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import { editaisStore } from '@/store'
 import Edital from '@/models/domain/Edital'
 
 @Component
@@ -93,6 +100,7 @@ export default class Index extends Vue {
     }
   ]
 
+  fetchingData: Boolean = false
   editais: Edital[] = []
   message: String = 'Nenhuma notícia cadastrada'
 
@@ -110,6 +118,17 @@ export default class Index extends Vue {
 
   download () {
     console.log('download')
+  }
+
+  async mounted (): Promise<void> {
+    try {
+      this.fetchingData = true
+      this.editais = await editaisStore.getAll()
+    } catch (error) {
+      this.message = 'Ocorreu um erro ao buscar os editais. Por favor, tente novamento mais tarde.'
+    } finally {
+      this.fetchingData = false
+    }
   }
 }
 </script>
