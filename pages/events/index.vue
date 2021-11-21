@@ -9,11 +9,11 @@
     <v-card class="pa-5">
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" @click="publishEdital">
+        <v-btn color="primary" @click="publishEvent">
           <v-icon left>
             {{ icons.mdiPlus }}
           </v-icon>
-          Publicar Edital
+          Publicar Evento
         </v-btn>
       </v-card-actions>
 
@@ -56,7 +56,7 @@
                 class="text-right"
                 color="red"
                 :loading="isDeleting && item.uid === uid"
-                @click="deleteEdital(item)"
+                @click="deleteEvent(item)"
               >
                 <v-icon>
                   {{ icons.mdiDelete }}
@@ -74,7 +74,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
-import { editaisStore } from '@/store'
+import { eventsStore } from '@/store'
 import Edital from '@/models/domain/Edital'
 
 @Component
@@ -110,7 +110,7 @@ export default class Index extends Vue {
   uid: String = ''
   errorMessage: String = ''
 
-  publishEdital (): void {
+  publishEvent (): void {
     this.$router.push('/editais/publish')
   }
 
@@ -118,7 +118,7 @@ export default class Index extends Vue {
     this.$router.push(`/editais/edit/${uid}`)
   }
 
-  async deleteEdital (item: Edital): Promise<void> {
+  async deleteEvent (item: Edital): Promise<void> {
     try {
       this.uid = item.uid!
       this.isDeleting = true
@@ -129,26 +129,6 @@ export default class Index extends Vue {
     } finally {
       this.uid = ''
       this.isDeleting = false
-    }
-  }
-
-  async download (item: Edital): Promise<void> {
-    try {
-      this.uid = item.uid!
-      this.downloadingDocument = true
-      const documentUrl = await editaisStore.getDocument(item.documentPath!)
-
-      const link = document.createElement('a') as HTMLAnchorElement
-      link.href = documentUrl as string
-      link.download = item.documentPath!.split('/')[1]
-      link.target = '_blank'
-      link.click()
-    } catch (error) {
-      this.errorMessage = 'Ocorreu um erro baixar o edital.'
-      this.snackbar = true
-    } finally {
-      this.uid = ''
-      this.downloadingDocument = false
     }
   }
 
