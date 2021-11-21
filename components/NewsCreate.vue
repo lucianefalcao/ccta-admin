@@ -1,53 +1,51 @@
 <template>
-  <v-col align-self="start">
-    <v-card class="pa-5">
-      <v-card-actions>
-        <back-button />
-      </v-card-actions>
-      <v-card-title class="mb-5">
-        <h3>{{ pageTitle }}</h3>
-      </v-card-title>
-      <v-card-text>
-        <upload-image-button :cover-name="coverName" @cover="getCover" />
+  <v-card class="pa-5">
+    <v-card-actions>
+      <back-button />
+    </v-card-actions>
+    <v-card-title class="mb-5">
+      <h3>{{ pageTitle }}</h3>
+    </v-card-title>
+    <v-card-text>
+      <upload-image-button :cover-name="coverName" @cover="getCover" />
 
-        <v-text-field
-          v-model="title"
-          label="Título"
-          :rules="[rules.title.required]"
-          maxlength="120"
-          counter
-          required
-          outlined
-          class="mb-5"
-        />
+      <v-text-field
+        v-model="title"
+        label="Título"
+        :rules="[rules.title.required]"
+        maxlength="120"
+        counter
+        required
+        outlined
+        class="mb-5"
+      />
 
-        <editor
-          v-model="newsText"
-          api-key="no-api-key"
-          :init="editorConfig"
-        />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          depressed
-          color="secondary"
-          :disabled="!canSave"
-          @click="saveAsDraft"
-        >
-          Salvar como rascunho
-        </v-btn>
-        <v-btn
-          depressed
-          :disabled="!canSave"
-          color="primary"
-          @click="publish"
-        >
-          Publicar
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-col>
+      <editor
+        v-model="newsText"
+        api-key="no-api-key"
+        :init="editorConfig"
+      />
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        depressed
+        color="secondary"
+        :disabled="!canSave"
+        @click="saveAsDraft"
+      >
+        Salvar como rascunho
+      </v-btn>
+      <v-btn
+        depressed
+        :disabled="!canSave"
+        color="primary"
+        @click="publish"
+      >
+        Publicar
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script lang="ts">

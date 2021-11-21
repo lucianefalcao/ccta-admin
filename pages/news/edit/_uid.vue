@@ -1,16 +1,25 @@
 <template>
-  <div v-if="fetchingNews" class="text-center">
-    <v-progress-circular
-      color="primary"
-      indeterminate
+  <v-col align-self="start">
+    <div v-if="fetchingNews" class="text-center">
+      <v-progress-circular
+        color="primary"
+        indeterminate
+      />
+    </div>
+    <news-create
+      v-else
+      :page-title="'Editar notícia'"
+      :news="news"
+      @updateNews="updateNews"
     />
-  </div>
-  <news-create
-    v-else
-    :page-title="'Editar notícia'"
-    :news="news"
-    @updateNews="updateNews"
-  />
+
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
+  </v-col>
 </template>
 
 <script lang="ts">
@@ -18,11 +27,13 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { newsStore } from '@/store'
 import NewsCreate from '@/components/NewsCreate.vue'
-import News from '~/models/domain/News'
+import Snackbar from '@/components/Snackbar.vue'
+import News from '@/models/domain/News'
 
 @Component({
   components: {
-    NewsCreate
+    NewsCreate,
+    Snackbar
   }
 })
 export default class Edit extends Vue {
@@ -37,7 +48,12 @@ export default class Edit extends Vue {
 
   coverURL: String = ''
   fetchingNews: Boolean = true
+  snackbar: Boolean = false
   errorMessage: String = ''
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
+  }
 
   async updateNews (news: News): Promise<void> {
     try {
@@ -45,6 +61,7 @@ export default class Edit extends Vue {
       this.$router.push('/news/' + newsSaved.uid)
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao atualizar a notícia. Por favor, tente novamente.'
+      this.snackbar = true
     }
   }
 
@@ -55,10 +72,11 @@ export default class Edit extends Vue {
       if (this.news.coverPath!.length > 0) {
         this.coverURL = await newsStore.getCover(this.news.coverPath!)
       }
-
-      this.fetchingNews = false
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao buscar a notícia. Por favor, tente novamente.'
+      this.snackbar = true
+    } finally {
+      this.fetchingNews = false
     }
   }
 }

@@ -45,6 +45,13 @@
         <div v-html="news.newsText" />
       </v-card-text>
     </v-card>
+
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
   </v-col>
 </template>
 
@@ -54,10 +61,12 @@ import { Component, Vue } from 'vue-property-decorator'
 import { newsStore } from '@/store'
 import News from '~/models/domain/News'
 import BackButton from '@/components/BackButton.vue'
+import Snackbar from '@/components/Snackbar.vue'
 
 @Component({
   components: {
-    BackButton
+    BackButton,
+    Snackbar
   }
 })
 export default class NewsUid extends Vue {
@@ -71,8 +80,10 @@ export default class NewsUid extends Vue {
   }
 
   coverURL: String = ''
+  errorMessage: String = ''
   fetchingNews: Boolean = true
   isPublished: Boolean = false
+  snackbar: Boolean = false
 
   get lastModified (): String {
     return new Date(this.news.lastModified as number).toLocaleDateString('pt-BR')
@@ -82,24 +93,38 @@ export default class NewsUid extends Vue {
     this.$router.push('/news/edit/' + this.news.uid)
   }
 
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
+  }
+
   async publish (): Promise<void> {
-    this.news.state = 'published'
-    this.news = await newsStore.updateNews(this.news)
-    this.isPublished = true
+    try {
+      this.news.state = 'published'
+      this.news = await newsStore.updateNews(this.news)
+      this.isPublished = true
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao publicar a notícia. Por favor, tente novamente.'
+      this.snackbar = true
+    }
   }
 
   async beforeCreate (): Promise<void> {
-    this.news = await newsStore.getNewsByUid(this.$route.params.uid)
+    try {
+      this.news = await newsStore.getNewsByUid(this.$route.params.uid)
 
-    if (this.news.coverPath!.length > 0) {
-      this.coverURL = await newsStore.getCover(this.news.coverPath!)
+      if (this.news.coverPath!.length > 0) {
+        this.coverURL = await newsStore.getCover(this.news.coverPath!)
+      }
+
+      if (this.news.state === 'published') {
+        this.isPublished = true
+      }
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao buscar a notícia. Por favor, tente novamente.'
+      this.snackbar = true
+    } finally {
+      this.fetchingNews = false
     }
-
-    if (this.news.state === 'published') {
-      this.isPublished = true
-    }
-
-    this.fetchingNews = false
   }
 }
 </script>
