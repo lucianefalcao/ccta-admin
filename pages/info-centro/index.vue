@@ -2,7 +2,7 @@
   <v-col align-self="start">
     <v-card class="pa-5">
       <v-card-actions>
-        <v-btn color="primary">
+        <v-btn color="primary" @click="publishCenterInfo">
           <v-icon left>
             {{ icons.mdiPlus }}
           </v-icon>
@@ -24,7 +24,7 @@
 
       <v-card-title>Localização</v-card-title>
       <v-card-text>
-        {{ center.localization }}
+        {{ center.location }}
       </v-card-text>
 
       <v-card-title>Cursos</v-card-title>
@@ -109,13 +109,17 @@ export default class Index extends Vue {
   courses: Course[] = []
   center: Center = {
     about: '',
-    localization: ''
+    location: ''
   }
 
   message: String = 'Nenhum curso cadastrado'
 
   fetchingData: Boolean = false
   isDeleting: Boolean = false
+
+  publishCenterInfo (): void {
+    this.$router.push('/info-centro/publish')
+  }
 
   async mounted (): Promise<void> {
     try {

@@ -9,9 +9,9 @@
     <v-card-text>
       <v-text-field
         v-model="location"
-        label="Título"
+        label="Localização"
         :rules="[rules.location.required]"
-        maxlength="60"
+        maxlength="200"
         counter
         required
         outlined
@@ -19,9 +19,9 @@
       />
       <v-textarea
         v-model="about"
-        label="Descrição"
+        label="Sobre o centro"
         :rules="[rules.about.required, rules.about.length]"
-        :counter="200"
+        :counter="400"
         required
         outlined
         class="mb-5"
@@ -70,7 +70,7 @@ export default class CenterInfo extends Vue {
     },
     about: {
       required: (value: String) => !!value || 'Por favor, adicione uma breve descrição.',
-      length: (value: String) => value.length < 200 || 'Máximo 200 caracteres'
+      length: (value: String) => value.length < 400 || 'Máximo 400 caracteres'
     }
   }
 
@@ -85,13 +85,13 @@ export default class CenterInfo extends Vue {
 
   publish (): void {
     const event = this.createCenterInfo()
-    this.$emit('saveEvent', event)
+    this.$emit('saveCenterInfo', event)
   }
 
   createCenterInfo (): Center {
     return {
       uid: this.center?.uid ?? undefined,
-      location: this.center?.location,
+      location: this.location,
       lastModified: Date.now(),
       user: userStore.authUser,
       about: this.about
