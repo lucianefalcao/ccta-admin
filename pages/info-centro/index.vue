@@ -2,11 +2,11 @@
   <v-col align-self="start">
     <v-card class="pa-5">
       <v-card-actions>
-        <v-btn color="primary" @click="publishCenterInfo">
+        <v-btn color="primary" @click="updateCenterInfo">
           <v-icon left>
             {{ icons.mdiPlus }}
           </v-icon>
-          Cadastrar informações do centro
+          {{ centerInfoButtonText }}
         </v-btn>
         <v-spacer />
         <v-btn color="primary">
@@ -108,6 +108,7 @@ export default class Index extends Vue {
 
   courses: Course[] = []
   center: Center = {
+    uid: undefined,
     about: '',
     location: ''
   }
@@ -117,8 +118,20 @@ export default class Index extends Vue {
   fetchingData: Boolean = false
   isDeleting: Boolean = false
 
-  publishCenterInfo (): void {
-    this.$router.push('/info-centro/publish')
+  get existeInfoCentro (): Boolean {
+    return this.center.uid !== undefined
+  }
+
+  get centerInfoButtonText (): String {
+    return this.existeInfoCentro ? 'Editar informações do centro' : 'Cadastrar informações do centro'
+  }
+
+  updateCenterInfo (): void {
+    if (this.existeInfoCentro) {
+      this.$router.push(`/info-centro/edit/${this.center.uid}`)
+    } else {
+      this.$router.push('/info-centro/publish')
+    }
   }
 
   async mounted (): Promise<void> {
