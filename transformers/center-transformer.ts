@@ -10,7 +10,7 @@ export default class CenterTransformer {
       about: center.about,
       lastModified: center.lastModified,
       user,
-      localization: center.localization
+      location: center.location
     }
   }
 
@@ -19,7 +19,7 @@ export default class CenterTransformer {
       about: center.about!,
       lastModified: center.lastModified!,
       userUid: center.user!.uid!,
-      localization: center.localization!
+      location: center.location!
     }
   }
 }
