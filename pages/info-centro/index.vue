@@ -43,6 +43,16 @@
           <template #item.actions="{ item }">
             <div class="text-end">
               <v-btn
+                small
+                depressed
+                outlined
+                color="secondary"
+                @click="showCourse(item.uid)"
+              >
+                Ver
+              </v-btn>
+
+              <v-btn
                 icon
                 color="secondary"
                 @click="editCourse(item.uid)"
@@ -144,6 +154,10 @@ export default class Index extends Vue {
 
   editCourse (uid: String): void {
     this.$router.push(`/info-centro/courses/edit/${uid}`)
+  }
+
+  showCourse (uid: String): void {
+    this.$router.push(`/info-centro/courses/${uid}`)
   }
 
   async mounted (): Promise<void> {

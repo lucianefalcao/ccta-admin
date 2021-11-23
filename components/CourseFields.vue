@@ -84,7 +84,7 @@
         v-model="course.description"
         label="Descrição"
         :rules="rules.description"
-        :counter="400"
+        :counter="600"
         required
         outlined
         class="mb-5"
@@ -141,7 +141,7 @@ export default class CourseFields extends Vue {
     turno: [(value: String) => !!value || 'Por favor, escolha um turno.'],
     description: [
       (value: String) => !!value || 'Por favor, adicione uma breve descrição.',
-      (value: String) => value.length < 400 || 'Máximo 400 caracteres']
+      (value: String) => value.length < 600 || 'Máximo 400 caracteres']
   }
 
   types: {type: String, label: String}[] = [
