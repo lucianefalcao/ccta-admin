@@ -45,7 +45,7 @@
               <v-btn
                 icon
                 color="secondary"
-                @click="editar(item.uid)"
+                @click="editCourse(item.uid)"
               >
                 <v-icon>
                   {{ icons.mdiPencil }}
@@ -140,6 +140,10 @@ export default class Index extends Vue {
 
   publishCourse (): void {
     this.$router.push('/info-centro/courses/publish')
+  }
+
+  editCourse (uid: String): void {
+    this.$router.push(`/info-centro/courses/edit/${uid}`)
   }
 
   async mounted (): Promise<void> {
