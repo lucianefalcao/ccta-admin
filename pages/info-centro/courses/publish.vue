@@ -38,7 +38,6 @@ export default class Publish extends Vue {
 
   async saveCourse (course: Course): Promise<void> {
     try {
-      console.log('aqui')
       const courseSaved = await courseStore.save(course)
       this.$router.push(`/info-centro/courses/${courseSaved.uid}`)
     } catch (error) {

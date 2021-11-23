@@ -32,6 +32,15 @@
           <template #item.actions="{ item }">
             <div class="text-end">
               <v-btn
+                small
+                depressed
+                outlined
+                color="secondary"
+                @click="showEvent(item.uid)"
+              >
+                Ver
+              </v-btn>
+              <v-btn
                 icon
                 color="secondary"
                 @click="editar(item.uid)"
@@ -105,6 +114,10 @@ export default class Index extends Vue {
 
   editar (uid: String): void {
     this.$router.push(`/events/edit/${uid}`)
+  }
+
+  showEvent (uid: String): void {
+    this.$router.push(`/events/${uid}`)
   }
 
   async deleteEvent (item: Event): Promise<void> {

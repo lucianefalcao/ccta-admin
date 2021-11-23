@@ -20,26 +20,25 @@
       </v-card-actions>
 
       <v-card-title style="word-break: break-word;">
-        <v-row>
-          <v-col>
-            <h2 class="pr-2">
-              {{ course.name }}
-            </h2>
-            {{ course.type }} • {{ course.subType }} <span class="body-2"> ({{ turnos[course.turno] }} • {{ course.nrPeriods }} períodos) </span>
-          </v-col>
-        </v-row>
+        <h2 class="pr-2">
+          {{ event.title }}
+        </h2>
       </v-card-title>
 
       <v-card-text class="mb-2">
-        Criado por {{ course.user.name }} • última atualização {{ lastModified }}
+        Criado por {{ event.user.name }} • última atualização {{ lastModified }}
       </v-card-text>
+
+      <v-card-title>
+        Data: {{ eventDate }}
+      </v-card-title>
 
       <v-card-title>
         Descrição
       </v-card-title>
 
       <v-card-text class="black--text">
-        {{ course.description }}
+        {{ event.description }}
       </v-card-text>
     </v-card>
 
@@ -55,8 +54,8 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { courseStore } from '@/store'
-import Course from '~/models/domain/Course'
+import { eventsStore } from '@/store'
+import Event from '~/models/domain/Event'
 import BackButton from '@/components/BackButton.vue'
 import Snackbar from '@/components/Snackbar.vue'
 
@@ -67,21 +66,13 @@ import Snackbar from '@/components/Snackbar.vue'
   }
 })
 export default class CourseUid extends Vue {
-  course: Course = {
-    name: undefined,
-    type: undefined,
-    subType: undefined,
-    nrPeriods: 0,
-    turno: 'M',
-    description: undefined,
-    user: undefined
-  }
-
-  turnos = {
-    M: 'Manhã',
-    T: 'Tarde',
-    I: 'Integral',
-    N: 'Noite'
+  event: Event = {
+    uid: undefined,
+    title: undefined,
+    date: undefined,
+    lastModified: undefined,
+    user: undefined,
+    description: undefined
   }
 
   errorMessage: String = ''
@@ -89,11 +80,18 @@ export default class CourseUid extends Vue {
   snackbar: Boolean = false
 
   get lastModified (): String {
-    return new Date(this.course.lastModified as number).toLocaleDateString('pt-BR')
+    return new Date(this.event.lastModified as number).toLocaleDateString('pt-BR')
+  }
+
+  get eventDate (): String {
+    const date = new Date(this.event.date as number)
+    const time = date.toLocaleTimeString(['pt-BR'], { hour: '2-digit', minute: '2-digit' })
+
+    return date.toLocaleDateString('pt-BR') + ' às ' + time
   }
 
   editar (): void {
-    this.$router.push('/info-centro/courses/edit/' + this.course.uid)
+    this.$router.push('/events/edit/' + this.event.uid)
   }
 
   setSnackbar (snackbar: Boolean): void {
@@ -102,7 +100,7 @@ export default class CourseUid extends Vue {
 
   async beforeCreate (): Promise<void> {
     try {
-      this.course = await courseStore.getCourseByUid(this.$route.params.uid)
+      this.event = await eventsStore.getEventByUid(this.$route.params.uid)
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao buscar a notícia. Por favor, tente novamente.'
       this.snackbar = true
