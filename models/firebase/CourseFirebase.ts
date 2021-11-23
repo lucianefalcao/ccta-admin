@@ -3,7 +3,8 @@ export default interface CourseFirebase {
   userUid: String,
   name: String,
   type: String,
-  nrPeriods: Number,
+  subType: String,
+  nrPeriods: number,
   turno: String,
   description: String
 }

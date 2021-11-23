@@ -44,7 +44,6 @@
 <script lang="ts">
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { mdiCalendar, mdiClockOutline } from '@mdi/js'
 import BackButton from '@/components/BackButton.vue'
 import { userStore } from '@/store'
 import Center from '@/models/domain/Center'
@@ -66,7 +65,7 @@ export default class CenterInfo extends Vue {
 
   rules = {
     location: {
-      required: (value: String) => !!value || 'Por favor, adicione um título.'
+      required: (value: String) => !!value || 'Por favor, adicione um endereço.'
     },
     about: {
       required: (value: String) => !!value || 'Por favor, adicione uma breve descrição.',
@@ -74,18 +73,13 @@ export default class CenterInfo extends Vue {
     }
   }
 
-  icons = {
-    mdiCalendar,
-    mdiClockOutline
-  }
-
   get canSave (): Boolean {
     return (this.location.length > 0) && (this.about.length > 0)
   }
 
   publish (): void {
-    const event = this.createCenterInfo()
-    this.$emit('saveCenterInfo', event)
+    const center = this.createCenterInfo()
+    this.$emit('saveCenterInfo', center)
   }
 
   createCenterInfo (): Center {

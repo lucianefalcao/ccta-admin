@@ -9,7 +9,7 @@
           {{ centerInfoButtonText }}
         </v-btn>
         <v-spacer />
-        <v-btn color="primary">
+        <v-btn color="primary" @click="publishCourse">
           <v-icon left>
             {{ icons.mdiPlus }}
           </v-icon>
@@ -88,13 +88,17 @@ export default class Index extends Vue {
 
   headers = [
     {
-      text: 'Título',
+      text: 'Curso',
       align: 'start',
-      value: 'title'
+      value: 'name'
     },
     {
       text: 'Tipo',
       value: 'type'
+    },
+    {
+      text: 'Subtipo',
+      value: 'subType'
     },
     {
       text: 'Opções',
@@ -132,6 +136,10 @@ export default class Index extends Vue {
     } else {
       this.$router.push('/info-centro/publish')
     }
+  }
+
+  publishCourse (): void {
+    this.$router.push('/info-centro/courses/publish')
   }
 
   async mounted (): Promise<void> {
