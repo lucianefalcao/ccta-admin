@@ -74,7 +74,7 @@
             v-model="course.nrPeriods"
             label="Número de períodos"
             :rules="rules.nrPeriods"
-            number
+            type="number"
             outlined
           />
         </v-col>

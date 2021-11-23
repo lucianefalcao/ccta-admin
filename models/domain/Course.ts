@@ -5,7 +5,7 @@ export default interface Course {
   name?: String,
   type?: String,
   subType?: String,
-  nrPeriods?: Number,
+  nrPeriods?: number,
   lastModified?: number,
   user?: User,
   turno?: String,

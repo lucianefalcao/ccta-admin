@@ -4,7 +4,7 @@ export default interface CourseFirebase {
   name: String,
   type: String,
   subType: String,
-  nrPeriods: Number,
+  nrPeriods: number,
   turno: String,
   description: String
 }
