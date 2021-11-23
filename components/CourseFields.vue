@@ -194,6 +194,7 @@ export default class CourseFields extends Vue {
   mounted () {
     if (this.courseProps) {
       this.course = this.courseProps
+      this.course.type = this.courseProps.type === 'Graduação' ? 'graduation' : 'pos'
     }
   }
 }
