@@ -57,8 +57,8 @@ export default class Edit extends Vue {
 
   async saveCourse (course: Course): Promise<void> {
     try {
-      await courseStore.update(course)
-      this.$router.push('/info-centro')
+      const courseSaved = await courseStore.update(course)
+      this.$router.push(`/info-centro/courses/${courseSaved.uid}`)
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao atualizar o curso. Por favor, tente novamente.'
       this.snackbar = true
