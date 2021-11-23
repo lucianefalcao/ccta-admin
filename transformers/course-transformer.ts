@@ -13,7 +13,8 @@ export default class CourseTransformer {
       user,
       description: course.description,
       nrPeriods: course.nrPeriods,
-      turno: course.turno
+      turno: course.turno,
+      subType: course.subType
     }
   }
 
@@ -25,7 +26,8 @@ export default class CourseTransformer {
       type: course.type!,
       description: course.description!,
       nrPeriods: course.nrPeriods!,
-      turno: course.turno!
+      turno: course.turno!,
+      subType: course.subType!
     }
   }
 }
