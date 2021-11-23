@@ -64,7 +64,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
 import { eventsStore } from '@/store'
-import Edital from '@/models/domain/Edital'
+import Event from '@/models/domain/Event'
 
 @Component
 export default class Index extends Vue {
@@ -94,7 +94,7 @@ export default class Index extends Vue {
   isDeleting: Boolean = false
   downloadingDocument: Boolean = false
   snackbar: Boolean = false
-  events: Edital[] = []
+  events: Event[] = []
   message: String = 'Nenhum evento cadastrado'
   uid: String = ''
   errorMessage: String = ''
@@ -107,7 +107,7 @@ export default class Index extends Vue {
     this.$router.push(`/events/edit/${uid}`)
   }
 
-  async deleteEvent (item: Edital): Promise<void> {
+  async deleteEvent (item: Event): Promise<void> {
     try {
       this.uid = item.uid!
       this.isDeleting = true

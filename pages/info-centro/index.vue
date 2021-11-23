@@ -66,7 +66,7 @@
                 class="text-right"
                 color="red"
                 :loading="isDeleting && item.uid === uid"
-                @click="deleteEvent(item)"
+                @click="deleteCourse(item)"
               >
                 <v-icon>
                   {{ icons.mdiDelete }}
@@ -128,6 +128,9 @@ export default class Index extends Vue {
   }
 
   message: String = 'Nenhum curso cadastrado'
+  uid: String = ''
+  errorMessage: String = ''
+  snackbar: Boolean = false
 
   fetchingData: Boolean = false
   isDeleting: Boolean = false
@@ -158,6 +161,20 @@ export default class Index extends Vue {
 
   showCourse (uid: String): void {
     this.$router.push(`/info-centro/courses/${uid}`)
+  }
+
+  async deleteCourse (item: Course): Promise<void> {
+    try {
+      this.uid = item.uid!
+      this.isDeleting = true
+      this.courses = await courseStore.delete(item)
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao deletar o edital.'
+      this.snackbar = true
+    } finally {
+      this.uid = ''
+      this.isDeleting = false
+    }
   }
 
   async mounted (): Promise<void> {
