@@ -27,9 +27,20 @@ export default class UsersModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  async update ({ name, email, password }: {name: String, email: String, password: String}): Promise<void> {
+    const user = this.store.$fire.auth.currentUser
+
+    await user.updateEmail(email)
+    await user.updatePassword(password)
+
+    const userRef = await this.store.$fire.firestore.collection('users').doc(user.uid)
+    await userRef.update({ name, email })
+  }
+
+  @Action({ rawError: true })
   async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<void> {
     if (authUser) {
-      const user = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get('name')
+      const user = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get()
       this.context.commit('setAuthUser', { uid: authUser.uid, email: user.data().email, name: user.data().name })
     } else {
       this.context.commit('setAuthUser', null)

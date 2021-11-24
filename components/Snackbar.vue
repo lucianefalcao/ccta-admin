@@ -1,7 +1,7 @@
 <template>
   <v-snackbar
     v-model="snackbar"
-    light
+    :color="color"
     :timeout="-1"
     :multi-line="true"
   >
@@ -9,7 +9,7 @@
 
     <template #action="{ attrs }">
       <v-btn
-        color="red"
+        color="white"
         text
         v-bind="attrs"
         @click="close"
@@ -31,6 +31,9 @@ export default class Snackbar extends Vue {
 
   @Prop({ type: String, required: true })
   message!: String
+
+  @Prop({ type: String, default: 'red' })
+  color!: String
 
   close (): void {
     this.$emit('closeSnackbar', false)
