@@ -44,6 +44,7 @@
     </v-card>
     <snackbar
       v-if="snackbar"
+      :color="snackbarColor"
       :snackbar="snackbar"
       :message="errorMessage"
       @closeSnackbar="setSnackbar"
@@ -68,6 +69,7 @@ export default class Perfil extends Vue {
   password: String = ''
 
   snackbar: Boolean = false
+  snackbarColor: String = ''
   errorMessage: String = ''
 
   rules = {
@@ -82,8 +84,13 @@ export default class Perfil extends Vue {
         email: this.email,
         password: this.password
       })
+
+      this.errorMessage = 'Suas informações foram atualizadas.'
+      this.snackbarColor = 'green'
+      this.snackbar = true
     } catch (error) {
       this.errorMessage = 'Ocorreu um erro ao atualizar suas informações, por favor tente novamente.'
+      this.snackbarColor = 'red'
       this.snackbar = true
     }
   }
