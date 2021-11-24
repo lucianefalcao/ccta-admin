@@ -23,6 +23,7 @@
 
             <v-text-field
               v-model="password"
+              :rules="rules.password"
               dense
               outlined
               label="Nova senha"
@@ -36,7 +37,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn depressed color="primary" @click="update">
+        <v-btn depressed color="primary" :disabled="!canUpdate" @click="update">
           Salvar
         </v-btn>
       </v-card-actions>
@@ -69,6 +70,11 @@ export default class Perfil extends Vue {
   snackbar: Boolean = false
   errorMessage: String = ''
 
+  rules = {
+    password: [
+      (value: String) => value.length >= 6 || 'A senha deve conter 6 caracteres.']
+  }
+
   async update () {
     try {
       await userStore.update({
@@ -80,6 +86,11 @@ export default class Perfil extends Vue {
       this.errorMessage = 'Ocorreu um erro ao atualizar suas informações, por favor tente novamente.'
       this.snackbar = true
     }
+  }
+
+  get canUpdate (): Boolean {
+    const password = this.rules.password.every((element: Function) => element(this.password) === true)
+    return password
   }
 
   setSnackbar (snackbar: Boolean): void {
