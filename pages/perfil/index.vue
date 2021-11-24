@@ -41,6 +41,12 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
   </v-col>
 </template>
 
@@ -48,20 +54,36 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { userStore } from '@/store'
+import Snackbar from '@/components/Snackbar.vue'
 
-@Component
+@Component({
+  components: {
+    Snackbar
+  }
+})
 export default class Perfil extends Vue {
   name: String = userStore.authUser.name!
   email: String = userStore.authUser.email!
   password: String = ''
 
+  snackbar: Boolean = false
+  errorMessage: String = ''
+
   async update () {
-    const newData = {
-      name: this.name,
-      email: this.email,
-      password: this.password
+    try {
+      await userStore.update({
+        name: this.name,
+        email: this.email,
+        password: this.password
+      })
+    } catch (error) {
+      this.errorMessage = 'Ocorreu um erro ao atualizar suas informações, por favor tente novamente.'
+      this.snackbar = true
     }
-    await userStore.update(newData)
+  }
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
   }
 }
 </script>
