@@ -8,21 +8,24 @@
         <v-row>
           <v-col cols="12" sm="6" align-self="center">
             <v-text-field
+              v-model="name"
               dense
               outlined
               label="Nome"
             />
 
             <v-text-field
+              v-model="email"
               dense
               outlined
               label="Email"
             />
 
             <v-text-field
+              v-model="password"
               dense
               outlined
-              label="Senha"
+              label="Nova senha"
             />
           </v-col>
 
@@ -33,10 +36,32 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn depressed color="primary">
+        <v-btn depressed color="primary" @click="update">
           Salvar
         </v-btn>
       </v-card-actions>
     </v-card>
   </v-col>
 </template>
+
+<script lang="ts">
+
+import { Component, Vue } from 'vue-property-decorator'
+import { userStore } from '@/store'
+
+@Component
+export default class Perfil extends Vue {
+  name: String = userStore.authUser.name!
+  email: String = userStore.authUser.email!
+  password: String = ''
+
+  async update () {
+    const newData = {
+      name: this.name,
+      email: this.email,
+      password: this.password
+    }
+    await userStore.update(newData)
+  }
+}
+</script>
