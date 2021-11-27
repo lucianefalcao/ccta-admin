@@ -83,6 +83,9 @@ export default {
       },
       storage: {
         emulatorPort: 9199
+      },
+      functions: {
+        emulatorPort: 1234
       }
     }
   },
