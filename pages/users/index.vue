@@ -70,7 +70,7 @@ export default class Index extends Vue {
   fetchingData: Boolean = false
   isDeleting: Boolean = false
   uid: String = ''
-  message: String = 'Nenhum usuário cadastrada'
+  message: String = 'Nenhum usuário cadastrado'
 
   headers = [
     {
