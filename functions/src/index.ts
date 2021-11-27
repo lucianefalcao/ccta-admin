@@ -11,8 +11,9 @@ export const createUser = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const user = await admin.auth().getUserByEmail(data.email);
-  if (user.uid.length > 0) {
+  const users = await admin.auth().getUsers([{email: data.email}]);
+
+  if (users.users.length > 0) {
     throw new functions.https.HttpsError(
         "already-exists",
         "Esse email já existe."
