@@ -1,4 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import UserTransformer from '@/transformers/user-transformer'
 import User from '@/models/domain/User'
 import { $fire } from '~/utils/firebase-accessor'
 
@@ -24,6 +25,18 @@ export default class UsersModule extends VuexModule {
   async getUserByUid (uid: String): Promise<User> {
     const user = await $fire.firestore.collection('users').doc(uid).get()
     return { uid: user.id, email: user.data().email, name: user.data().name }
+  }
+
+  @Action({ rawError: true })
+  async getAll (): Promise<User[]> {
+    const usersRef = await this.store.$fire.firestore.collection('courses').get()
+    const users: User[] = []
+    for (const userData of usersRef.docs) {
+      const user = UserTransformer.transformInfraToModel(userData.data(), userData.id)
+      users.push(user)
+    }
+
+    return users
   }
 
   @Action({ rawError: true })
