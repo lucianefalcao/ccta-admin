@@ -5,7 +5,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary">
+        <v-btn color="primary" @click="registerUser">
           <v-icon left>
             mdi-plus
           </v-icon>
@@ -87,6 +87,10 @@ export default class Index extends Vue {
       width: '220px'
     }
   ]
+
+  registerUser () {
+    this.$router.push('/users/register')
+  }
 
   async mounted (): Promise<void> {
     try {
