@@ -59,6 +59,12 @@
         </v-card-actions>
       </validation-observer>
     </v-card>
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
   </v-col>
 </template>
 
@@ -67,6 +73,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { required, email } from 'vee-validate/dist/rules'
 import { extend, ValidationProvider, ValidationObserver } from 'vee-validate'
+import { FirebaseError } from '@firebase/util'
+import Snackbar from '@/components/Snackbar.vue'
 import { userStore } from '@/store/index'
 
 extend('required', {
@@ -82,12 +90,16 @@ extend('email', {
 @Component({
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
+    Snackbar
   }
 })
 export default class Register extends Vue {
   name: String = ''
   email: String = ''
+  errorMessage: String = ''
+
+  snackbar: Boolean = false
 
   $refs!: {
     observer: InstanceType<typeof ValidationObserver>
@@ -96,11 +108,23 @@ export default class Register extends Vue {
   async register () {
     try {
       if (await this.$refs.observer.validate()) {
-        await userStore.createUser({ name: this.name, email: this.email })
+        const user = await userStore.createUser({ name: this.name, email: this.email })
       }
     } catch (error) {
-      console.log(error)
+      if (error instanceof FirebaseError) {
+        if (error.code === 'functions/unauthenticated') {
+          this.errorMessage = 'Você não está autenticado. Por favor, realize o login novamente.'
+          this.snackbar = true
+        } else if (error.code === 'functions/already-exists') {
+          this.errorMessage = 'Este email já está cadastrado para outro usuário'
+          this.snackbar = true
+        }
+      }
     }
+  }
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
   }
 }
 </script>
