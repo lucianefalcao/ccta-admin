@@ -78,14 +78,7 @@ export const removeUser = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const updateUser = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-        "unauthenticated",
-        "O usuário não está autenticado."
-    );
-  }
-
+export const updateUser = functions.https.onCall(async (data) => {
   return await admin.auth().updateUser(data.uid, {
     password: data.password,
   });
