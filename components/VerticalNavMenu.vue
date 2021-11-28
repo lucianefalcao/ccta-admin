@@ -29,7 +29,7 @@
       class="pr-5"
     >
       <nav-menu-item
-        v-for="item in primaryMenu"
+        v-for="item in primary"
         :key="item.icon"
         :icon="item.icon"
         :title="item.title"
@@ -39,7 +39,7 @@
       <v-divider class="my-5" />
 
       <nav-menu-item
-        v-for="item in subMenu"
+        v-for="item in secondary"
         :key="item.icon"
         :icon="item.icon"
         :title="item.title"
@@ -62,9 +62,13 @@ import { menuStore } from '@/store'
   }
 })
 export default class VerticalNavMenu extends Vue {
-  primaryMenu: Menu[] = menuStore.primary
+  get primary (): Menu[] {
+    return menuStore.primary
+  }
 
-  subMenu: Menu[] = menuStore.secondary
+  get secondary (): Menu[] {
+    return menuStore.secondary
+  }
 
   @Prop({ type: Boolean })
   isDrawerOpen!: Boolean
