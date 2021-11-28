@@ -61,7 +61,7 @@
                     outlined
                     required
                     :type="isPasswordVisible ? 'text' : 'password'"
-                    :append-icon="isPasswordVisible ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
+                    :append-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                     :error-messages="errors"
                     @click:append="isPasswordVisible = !isPasswordVisible"
                   />
@@ -88,7 +88,6 @@
 <script lang="ts">
 
 import { Vue, Component } from 'vue-property-decorator'
-import { mdiEyeOffOutline, mdiEyeOutline } from '@mdi/js'
 import { FirebaseError } from '@firebase/util'
 import { required, email, min } from 'vee-validate/dist/rules'
 import { extend, ValidationProvider, ValidationObserver, setInteractionMode } from 'vee-validate'
@@ -123,10 +122,6 @@ export default class Index extends Vue {
   password: String = ''
   isPasswordVisible: Boolean = false
   errorMessage: String = ''
-  icons: Object = {
-    mdiEyeOffOutline,
-    mdiEyeOutline
-  }
 
   $refs!: {
     observer: InstanceType<typeof ValidationObserver>
