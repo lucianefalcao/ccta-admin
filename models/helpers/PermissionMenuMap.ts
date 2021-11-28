@@ -62,13 +62,6 @@ const menuPermissionMap: Menu[] = [
     to: '/configuracoes',
     type: 'secondary',
     permission: 'gerenciar-configuracoes'
-  },
-  {
-    icon: 'mdi-logout',
-    title: 'Sair',
-    to: '/',
-    type: 'secondary',
-    permission: ''
   }
 ]
 
