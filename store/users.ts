@@ -8,7 +8,8 @@ export default class UsersModule extends VuexModule {
   authUser: User = {
     uid: undefined,
     email: undefined,
-    name: undefined
+    name: undefined,
+    permissions: []
   }
 
   @Mutation
@@ -23,8 +24,8 @@ export default class UsersModule extends VuexModule {
 
   @Action({ rawError: true })
   async getUserByUid (uid: String): Promise<User> {
-    const user = await $fire.firestore.collection('users').doc(uid).get()
-    return { uid: user.id, email: user.data().email, name: user.data().name }
+    const userInfra = await $fire.firestore.collection('users').doc(uid).get()
+    return await UserTransformer.transformInfraToModel(userInfra, userInfra.id)
   }
 
   @Action({ rawError: true })
@@ -32,7 +33,7 @@ export default class UsersModule extends VuexModule {
     const usersRef = await this.store.$fire.firestore.collection('users').get()
     const users: User[] = []
     for (const userData of usersRef.docs) {
-      const user = UserTransformer.transformInfraToModel(userData.data(), userData.id)
+      const user = await UserTransformer.transformInfraToModel(userData.data(), userData.id)
       users.push(user)
     }
 
@@ -61,8 +62,9 @@ export default class UsersModule extends VuexModule {
   @Action({ rawError: true })
   async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<void> {
     if (authUser) {
-      const user = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get()
-      this.context.commit('setAuthUser', { uid: authUser.uid, email: user.data().email, name: user.data().name })
+      const userInfra = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get()
+      const user = await UserTransformer.transformInfraToModel(userInfra, userInfra.id)
+      this.context.commit('setAuthUser', user)
     } else {
       this.context.commit('setAuthUser', null)
     }
