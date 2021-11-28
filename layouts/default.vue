@@ -14,9 +14,18 @@
           @click="isDrawerOpen = !isDrawerOpen"
         />
         <v-spacer />
-        <v-avatar size="40" color="#ff4c51">
+        <v-avatar size="40" color="primary" class="mr-5">
           <span class="white--text text-h5">{{ userName[0] }}</span>
         </v-avatar>
+        <v-btn
+          color="secondary"
+          outlined
+          small
+          depressed
+          @click="logout"
+        >
+          Sair
+        </v-btn>
       </v-row>
     </v-app-bar>
 
@@ -45,6 +54,11 @@ export default class Default extends Vue {
   }
 
   isDrawerOpen: Boolean = true
+
+  async logout () {
+    await this.$fire.auth.signOut()
+    this.$router.push('/auth/signIn')
+  }
 }
 </script>
 
