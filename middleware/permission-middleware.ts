@@ -4,7 +4,7 @@ import { userStore } from '@/store'
 const permissionMiddleware: Middleware = ({ route, error }) => {
   const permissionCodes = userStore.userPermissions.map(e => e.code)
 
-  if (route.path.includes('/news') && !permissionCodes.includes('gerenciar-noticas')) {
+  if (route.path.includes('/news') && !permissionCodes.includes('gerenciar-noticias')) {
     error({ statusCode: 403, message: 'Você não possui permissão para acessar a página de notícias' })
   }
 
