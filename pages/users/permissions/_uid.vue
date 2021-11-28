@@ -43,6 +43,16 @@
           </v-col>
         </v-row>
       </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          depressed
+          color="primary"
+          @click="saveOrRemovePermission"
+        >
+          Salvar
+        </v-btn>
+      </v-card-actions>
     </v-card>
 
     <snackbar
@@ -58,7 +68,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import User from '~/models/domain/User'
-import { userStore } from '~/store'
+import { permissionStore, userStore } from '~/store'
 
 @Component
 export default class Permission extends Vue {
@@ -111,11 +121,17 @@ export default class Permission extends Vue {
     this.snackbar = snackbar
   }
 
+  saveOrRemovePermission () {
+    const removeItems = this.user.permissions.filter(item => !this.selectedPermissions.includes(item.code!))
+    const userPermissionsCodes = this.user.permissions.map(item => item.code) as String[]
+    const saveItems = this.selectedPermissions.filter((item: String) => !userPermissionsCodes.includes(item))
+    console.log(removeItems, saveItems)
+  }
+
   mounted (): void {
     try {
       this.user = userStore.authUser
-      console.log(this.user)
-      this.selectedPermissions = this.user.permissions
+      this.selectedPermissions = this.user.permissions.map(item => item.code) as String[]
     } catch (e) {
       this.errorMessage = 'Ocorreu um erro ao buscar o usuário. Por favor, tente novamente.'
       this.snackbar = true
