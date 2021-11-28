@@ -53,7 +53,8 @@ export default class UsersModule extends VuexModule {
     const user = this.store.$fire.auth.currentUser
 
     await user.updateEmail(email)
-    await user.updatePassword(password)
+    const updateUser = this.store.$fire.functions.httpsCallable('updateUser')
+    await updateUser({ uid: user.uid, password })
 
     const userRef = await this.store.$fire.firestore.collection('users').doc(user.uid)
     await userRef.update({ name, email })
