@@ -1,6 +1,9 @@
 <template>
   <v-col align-self="start">
     <v-card class="pa-5">
+      <v-card-actions>
+        <back-button />
+      </v-card-actions>
       <v-card-title class="text-h4">
         Permissões
       </v-card-title>
