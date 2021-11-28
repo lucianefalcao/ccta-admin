@@ -64,6 +64,13 @@
           </template>
         </v-data-table>
       </v-card-text>
+
+      <snackbar
+        v-if="snackbar"
+        :snackbar="snackbar"
+        :message="errorMessage"
+        @closeSnackbar="setSnackbar"
+      />
     </v-card>
   </v-col>
 </template>
@@ -132,6 +139,10 @@ export default class Index extends Vue {
       this.uid = ''
       this.isDeleting = false
     }
+  }
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
   }
 
   async mounted (): Promise<void> {
