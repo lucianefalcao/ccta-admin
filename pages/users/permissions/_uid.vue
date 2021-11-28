@@ -6,10 +6,10 @@
       </v-card-title>
 
       <v-card-title class="pb-0">
-        Luciane
+        {{ user.name }}
       </v-card-title>
       <v-card-text class="text-subtitle-1">
-        luciane@mail.com
+        {{ user.email }}
       </v-card-text>
 
       <v-card-text>
@@ -42,5 +42,44 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
   </v-col>
 </template>
+
+<script lang="ts">
+
+import { Component, Vue } from 'vue-property-decorator'
+import User from '~/models/domain/User'
+import { userStore } from '~/store'
+
+@Component
+export default class Permission extends Vue {
+  user: User = {
+    uid: undefined,
+    name: undefined,
+    email: undefined
+  }
+
+  errorMessage: String = ''
+  snackbar: Boolean = false
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
+  }
+
+  async mounted (): Promise<void> {
+    try {
+      this.user = await userStore.getUserByUid(this.$route.params.uid)
+    } catch (e) {
+      this.errorMessage = 'Ocorreu um erro ao buscar o usuário. Por favor, tente novamente.'
+      this.snackbar = true
+    }
+  }
+}
+</script>
