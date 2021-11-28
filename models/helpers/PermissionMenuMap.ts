@@ -61,7 +61,7 @@ const menuPermissionMap: Menu[] = [
     title: 'Configurações do site',
     to: '/configuracoes',
     type: 'secondary',
-    permission: 'gerenciar-configurações'
+    permission: 'gerenciar-configuracoes'
   },
   {
     icon: 'mdi-logout',
