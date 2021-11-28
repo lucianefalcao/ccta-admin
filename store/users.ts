@@ -63,8 +63,8 @@ export default class UsersModule extends VuexModule {
   async createUser ({ name, email }: {name: String, email: String}): Promise<User> {
     const createUser = this.store.$fire.functions.httpsCallable('createUser')
     const response = await createUser({ name, email })
-    const user = await this.store.$fire.firestore.collection('users').doc(response.uid)
-    return UserTransformer.transformInfraToModel(user, response.uid)
+    const user = await this.store.$fire.firestore.collection('users').doc(response.data.uid)
+    return UserTransformer.transformInfraToModel(user, response.data.uid)
   }
 
   @Action({ rawError: true })

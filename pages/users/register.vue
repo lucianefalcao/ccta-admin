@@ -109,7 +109,6 @@ export default class Register extends Vue {
     try {
       if (await this.$refs.observer.validate()) {
         const user = await userStore.createUser({ name: this.name, email: this.email })
-        console.log(user)
         this.$router.push(`/users/permissions/${user.uid}`)
       }
     } catch (error) {
