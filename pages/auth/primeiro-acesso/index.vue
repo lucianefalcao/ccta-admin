@@ -3,9 +3,10 @@
     <v-row justify="space-around">
       <v-col align="center">
         <v-card class="auth-card" width="400">
-          <v-alert v-if="errorMessage !== ''" text type="error">
-            {{ errorMessage }}
+          <v-alert v-if="showAlert" text :type="alertType">
+            {{ alertMessage }}
           </v-alert>
+
           <v-card-title class="d-flex align-center justify-center">
             <v-img
               src="/logo.svg"
@@ -16,16 +17,13 @@
               contain
             />
             <p class="text-2xl font-weight-medium mb-0">
-              CCTA
+              Primeiro acesso
             </p>
           </v-card-title>
 
           <v-card-text>
-            <p class="text-2xl font-weight-medium text--primary mb-2">
-              Bem vindo(a) ao CCTA Admin!
-            </p>
             <p class="mb-2">
-              Por favor, realize o login
+              {{ instructionMessage }}
             </p>
           </v-card-text>
 
@@ -34,8 +32,9 @@
               ref="observer"
               v-slot="{invalid}"
             >
-              <v-form @submit.prevent="login">
+              <v-form @submit.prevent="buttonAction">
                 <validation-provider
+                  v-if="!emailVerified"
                   v-slot="{ errors }"
                   name="Email"
                   rules="required|email"
@@ -44,19 +43,20 @@
                     v-model="email"
                     outlined
                     label="Email"
-                    class="mb-3"
                     required
                     :error-messages="errors"
                   />
                 </validation-provider>
+
                 <validation-provider
+                  v-else
                   v-slot="{ errors }"
                   name="Password"
                   rules="required|min:6"
                 >
                   <v-text-field
                     v-model="password"
-                    label="Senha"
+                    label="Criar senha"
                     class="mb-3"
                     outlined
                     required
@@ -74,16 +74,10 @@
                   type="submit"
                   :disabled="invalid"
                 >
-                  Login
+                  {{ buttonName }}
                 </v-btn>
               </v-form>
             </validation-observer>
-          </v-card-text>
-
-          <v-card-text>
-            <nuxt-link to="/auth/primeiro-acesso">
-              Primeiro acesso
-            </nuxt-link>
           </v-card-text>
         </v-card>
       </v-col>
@@ -96,10 +90,9 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { FirebaseError } from '@firebase/util'
 import { required, email, min } from 'vee-validate/dist/rules'
-import { extend, ValidationProvider, ValidationObserver, setInteractionMode } from 'vee-validate'
+import { extend, ValidationProvider, ValidationObserver } from 'vee-validate'
 import { userStore } from '@/store/index'
-
-setInteractionMode('eager')
+import User from '~/models/domain/User'
 
 extend('required', {
   ...required,
@@ -123,23 +116,50 @@ extend('email', {
     ValidationObserver
   }
 })
-export default class Index extends Vue {
+export default class PrimeiroAcesso extends Vue {
   email: String = ''
   password: String = ''
-  isPasswordVisible: Boolean = false
   errorMessage: String = ''
-
-  $refs!: {
-    observer: InstanceType<typeof ValidationObserver>
+  successMessage: String = ''
+  alertType: String = 'error'
+  emailVerified: Boolean = false
+  isPasswordVisible: Boolean = false
+  user: User = {
+    uid: undefined,
+    email: undefined,
+    name: undefined,
+    state: 'A'
   }
 
-  async login (): Promise<void> {
+  get buttonName () {
+    return this.emailVerified ? 'Salvar' : 'Verificar email'
+  }
+
+  get showAlert () {
+    return this.errorMessage.length !== 0 || this.successMessage.length !== 0
+  }
+
+  get alertMessage () {
+    return this.errorMessage.length !== 0 ? this.errorMessage : this.successMessage
+  }
+
+  get instructionMessage () {
+    return this.emailVerified ? 'Por favor, crie uma senha' : 'Por favor, informe seu email'
+  }
+
+  async buttonAction () {
+    if (this.emailVerified) {
+      await this.createPassword()
+    } else {
+      await this.verifyEmail()
+    }
+  }
+
+  async createPassword () {
     try {
-      if (await this.$refs.observer.validate()) {
-        await userStore.signIn({ email: this.email, password: this.password })
-      } else {
-        this.errorMessage = 'Os dados inseridos são inválidos.'
-      }
+      const u = this.user.uid!
+      await userStore.createPassword({ password: this.password, uid: u })
+      await userStore.signIn({ email: this.email, password: this.password })
     } catch (e) {
       if (e instanceof FirebaseError) {
         if (e.code === 'auth/user-not-found') {
@@ -147,7 +167,30 @@ export default class Index extends Vue {
         } else if (e.code === 'auth/wrong-password') {
           this.errorMessage = 'Senha incorreta.'
         }
+        this.errorMessage = 'Não foi possível criar uma nova senha. Por favor, tente novamente.'
+        this.alertType = 'error'
+      } else {
+        this.errorMessage = 'Não foi possível criar uma nova senha. Por favor, tente novamente.'
+        this.alertType = 'error'
       }
+    }
+  }
+
+  async verifyEmail () {
+    try {
+      const users = await userStore.verifyEmail(this.email)
+
+      if (users.length === 0) {
+        this.errorMessage = 'O seu email não está cadastrado. Por favor, contate o administrador do sistema.'
+        return
+      }
+
+      this.user = users[0]
+      this.emailVerified = true
+      this.successMessage = 'Seu email foi verificado. Por favor, crie uma senha para o acesso.'
+      this.alertType = 'success'
+    } catch (e) {
+      this.errorMessage = 'Não foi possível verificar seu email. Por favor, tente novamente.'
     }
   }
 }

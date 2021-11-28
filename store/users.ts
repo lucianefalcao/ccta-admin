@@ -28,6 +28,7 @@ export default class UsersModule extends VuexModule {
   @Action({ rawError: true })
   async signIn ({ email, password }: { email: String, password: String }): Promise<void> {
     await this.store.$fire.auth.signInWithEmailAndPassword(email, password)
+    this.store.$router.push('/')
   }
 
   @Action({ rawError: true })
@@ -49,11 +50,12 @@ export default class UsersModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async update ({ name, email, password }: {name: String, email: String, password: String, state: String}): Promise<void> {
+  async update ({ name, email, password }: {name: String, email: String, password: String }): Promise<void> {
     const user = this.store.$fire.auth.currentUser
 
     await user.updateEmail(email)
-    await user.updatePassword(password)
+    const updateUser = this.store.$fire.functions.httpsCallable('updateUser')
+    await updateUser({ uid: user.uid, password })
 
     const userRef = await this.store.$fire.firestore.collection('users').doc(user.uid)
     await userRef.update({ name, email })
@@ -81,6 +83,24 @@ export default class UsersModule extends VuexModule {
     const userRef = await this.store.$fire.firestore.collection('users').doc(user.uid)
     await userRef.update({ state: 'X' })
     await permissionStore.deletePermissionsByUserUid(user.uid!)
+  }
+
+  @Action({ rawError: true })
+  async verifyEmail (email: String): Promise<User[]> {
+    const usersRef = await this.store.$fire.firestore.collection('users').where('email', '==', email).get()
+    const users: User[] = []
+    for (const userData of usersRef.docs) {
+      const user = UserTransformer.transformInfraToModel(userData.data(), userData.id)
+      users.push(user)
+    }
+
+    return users
+  }
+
+  @Action({ rawError: true })
+  async createPassword ({ uid, password }: {uid: String, password: String }): Promise<void> {
+    const updateUser = this.store.$fire.functions.httpsCallable('updateUser')
+    await updateUser({ uid, password })
   }
 
   @Action({ rawError: true })

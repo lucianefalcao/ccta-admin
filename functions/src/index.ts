@@ -77,3 +77,9 @@ export const removeUser = functions.https.onCall(async (data, context) => {
     await admin.auth().deleteUser(user.uid);
   }
 });
+
+export const updateUser = functions.https.onCall(async (data) => {
+  return await admin.auth().updateUser(data.uid, {
+    password: data.password,
+  });
+});

@@ -24,9 +24,12 @@
             <v-text-field
               v-model="password"
               :rules="rules.password"
+              :type="isPasswordVisible ? 'text' : 'password'"
+              :append-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
               dense
               outlined
               label="Nova senha"
+              @click:append="isPasswordVisible = !isPasswordVisible"
             />
           </v-col>
 
@@ -69,6 +72,7 @@ export default class Perfil extends Vue {
   password: String = ''
 
   snackbar: Boolean = false
+  isPasswordVisible: Boolean = false
   snackbarColor: String = ''
   errorMessage: String = ''
 
