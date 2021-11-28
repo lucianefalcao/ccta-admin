@@ -29,7 +29,7 @@
       class="pr-5"
     >
       <nav-menu-item
-        v-for="item in primaryMenu"
+        v-for="item in primary"
         :key="item.icon"
         :icon="item.icon"
         :title="item.title"
@@ -39,7 +39,7 @@
       <v-divider class="my-5" />
 
       <nav-menu-item
-        v-for="item in subMenu"
+        v-for="item in secondary"
         :key="item.icon"
         :icon="item.icon"
         :title="item.title"
@@ -52,18 +52,9 @@
 <script lang="ts">
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import {
-  mdiNewspaperVariantOutline,
-  mdiCalendar,
-  mdiChatAlertOutline,
-  mdiBullhornOutline,
-  mdiAccountOutline,
-  mdiCogOutline,
-  mdiTuneVariant,
-  mdiOfficeBuildingOutline,
-  mdiLogout
-} from '@mdi/js'
 import NavMenuItem from '@/components/NavMenuItem.vue'
+import { Menu } from '@/models/helpers/PermissionMenuMap'
+import { menuStore } from '@/store'
 
 @Component({
   components: {
@@ -71,56 +62,13 @@ import NavMenuItem from '@/components/NavMenuItem.vue'
   }
 })
 export default class VerticalNavMenu extends Vue {
-  primaryMenu: {icon: String, title: String, to: String}[] = [
-    {
-      icon: mdiNewspaperVariantOutline,
-      title: 'Notícias',
-      to: '/news'
-    },
-    {
-      icon: mdiCalendar,
-      title: 'Eventos',
-      to: '/events'
-    },
-    {
-      icon: mdiBullhornOutline,
-      title: 'Editais',
-      to: '/editais'
-    },
-    {
-      icon: mdiChatAlertOutline,
-      title: 'Atendimento',
-      to: '/chat'
-    },
-    {
-      icon: mdiOfficeBuildingOutline,
-      title: 'Informações do centro',
-      to: '/info-centro'
-    }
-  ]
+  get primary (): Menu[] {
+    return menuStore.primary
+  }
 
-  subMenu: {icon: String, title: String, to: String}[] = [
-    {
-      icon: mdiAccountOutline,
-      title: 'Perfil',
-      to: '/perfil'
-    },
-    {
-      icon: mdiTuneVariant,
-      title: 'Gerenciar usuários',
-      to: '/users'
-    },
-    {
-      icon: mdiCogOutline,
-      title: 'Configurações do site',
-      to: '/configuracoes'
-    },
-    {
-      icon: mdiLogout,
-      title: 'Sair',
-      to: '/auth/signIn'
-    }
-  ]
+  get secondary (): Menu[] {
+    return menuStore.secondary
+  }
 
   @Prop({ type: Boolean })
   isDrawerOpen!: Boolean

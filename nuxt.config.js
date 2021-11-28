@@ -38,7 +38,7 @@ export default {
   components: true,
 
   router: {
-    middleware: ['auth-middleware']
+    middleware: ['auth-middleware', 'permission-middleware']
   },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules

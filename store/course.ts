@@ -7,10 +7,10 @@ import CourseTransformer from '@/transformers/course-transformer'
 export default class CenterModule extends VuexModule {
   @Action({ rawError: true })
   async save (course: Course): Promise<Course> {
-    const centerFirebase = CourseTransformer.transformModelToInfra(course)
-    const centerRef = await this.store.$fire.firestore.collection('courses').doc()
-    await centerRef.set(centerFirebase)
-    course.uid = centerRef.id
+    const courseFirebase = CourseTransformer.transformModelToInfra(course)
+    const courseRef = await this.store.$fire.firestore.collection('courses').doc()
+    await courseRef.set(courseFirebase)
+    course.uid = courseRef.id
     return course
   }
 

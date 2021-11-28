@@ -1,4 +1,4 @@
-export default interface User {
+export default interface UserFirebase {
   uid?: String,
   email?: String,
   name?: String
