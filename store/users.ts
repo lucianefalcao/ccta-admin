@@ -38,7 +38,7 @@ export default class UsersModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAll (): Promise<User[]> {
-    const usersRef = await this.store.$fire.firestore.collection('users').get()
+    const usersRef = await this.store.$fire.firestore.collection('users').where('state', '==', 'A').get()
     const users: User[] = []
     for (const userData of usersRef.docs) {
       const user = UserTransformer.transformInfraToModel(userData.data(), userData.id)

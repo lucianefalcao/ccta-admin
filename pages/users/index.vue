@@ -116,6 +116,7 @@ export default class Index extends Vue {
       this.uid = item.uid!
       this.isDeleting = true
       await userStore.deleteUser(item)
+      this.users = await userStore.getAll()
     } catch (error) {
       this.errorMessage = 'Não foi possível deletar o usuário'
       this.snackbar = true
