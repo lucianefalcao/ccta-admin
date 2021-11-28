@@ -14,10 +14,18 @@ export const createUser = functions.https.onCall(async (data, context) => {
   const users = await admin.auth().getUsers([{email: data.email}]);
 
   if (users.users.length > 0) {
-    throw new functions.https.HttpsError(
-        "already-exists",
-        "Esse email já existe."
-    );
+    const usersData = await admin.firestore()
+        .collection("users")
+        .where("email", "==", data.email)
+        .where("state", "==", "X")
+        .get();
+
+    if (usersData.empty) {
+      throw new functions.https.HttpsError(
+          "already-exists",
+          "Esse email já existe."
+      );
+    }
   }
 
   const newUser = await admin.auth().createUser({
@@ -29,6 +37,7 @@ export const createUser = functions.https.onCall(async (data, context) => {
   await admin.firestore().collection("users").doc(newUser.uid).set({
     email: newUser.email,
     name: newUser.displayName,
+    state: "A",
   });
 
   return {
