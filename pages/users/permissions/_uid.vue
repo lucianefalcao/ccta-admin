@@ -48,6 +48,8 @@
         <v-btn
           depressed
           color="primary"
+          :loading="isSaving"
+          :disabled="isSaving"
           @click="saveOrRemovePermission"
         >
           Salvar
@@ -68,21 +70,19 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import User from '~/models/domain/User'
+import Permission from '~/models/domain/Permission'
 import { permissionStore, userStore } from '~/store'
 
 @Component
-export default class Permission extends Vue {
-  user: User = {
-    uid: undefined,
-    name: undefined,
-    email: undefined,
-    permissions: []
-  }
+export default class PermissionDetails extends Vue {
+  user: User = userStore.authUser
 
   errorMessage: String = ''
   snackbar: Boolean = false
+  isSaving: Boolean = false
 
   selectedPermissions: String[] = []
+  userPermissions: Permission[] = userStore.userPermissions
 
   permissions: {code: String, label: String, description: String}[] = [
     {
@@ -121,17 +121,36 @@ export default class Permission extends Vue {
     this.snackbar = snackbar
   }
 
-  saveOrRemovePermission () {
-    const removeItems = this.user.permissions.filter(item => !this.selectedPermissions.includes(item.code!))
-    const userPermissionsCodes = this.user.permissions.map(item => item.code) as String[]
-    const saveItems = this.selectedPermissions.filter((item: String) => !userPermissionsCodes.includes(item))
-    console.log(removeItems, saveItems)
+  async saveOrRemovePermission () {
+    try {
+      this.isSaving = true
+      const removeItems = this.userPermissions.filter(item => !this.selectedPermissions.includes(item.code!))
+      const userPermissionsCodes = this.userPermissions.map(item => item.code) as String[]
+      const saveItems = this.selectedPermissions.filter((item: String) => !userPermissionsCodes.includes(item))
+
+      for (const item of saveItems) {
+        await permissionStore.setPermission({ uid: undefined, code: item, user: this.user })
+      }
+
+      for (const item of removeItems) {
+        await permissionStore.remove(item)
+      }
+
+      this.userPermissions = await permissionStore.getPermissionsByUserUid(this.user.uid!)
+      userStore.updateUserPermissions(this.userPermissions)
+
+      this.$router.push('/users')
+    } catch (error) {
+      this.errorMessage = 'Não foi possível salvar as alterações. Por favor, tente novamente.'
+      this.snackbar = true
+    } finally {
+      this.isSaving = false
+    }
   }
 
   mounted (): void {
     try {
-      this.user = userStore.authUser
-      this.selectedPermissions = this.user.permissions.map(item => item.code) as String[]
+      this.selectedPermissions = this.userPermissions.map(item => item.code) as String[]
     } catch (e) {
       this.errorMessage = 'Ocorreu um erro ao buscar o usuário. Por favor, tente novamente.'
       this.snackbar = true

@@ -1,15 +1,12 @@
 import User from '@/models/domain/User'
 import UserFirebase from '@/models/firebase/UserFirebase'
-import { permissionStore } from '@/store'
 
 export default class UserTransformer {
-  static async transformInfraToModel (user: UserFirebase, userUid: String): Promise<User> {
-    const userPermissions = await permissionStore.getPermissionsByUserUid(userUid)
+  static transformInfraToModel (user: UserFirebase, userUid: String): User {
     return {
       uid: userUid,
       email: user.email,
-      name: user.name,
-      permissions: userPermissions
+      name: user.name
     }
   }
 

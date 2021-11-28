@@ -2,19 +2,27 @@ import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import UserTransformer from '@/transformers/user-transformer'
 import User from '@/models/domain/User'
 import { $fire } from '~/utils/firebase-accessor'
+import Permission from '~/models/domain/Permission'
+import { permissionStore } from '~/utils/store-accessor'
 
 @Module({ name: 'users', stateFactory: true, namespaced: true })
 export default class UsersModule extends VuexModule {
   authUser: User = {
     uid: undefined,
     email: undefined,
-    name: undefined,
-    permissions: []
+    name: undefined
   }
+
+  userPermissions: Permission[] = []
 
   @Mutation
   setAuthUser (user: User): void {
     this.authUser = user
+  }
+
+  @Mutation
+  setUserPermissions (userPermissions: Permission[]): void {
+    this.userPermissions = userPermissions
   }
 
   @Action({ rawError: true })
@@ -24,8 +32,8 @@ export default class UsersModule extends VuexModule {
 
   @Action({ rawError: true })
   async getUserByUid (uid: String): Promise<User> {
-    const userInfra = await $fire.firestore.collection('users').doc(uid).get()
-    return await UserTransformer.transformInfraToModel(userInfra, userInfra.id)
+    const userInfra = await this.store.$fire.firestore.collection('users').doc(uid).get()
+    return UserTransformer.transformInfraToModel(userInfra, userInfra.id)
   }
 
   @Action({ rawError: true })
@@ -33,7 +41,7 @@ export default class UsersModule extends VuexModule {
     const usersRef = await this.store.$fire.firestore.collection('users').get()
     const users: User[] = []
     for (const userData of usersRef.docs) {
-      const user = await UserTransformer.transformInfraToModel(userData.data(), userData.id)
+      const user = UserTransformer.transformInfraToModel(userData.data(), userData.id)
       users.push(user)
     }
 
@@ -60,11 +68,20 @@ export default class UsersModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  updateUserPermissions (permissions: Permission[]): void {
+    const userPermissions = permissions
+    this.context.commit('setUserPermissions', userPermissions)
+  }
+
+  @Action({ rawError: true })
   async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<void> {
     if (authUser) {
       const userInfra = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get()
-      const user = await UserTransformer.transformInfraToModel(userInfra.data(), userInfra.id)
+      const user = UserTransformer.transformInfraToModel(userInfra.data(), userInfra.id)
       this.context.commit('setAuthUser', user)
+
+      const userPermissions = await permissionStore.getPermissionsByUserUid(user.uid!)
+      this.context.commit('setUserPermissions', userPermissions)
     } else {
       this.context.commit('setAuthUser', null)
     }
