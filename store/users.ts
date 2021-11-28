@@ -84,6 +84,7 @@ export default class UsersModule extends VuexModule {
       this.context.commit('setUserPermissions', userPermissions)
     } else {
       this.context.commit('setAuthUser', null)
+      this.context.commit('setUserPermissions', [])
     }
   }
 }

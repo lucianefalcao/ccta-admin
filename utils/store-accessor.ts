@@ -7,6 +7,7 @@ import eventsModule from '@/store/events'
 import centerModule from '@/store/center'
 import courseModule from '@/store/course'
 import permissionModule from '@/store/permission'
+import menuModule from '@/store/menu'
 
 let userStore: userModule
 let newsStore: newsModule
@@ -15,6 +16,7 @@ let eventsStore: eventsModule
 let centerStore: centerModule
 let courseStore: courseModule
 let permissionStore: permissionModule
+let menuStore: menuModule
 
 function initialiseStores (store: Store<any>): void {
   userStore = getModule(userModule, store)
@@ -24,6 +26,7 @@ function initialiseStores (store: Store<any>): void {
   centerStore = getModule(centerModule, store)
   courseStore = getModule(courseModule, store)
   permissionStore = getModule(permissionModule, store)
+  menuStore = getModule(menuModule, store)
 }
 
-export { initialiseStores, userStore, newsStore, editaisStore, eventsStore, centerStore, courseStore, permissionStore }
+export { initialiseStores, userStore, newsStore, editaisStore, eventsStore, centerStore, courseStore, permissionStore, menuStore }

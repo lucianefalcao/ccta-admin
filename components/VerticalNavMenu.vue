@@ -52,18 +52,9 @@
 <script lang="ts">
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import {
-  mdiNewspaperVariantOutline,
-  mdiCalendar,
-  mdiChatAlertOutline,
-  mdiBullhornOutline,
-  mdiAccountOutline,
-  mdiCogOutline,
-  mdiTuneVariant,
-  mdiOfficeBuildingOutline,
-  mdiLogout
-} from '@mdi/js'
 import NavMenuItem from '@/components/NavMenuItem.vue'
+import { Menu } from '@/models/helpers/PermissionMenuMap'
+import { menuStore } from '@/store'
 
 @Component({
   components: {
@@ -71,56 +62,9 @@ import NavMenuItem from '@/components/NavMenuItem.vue'
   }
 })
 export default class VerticalNavMenu extends Vue {
-  primaryMenu: {icon: String, title: String, to: String}[] = [
-    {
-      icon: mdiNewspaperVariantOutline,
-      title: 'Notícias',
-      to: '/news'
-    },
-    {
-      icon: mdiCalendar,
-      title: 'Eventos',
-      to: '/events'
-    },
-    {
-      icon: mdiBullhornOutline,
-      title: 'Editais',
-      to: '/editais'
-    },
-    {
-      icon: mdiChatAlertOutline,
-      title: 'Atendimento',
-      to: '/chat'
-    },
-    {
-      icon: mdiOfficeBuildingOutline,
-      title: 'Informações do centro',
-      to: '/info-centro'
-    }
-  ]
+  primaryMenu: Menu[] = menuStore.primary
 
-  subMenu: {icon: String, title: String, to: String}[] = [
-    {
-      icon: mdiAccountOutline,
-      title: 'Perfil',
-      to: '/perfil'
-    },
-    {
-      icon: mdiTuneVariant,
-      title: 'Gerenciar usuários',
-      to: '/users'
-    },
-    {
-      icon: mdiCogOutline,
-      title: 'Configurações do site',
-      to: '/configuracoes'
-    },
-    {
-      icon: mdiLogout,
-      title: 'Sair',
-      to: '/auth/signIn'
-    }
-  ]
+  subMenu: Menu[] = menuStore.secondary
 
   @Prop({ type: Boolean })
   isDrawerOpen!: Boolean

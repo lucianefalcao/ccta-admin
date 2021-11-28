@@ -2,11 +2,8 @@
   <v-app>
     <v-row justify="center">
       <v-col align-self="center" align="center">
-        <h1 v-if="error.statusCode === 403">
-          {{ error.message }}
-        </h1>
-        <h1 v-if="error.statusCode === 404">
-          {{ otherError }}
+        <h1>
+          {{ mensagem }}
         </h1>
         <NuxtLink to="/">
           Voltar
@@ -25,18 +22,14 @@ export default {
       default: null
     }
   },
-  data () {
+  head () {
     return {
-      pageNotFound: 'Essa página não existe',
-      authorization: 'Você não possui permissão',
-      otherError: 'Ocorreu um erro'
+      title: this.mensagem
     }
   },
-  head () {
-    const title =
-      this.error.statusCode === 404 ? this.pageNotFound : this.otherError
-    return {
-      title
+  computed: {
+    mensagem () {
+      return this.error.message.length > 0 ? this.error.message : 'Ocorreu um erro'
     }
   }
 }
