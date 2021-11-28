@@ -63,7 +63,7 @@ export default class UsersModule extends VuexModule {
   async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<void> {
     if (authUser) {
       const userInfra = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get()
-      const user = await UserTransformer.transformInfraToModel(userInfra, userInfra.id)
+      const user = await UserTransformer.transformInfraToModel(userInfra.data(), userInfra.id)
       this.context.commit('setAuthUser', user)
     } else {
       this.context.commit('setAuthUser', null)

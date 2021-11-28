@@ -56,14 +56,15 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import User from '~/models/domain/User'
-import { userStore, permissionStore } from '~/store'
+import { userStore } from '~/store'
 
 @Component
 export default class Permission extends Vue {
   user: User = {
     uid: undefined,
     name: undefined,
-    email: undefined
+    email: undefined,
+    permissions: []
   }
 
   errorMessage: String = ''
@@ -76,8 +77,6 @@ export default class Permission extends Vue {
   async mounted (): Promise<void> {
     try {
       this.user = await userStore.getUserByUid(this.$route.params.uid)
-      const t = await permissionStore.getPermissionsByUserUid(this.$route.params.uid)
-      console.log(t)
     } catch (e) {
       this.errorMessage = 'Ocorreu um erro ao buscar o usuário. Por favor, tente novamente.'
       this.snackbar = true
