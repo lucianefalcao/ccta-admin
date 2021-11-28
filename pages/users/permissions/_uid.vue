@@ -78,14 +78,18 @@ import { permissionStore, userStore } from '~/store'
 
 @Component
 export default class PermissionDetails extends Vue {
-  user: User = userStore.authUser
+  user: User = {
+    uid: undefined,
+    name: undefined,
+    email: undefined
+  }
 
   errorMessage: String = ''
   snackbar: Boolean = false
   isSaving: Boolean = false
 
   selectedPermissions: String[] = []
-  userPermissions: Permission[] = userStore.userPermissions
+  userPermissions: Permission[] = []
 
   permissions: {code: String, label: String, description: String}[] = [
     {
@@ -157,8 +161,10 @@ export default class PermissionDetails extends Vue {
     }
   }
 
-  mounted (): void {
+  async mounted (): Promise<void> {
     try {
+      this.user = await userStore.getUserByUid(this.$route.params.uid)
+      this.userPermissions = await permissionStore.getPermissionsByUserUid(this.user.uid!)
       this.selectedPermissions = this.userPermissions.map(item => item.code) as String[]
     } catch (e) {
       this.errorMessage = 'Ocorreu um erro ao buscar o usuário. Por favor, tente novamente.'

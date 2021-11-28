@@ -1,7 +1,6 @@
 import { Action, Module, VuexModule, Mutation } from 'vuex-module-decorators'
-import { userStore } from '@/store'
+import { permissionStore } from '@/store'
 import { Menu, menuPermissionMap } from '@/models/helpers/PermissionMenuMap'
-import Permission from '~/models/domain/Permission'
 
 @Module({ name: 'menu', stateFactory: true, namespaced: true })
 export default class MenuModule extends VuexModule {
@@ -25,9 +24,10 @@ export default class MenuModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  defineMenus () {
+  async defineMenus (userUid: String) {
     this.context.commit('emptyMenus')
-    const permissions = userStore.userPermissions.map(item => item.code)
+    const userPermissions = await permissionStore.getPermissionsByUserUid(userUid)
+    const permissions = userPermissions.map(item => item.code)
 
     for (const menu of menuPermissionMap) {
       if (menu.permission.length === 0) {
