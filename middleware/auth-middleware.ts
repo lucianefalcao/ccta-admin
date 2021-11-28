@@ -6,7 +6,9 @@ const authMiddleware: Middleware = async ({ route, redirect }) => {
     return redirect('/auth/signIn')
   }
 
-  await menuStore.defineMenus(userStore.authUser.uid!)
+  if (userStore.authUser?.uid) {
+    await menuStore.defineMenus(userStore.authUser.uid!)
+  }
 }
 
 export default authMiddleware
