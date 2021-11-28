@@ -81,7 +81,8 @@ export default class PermissionDetails extends Vue {
   user: User = {
     uid: undefined,
     name: undefined,
-    email: undefined
+    email: undefined,
+    state: 'A'
   }
 
   errorMessage: String = ''

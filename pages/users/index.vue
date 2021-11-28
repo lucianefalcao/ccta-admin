@@ -45,6 +45,7 @@
                 class="text-right"
                 color="red"
                 :loading="isDeleting && item.uid === uid"
+                @click="deleteUser"
               >
                 <v-icon>
                   mdi-delete
@@ -95,6 +96,10 @@ export default class Index extends Vue {
 
   gerenciar (uid: String): void {
     this.$router.push(`/users/permissions/${uid}`)
+  }
+
+  async deleteUser (item: User): Promise<void> {
+    await userStore.deleteUser()
   }
 
   async mounted (): Promise<void> {

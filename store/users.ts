@@ -1,7 +1,6 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import UserTransformer from '@/transformers/user-transformer'
 import User from '@/models/domain/User'
-import { $fire } from '~/utils/firebase-accessor'
 import Permission from '~/models/domain/Permission'
 import { permissionStore } from '~/utils/store-accessor'
 
@@ -10,7 +9,8 @@ export default class UsersModule extends VuexModule {
   authUser: User = {
     uid: undefined,
     email: undefined,
-    name: undefined
+    name: undefined,
+    state: 'A'
   }
 
   userPermissions: Permission[] = []
@@ -27,13 +27,13 @@ export default class UsersModule extends VuexModule {
 
   @Action({ rawError: true })
   async signIn ({ email, password }: { email: String, password: String }): Promise<void> {
-    await $fire.auth.signInWithEmailAndPassword(email, password)
+    await this.store.$fire.auth.signInWithEmailAndPassword(email, password)
   }
 
   @Action({ rawError: true })
   async getUserByUid (uid: String): Promise<User> {
     const userInfra = await this.store.$fire.firestore.collection('users').doc(uid).get()
-    return UserTransformer.transformInfraToModel(userInfra, userInfra.id)
+    return UserTransformer.transformInfraToModel(userInfra.data(), userInfra.id)
   }
 
   @Action({ rawError: true })
@@ -71,6 +71,11 @@ export default class UsersModule extends VuexModule {
   updateUserPermissions (permissions: Permission[]): void {
     const userPermissions = permissions
     this.context.commit('setUserPermissions', userPermissions)
+  }
+
+  @Action({ rawError: true })
+  async deleteUser (user: User): Promise<void> {
+    await permissionStore.deletePermissionsByUserUid(user.uid!)
   }
 
   @Action({ rawError: true })
