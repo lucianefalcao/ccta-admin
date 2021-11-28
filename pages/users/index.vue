@@ -45,7 +45,7 @@
                 class="text-right"
                 color="red"
                 :loading="isDeleting && item.uid === uid"
-                @click="deleteUser"
+                @click="deleteUser(item)"
               >
                 <v-icon>
                   mdi-delete
@@ -99,7 +99,7 @@ export default class Index extends Vue {
   }
 
   async deleteUser (item: User): Promise<void> {
-    await userStore.deleteUser()
+    await userStore.deleteUser(item)
   }
 
   async mounted (): Promise<void> {

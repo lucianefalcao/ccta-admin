@@ -49,7 +49,7 @@ export default class UsersModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async update ({ name, email, password }: {name: String, email: String, password: String}): Promise<void> {
+  async update ({ name, email, password }: {name: String, email: String, password: String, state: String}): Promise<void> {
     const user = this.store.$fire.auth.currentUser
 
     await user.updateEmail(email)
@@ -76,6 +76,8 @@ export default class UsersModule extends VuexModule {
   @Action({ rawError: true })
   async deleteUser (user: User): Promise<void> {
     await permissionStore.deletePermissionsByUserUid(user.uid!)
+    const userRef = await this.store.$fire.firestore.collection('users').doc(user.uid)
+    await userRef.update({ state: 'X' })
   }
 
   @Action({ rawError: true })
