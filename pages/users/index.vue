@@ -36,6 +36,7 @@
                 depressed
                 outlined
                 color="secondary"
+                @click="gerenciar(item.uid)"
               >
                 Gerenciar
               </v-btn>
@@ -88,8 +89,12 @@ export default class Index extends Vue {
     }
   ]
 
-  registerUser () {
+  registerUser (): void {
     this.$router.push('/users/register')
+  }
+
+  gerenciar (uid: String): void {
+    this.$router.push(`/users/permissions/${uid}`)
   }
 
   async mounted (): Promise<void> {
