@@ -75,11 +75,12 @@ export default class UsersModule extends VuexModule {
 
   @Action({ rawError: true })
   async deleteUser (user: User): Promise<void> {
-    await permissionStore.deletePermissionsByUserUid(user.uid!)
+    const removeUser = this.store.$fire.functions.httpsCallable('removeUser')
+    await removeUser({ email: user.email })
+
     const userRef = await this.store.$fire.firestore.collection('users').doc(user.uid)
     await userRef.update({ state: 'X' })
-
-    await this.store.$fire.auth.deleteUser()
+    await permissionStore.deletePermissionsByUserUid(user.uid!)
   }
 
   @Action({ rawError: true })
