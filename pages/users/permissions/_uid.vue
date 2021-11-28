@@ -50,7 +50,7 @@
           color="primary"
           :loading="isSaving"
           :disabled="isSaving"
-          @click="saveOrRemovePermission"
+          @click="saveChanges"
         >
           Salvar
         </v-btn>
@@ -121,20 +121,11 @@ export default class PermissionDetails extends Vue {
     this.snackbar = snackbar
   }
 
-  async saveOrRemovePermission () {
+  async saveChanges () {
     try {
       this.isSaving = true
-      const removeItems = this.userPermissions.filter(item => !this.selectedPermissions.includes(item.code!))
-      const userPermissionsCodes = this.userPermissions.map(item => item.code) as String[]
-      const saveItems = this.selectedPermissions.filter((item: String) => !userPermissionsCodes.includes(item))
-
-      for (const item of saveItems) {
-        await permissionStore.setPermission({ uid: undefined, code: item, user: this.user })
-      }
-
-      for (const item of removeItems) {
-        await permissionStore.remove(item)
-      }
+      await this.savePermissions()
+      await this.removePermissions()
 
       this.userPermissions = await permissionStore.getPermissionsByUserUid(this.user.uid!)
       userStore.updateUserPermissions(this.userPermissions)
@@ -145,6 +136,21 @@ export default class PermissionDetails extends Vue {
       this.snackbar = true
     } finally {
       this.isSaving = false
+    }
+  }
+
+  async removePermissions (): Promise<void> {
+    const removeItems = this.userPermissions.filter(item => !this.selectedPermissions.includes(item.code!))
+    for (const item of removeItems) {
+      await permissionStore.remove(item)
+    }
+  }
+
+  async savePermissions (): Promise<void> {
+    const userPermissionsCodes = this.userPermissions.map(item => item.code) as String[]
+    const saveItems = this.selectedPermissions.filter((item: String) => !userPermissionsCodes.includes(item))
+    for (const item of saveItems) {
+      await permissionStore.setPermission({ uid: undefined, code: item, user: this.user })
     }
   }
 
