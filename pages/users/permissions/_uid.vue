@@ -15,7 +15,7 @@
       <v-card-text>
         <v-row justify="start">
           <v-col
-            v-for="(item,i) in 5"
+            v-for="(permission,i) in permissions"
             :key="i"
             sm="6"
             cols="12"
@@ -23,18 +23,20 @@
             <v-card outlined>
               <v-card-text>
                 <v-row justify="space-between" align="center">
-                  <v-col class="text-body-1">
-                    Gerenciar usuários
-                  </v-col>
-                  <v-col class="pa-0">
-                    <v-switch color="success" />
+                  <v-col class="py-0">
+                    <v-switch
+                      v-model="selectedPermissions"
+                      :label="permission.label"
+                      :value="permission.code"
+                      color="success"
+                    />
                   </v-col>
                 </v-row>
 
                 <v-divider />
 
                 <div class="text--primary pt-2">
-                  O usuário com esta permissão poderá cadastrar e excluir usuários, assim como alterar as permissões.
+                  {{ permission.description }}
                 </div>
               </v-card-text>
             </v-card>
@@ -70,13 +72,50 @@ export default class Permission extends Vue {
   errorMessage: String = ''
   snackbar: Boolean = false
 
+  selectedPermissions: String[] = []
+
+  permissions: {code: String, label: String, description: String}[] = [
+    {
+      code: 'gerenciar-usuarios',
+      label: 'Gerenciar usuários',
+      description: 'O usuário com está permissão poderá cadastrar e excluir outros usuários, assim como definir suas permissões.'
+    },
+    {
+      code: 'gerenciar-eventos',
+      label: 'Gerenciar eventos',
+      description: 'O usuário com está permissão poderá publicar, editar e excluir eventos.'
+    },
+    {
+      code: 'gerenciar-editais',
+      label: 'Gerenciar editais',
+      description: 'O usuário com está permissão poderá publicar, editar e excluir editais.'
+    },
+    {
+      code: 'gerenciar-noticias',
+      label: 'Gerenciar notícias',
+      description: 'O usuário com está permissão poderá cadastrar, editar e excluir notícias.'
+    },
+    {
+      code: 'gerenciar-info-centro',
+      label: 'Gerenciar informações do centro',
+      description: 'O usuário com está permissão poderá cadastrar, editar e excluir informações do centro.'
+    },
+    {
+      code: 'gerenciar-configuracoes',
+      label: 'Gerenciar configurações',
+      description: 'O usuário com está permissão poderá alterar a logo no site.'
+    }
+  ]
+
   setSnackbar (snackbar: Boolean): void {
     this.snackbar = snackbar
   }
 
-  async mounted (): Promise<void> {
+  mounted (): void {
     try {
-      this.user = await userStore.getUserByUid(this.$route.params.uid)
+      this.user = userStore.authUser
+      console.log(this.user)
+      this.selectedPermissions = this.user.permissions
     } catch (e) {
       this.errorMessage = 'Ocorreu um erro ao buscar o usuário. Por favor, tente novamente.'
       this.snackbar = true
