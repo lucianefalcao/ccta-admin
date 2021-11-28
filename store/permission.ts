@@ -33,4 +33,14 @@ export default class PermissionsModule extends VuexModule {
     permission.uid = permissionRef.id
     return permission
   }
+
+  @Action({ rawError: true })
+  async deletePermissionsByUserUid (userUid: String): Promise<void> {
+    const permissions = await this.getPermissionsByUserUid(userUid)
+
+    for (const permission of permissions) {
+      const permissionRef = await this.store.$fire.firestore.collection('courses').doc(permission.uid)
+      await permissionRef.delete()
+    }
+  }
 }
