@@ -6,13 +6,14 @@ import Permission from '@/models/domain/Permission'
 export default class PermissionsModule extends VuexModule {
   @Action({ rawError: true })
   async getPermissionsByUserUid (userUid: String): Promise<Permission[]> {
-    const permissionRef = await this.store.$fire.firestore.collection('permissions').get()
+    const permissionRef = await this.store.$fire.firestore
+      .collection('permissions')
+      .where('userUid', '==', userUid)
+      .get()
     const permissions: Permission[] = []
     for (const permissionData of permissionRef.docs) {
-      if (permissionData.data().userUid === userUid) {
-        const permission = await PermissionTransformer.transformInfraToModel(permissionData.data(), permissionData.id)
-        permissions.push(permission)
-      }
+      const permission = await PermissionTransformer.transformInfraToModel(permissionData.data(), permissionData.id)
+      permissions.push(permission)
     }
     return permissions
   }
@@ -31,5 +32,15 @@ export default class PermissionsModule extends VuexModule {
     await permissionRef.set(permissionFirebase)
     permission.uid = permissionRef.id
     return permission
+  }
+
+  @Action({ rawError: true })
+  async deletePermissionsByUserUid (userUid: String): Promise<void> {
+    const permissions = await this.getPermissionsByUserUid(userUid)
+
+    for (const permission of permissions) {
+      const permissionRef = await this.store.$fire.firestore.collection('courses').doc(permission.uid)
+      await permissionRef.delete()
+    }
   }
 }

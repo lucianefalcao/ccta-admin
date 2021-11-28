@@ -52,6 +52,7 @@
             depressed
             color="primary"
             :disabled="invalid"
+            :loading="isSaving"
             @click="register"
           >
             Cadastrar
@@ -100,6 +101,7 @@ export default class Register extends Vue {
   errorMessage: String = ''
 
   snackbar: Boolean = false
+  isSaving: Boolean = false
 
   $refs!: {
     observer: InstanceType<typeof ValidationObserver>
@@ -107,6 +109,7 @@ export default class Register extends Vue {
 
   async register () {
     try {
+      this.isSaving = true
       if (await this.$refs.observer.validate()) {
         const user = await userStore.createUser({ name: this.name, email: this.email })
         this.$router.push(`/users/permissions/${user.uid}`)
@@ -121,6 +124,8 @@ export default class Register extends Vue {
           this.snackbar = true
         }
       }
+    } finally {
+      this.isSaving = false
     }
   }
 

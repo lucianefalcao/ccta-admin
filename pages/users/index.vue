@@ -45,6 +45,7 @@
                 class="text-right"
                 color="red"
                 :loading="isDeleting && item.uid === uid"
+                @click="deleteUser(item)"
               >
                 <v-icon>
                   mdi-delete
@@ -55,6 +56,13 @@
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <snackbar
+      v-if="snackbar"
+      :snackbar="snackbar"
+      :message="errorMessage"
+      @closeSnackbar="setSnackbar"
+    />
   </v-col>
 </template>
 
@@ -70,8 +78,10 @@ export default class Index extends Vue {
 
   fetchingData: Boolean = false
   isDeleting: Boolean = false
+  snackbar: Boolean = false
   uid: String = ''
   message: String = 'Nenhum usuário cadastrado'
+  errorMessage: String = ''
 
   headers = [
     {
@@ -95,6 +105,26 @@ export default class Index extends Vue {
 
   gerenciar (uid: String): void {
     this.$router.push(`/users/permissions/${uid}`)
+  }
+
+  setSnackbar (snackbar: Boolean): void {
+    this.snackbar = snackbar
+  }
+
+  async deleteUser (item: User): Promise<void> {
+    try {
+      this.uid = item.uid!
+      this.isDeleting = true
+      await userStore.deleteUser(item)
+      this.users = await userStore.getAll()
+    } catch (error) {
+      console.log(error)
+      this.errorMessage = 'Não foi possível deletar o usuário'
+      this.snackbar = true
+    } finally {
+      this.uid = ''
+      this.isDeleting = false
+    }
   }
 
   async mounted (): Promise<void> {

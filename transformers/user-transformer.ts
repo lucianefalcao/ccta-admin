@@ -6,14 +6,16 @@ export default class UserTransformer {
     return {
       uid: userUid,
       email: user.email,
-      name: user.name
+      name: user.name,
+      state: user.state
     }
   }
 
   static transformModelToInfra (user: User): UserFirebase {
     return {
       email: user.email!,
-      name: user.name!
+      name: user.name!,
+      state: user.state
     }
   }
 }
