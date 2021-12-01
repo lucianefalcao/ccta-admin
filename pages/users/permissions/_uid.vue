@@ -114,6 +114,11 @@ export default class PermissionDetails extends Vue {
       description: 'O usuário com está permissão poderá cadastrar, editar e excluir notícias.'
     },
     {
+      code: 'gerenciar-chat',
+      label: 'Gerenciar atendimento',
+      description: 'O usuário com está permissão poderá realizar os atendimentos onlines.'
+    },
+    {
       code: 'gerenciar-info-centro',
       label: 'Gerenciar informações do centro',
       description: 'O usuário com está permissão poderá cadastrar, editar e excluir informações do centro.'
