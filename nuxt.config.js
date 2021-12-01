@@ -86,6 +86,9 @@ export default {
       },
       functions: {
         emulatorPort: 1234
+      },
+      database: {
+        emulatorPort: 9000
       }
     }
   },

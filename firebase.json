@@ -21,6 +21,9 @@
     },
     "functions": {
       "port": 1234
+    },
+    "database": {
+      "port": 9000
     }
   },
   "functions": {
