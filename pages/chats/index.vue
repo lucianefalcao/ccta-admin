@@ -74,204 +74,88 @@ export default class Chat extends Vue {
 
   currentMessages: { messageId: string; name: string; message: string; timestamp: number; }[] = []
 
-  visitants = [
-    {
-      id: 'lucianefalcao',
-      nome: 'Luciane',
-      email: 'luciane@mail.com'
-    },
-    {
-      id: 'maria',
-      nome: 'Maria',
-      email: 'maria@mail.com'
-    },
-    {
-      id: 'jose',
-      nome: 'Sicrano',
-      email: 'jose@mail.com'
-    },
-    {
-      id: 'fulano',
-      nome: 'Fulano',
-      email: 'fulano@mail.com'
-    },
-    {
-      id: 'sicrano',
-      nome: 'Sicrano',
-      email: 'sicrano@mail.com'
-    },
-    {
-      id: 'mariajose',
-      nome: 'Maria José',
-      email: 'mariajose@mail.com'
-    },
-    {
-      id: 'josemaria',
-      nome: 'José Maria',
-      email: 'josemaria@mail.com'
-    },
-    {
-      id: 'richard',
-      nome: 'Richard',
-      email: 'richard@mail.com'
-    },
-    {
-      id: 'ava',
-      nome: 'Ava',
-      email: 'ava@mail.com'
-    },
-    {
-      id: 'leo',
-      nome: 'Leo',
-      email: 'leo@mail.com'
-    },
-    {
-      id: 'lod',
-      nome: 'Lod',
-      email: 'lod@mail.com'
-    },
-    {
-      id: 'lid',
-      nome: 'Lid',
-      email: 'lid@mail.com'
-    },
-    {
-      id: 'lud',
-      nome: 'Lud',
-      email: 'lud@mail.com'
-    }
-  ]
-
   chats = [
     {
       id: 'one',
-      lastMessage: 'lucianefalcao: bla bla',
-      timestamp: 14785964
-    },
-    {
-      id: 'two',
-      lastMessage: 'lod: bla bla',
-      timestamp: 14785964
-    }
-  ]
-
-  members = [
-    {
-      chatId: 'one',
-      admin: 'XQZQw5conawlnjkaC8czlYhGwb6S',
-      user: 'lucianefalcao'
-    },
-    {
-      chatId: 'two',
-      admin: 'XQZQw5conawlnjkaC8czlYhGwb6S',
-      user: 'lod'
-    }
-  ]
-
-  messages = [
-    {
-      chatId: 'one',
-      messages: [
+      members: [
         {
-          messageId: 'm1',
-          name: 'lucianefalcao',
-          message: 'bla bla',
-          timestamp: 14556487
+          id: 'lucianefalcao',
+          nome: 'Luciane Falcão',
+          email: 'luciane@mail.com',
+          tipo: 'visitante',
+          chatId: 'one'
         },
         {
-          messageId: 'm2',
-          name: 'XQZQw5conawlnjkaC8czlYhGwb6S',
-          message: 'Como posso ajudar?',
-          timestamp: 14556487
+          id: 'KJkyIGH3DxqSLa1pm6wbSE3wPqt3',
+          nome: 'Test',
+          email: 'test@mail.com',
+          tipo: 'admin'
+        }
+      ],
+      messages: [
+        {
+          id: 'm1',
+          message: 'Preciso de ajuda',
+          memberId: 'lucianefalcao',
+          timestamp: 4564654
         }
       ]
     },
     {
-      chatId: 'two',
+      id: 'two',
+      members: [
+        {
+          id: 'lod',
+          nome: 'Lod',
+          email: 'lod@mail.com',
+          tipo: 'visitante'
+        }
+      ],
       messages: [
         {
-          messageId: 'm1',
-          name: 'lod',
-          message: 'preciso de ajuda',
-          timestamp: 14556487
+          id: 'm11',
+          message: 'Oi',
+          memberId: 'lod',
+          timestamp: 4564654
         }
       ]
     }
   ]
 
   get users () {
-    const us = []
+    const users = []
     for (const chat of this.chats) {
-      const chatMembers = this.members.filter(m => m.chatId === chat.id)
-
-      for (const chatMember of chatMembers) {
-        us.push(...this.visitants.filter(v => v.id === chatMember.user))
-      }
+      const chatMembers = chat.members.find(m => m.tipo === 'visitante')
+      users.push(chatMembers)
     }
 
-    return us
+    return users
   }
 
   get currentUser () {
     return userStore.authUser
   }
 
-  getChatId (userId: String) {
-    const chat = this.members.find(m => m.user === userId)
-    return chat?.chatId
+  getChat (userId: String) {
+    const chat = this.chats.find((chat) => {
+      return chat.members.find(m => m.id === userId)
+    })
+
+    return chat
   }
 
-  loadMessages (chatId: String) {
-    const chatMessages = this.messages.find(m => m.chatId === chatId)
-    return chatMessages?.messages
+  loadMessages (chat: any) {
+    return chat.messages
   }
 
   selectChat (user: any) {
     this.selectedUser = user
-    const chatId = this.getChatId(user.id)
-    const messages = this.loadMessages(chatId!)
+    const chat = this.getChat(user.id)
+    const messages = this.loadMessages(chat)
     this.currentMessages = messages!
 
     console.log(this.currentMessages)
   }
-  //   chats =
-  //   {
-  //     one: {
-  //       members: {
-  //         XQZQw5conawlnjkaC8czlYhGwb6S: {
-  //           name: this.currentUser.name,
-  //           type: 'admin'
-  //         },
-  //         lucianefalcao: {
-  //           name: 'Luciane',
-  //           email: 'luciane',
-  //           type: 'user'
-  //         }
-  //       },
-  //       messages: {
-  //         m1: {
-  //           nome: 'lucianefalcao',
-  //           message: 'test',
-  //           timestamp: 123456
-  //         }
-  //       }
-  //     }
-  //   }
-
-  // get users () {
-  //   const a = []
-  //   for (const chat in this.chats) {
-  //     for (const member in this.chats[chat].members) {
-  //       if (this.chats[chat].members[member].type === 'user') {
-  //         a.push(this.chats[chat].members[member])
-  //       }
-  //     }
-  //   }
-
-  //   console.log(a)
-
-  //   return a
-  // }
 }
 </script>
 
