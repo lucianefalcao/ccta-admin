@@ -31,7 +31,7 @@ const menuPermissionMap: Menu[] = [
   {
     icon: 'mdi-chat-alert-outline',
     title: 'Atendimento',
-    to: '/chat',
+    to: '/chats',
     type: 'primary',
     permission: 'gerenciar-chat'
   },

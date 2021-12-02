@@ -20,6 +20,7 @@
     "firebase": "^9.4.1",
     "nuxt": "^2.15.7",
     "vee-validate": "^3.4.14",
+    "vue-advanced-chat": "^1.4.2",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
     "vuetify": "^2.5.5",

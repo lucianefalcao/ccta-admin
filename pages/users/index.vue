@@ -118,7 +118,6 @@ export default class Index extends Vue {
       await userStore.deleteUser(item)
       this.users = await userStore.getAll()
     } catch (error) {
-      console.log(error)
       this.errorMessage = 'Não foi possível deletar o usuário'
       this.snackbar = true
     } finally {
@@ -131,6 +130,7 @@ export default class Index extends Vue {
     try {
       this.fetchingData = true
       this.users = await userStore.getAll()
+      console.log(this.users)
     } catch (error) {
       this.message = 'Ocorreu um erro ao buscar as notícias. Por favor, tente novamento mais tarde.'
     } finally {
