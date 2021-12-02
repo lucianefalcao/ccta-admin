@@ -33,11 +33,11 @@
           <div
             v-for="message in currentMessages"
             :key="message.messageId"
-            :class="{ 'd-flex flex-row-reverse': message.name === currentUser.uid ? true : false }"
+            :class="{ 'd-flex flex-row-reverse': message.memberId === currentUser.uid ? true : false }"
           >
             <v-chip
               color="primary"
-              class="pa-5"
+              class="pa-5 mb-2"
             >
               {{ message.message }}
             </v-chip>
@@ -45,11 +45,29 @@
         </v-card-text>
       </v-card>
       <v-card-text>
-        <v-text-field
-          append-outer-icon="mdi-send"
-          outlined
-          label="Mensagem"
-        />
+        <v-row>
+          <v-col align="center">
+            <v-text-field
+              v-model="message"
+              outlined
+              dense
+              label="Mensagem"
+              @keyup.enter="sendMessage"
+            />
+          </v-col>
+
+          <v-col sm="1" align="center">
+            <v-btn
+              :disabled="!(message.length > 0)"
+              icon
+              @click="sendMessage"
+            >
+              <v-icon color="primary">
+                mdi-send
+              </v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-col>
   </v-row>
@@ -72,6 +90,10 @@ export default class Chat extends Vue {
     nome: ''
   }
 
+  selectedChat = ''
+
+  message: String = ''
+
   currentMessages: { messageId: string; name: string; message: string; timestamp: number; }[] = []
 
   chats = [
@@ -82,8 +104,7 @@ export default class Chat extends Vue {
           id: 'lucianefalcao',
           nome: 'Luciane Falcão',
           email: 'luciane@mail.com',
-          tipo: 'visitante',
-          chatId: 'one'
+          tipo: 'visitante'
         },
         {
           id: 'KJkyIGH3DxqSLa1pm6wbSE3wPqt3',
@@ -151,10 +172,21 @@ export default class Chat extends Vue {
   selectChat (user: any) {
     this.selectedUser = user
     const chat = this.getChat(user.id)
+    this.selectedChat = chat?.id!
     const messages = this.loadMessages(chat)
     this.currentMessages = messages!
+  }
 
-    console.log(this.currentMessages)
+  sendMessage () {
+    const chat = this.chats.find(c => c.id === this.selectedChat)
+    chat?.messages.push({
+      id: 'm11',
+      message: this.message as string,
+      memberId: this.currentUser.uid! as string,
+      timestamp: new Date()
+    })
+
+    this.message = ''
   }
 }
 </script>
