@@ -219,6 +219,16 @@ export default class Chat extends Vue {
         return chats
       })
     })
+
+    const permissionsQuery = await this.$fire.firestore.collection('permissions')
+      .where('code', '==', 'gerenciar-usuarios').get()
+
+    const usersWithPermissions = permissionsQuery.docs.map((p: any) => p.data().userUid)
+
+    const onlineUsers = await this.$fire.firestore.collection('users')
+      .where(this.$fireModule.firestore.FieldPath.documentId(), 'in', usersWithPermissions)
+      .where('isOnline', '==', true)
+      .get()
   }
 
   @Watch('chats')

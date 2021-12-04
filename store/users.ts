@@ -114,16 +114,29 @@ export default class UsersModule extends VuexModule {
       this.context.commit('setUserPermissions', userPermissions)
 
       const userStatusDatabaseRef = this.store.$fire.database.ref('/status/' + authUser.uid)
+      const userStatusFirestoreRef = this.store.$fire.firestore.doc(`/users/${authUser.uid}`)
 
       this.store.$fire.database.ref('.info/connected').on('value', async (snapshot: any) => {
+        if (snapshot.val() === false) {
+          userStatusFirestoreRef.set({
+            ...userInfra.data(),
+            isOnline: false
+          })
+        }
         if (snapshot.val() !== false) {
           await userStatusDatabaseRef.onDisconnect().set({
-            idOnline: false,
+            isOnline: false,
             last_changed: this.store.$fireModule.database.ServerValue.TIMESTAMP
           })
+
           userStatusDatabaseRef.set({
             isOnline: true,
             last_changed: this.store.$fireModule.database.ServerValue.TIMESTAMP
+          })
+
+          await userStatusFirestoreRef.set({
+            ...userInfra.data(),
+            isOnline: true
           })
         }
       })
