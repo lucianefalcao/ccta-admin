@@ -118,56 +118,20 @@ export default class Chat extends Vue {
     nome: ''
   }
 
-  selectedChat = {}
+  selectedChat: any = {}
 
   message: String = ''
 
   currentMessages: { messageId: string; name: string; message: string; timestamp: number; }[] = []
 
-  chats = [
-    {
-      id: 'one',
-      visitante: {
-        id: 'lucianefalcao',
-        nome: 'Luciane Falcão',
-        email: 'luciane@mail.com'
-      },
-      atendente: {
-        id: 'sJG736FxJevQoQFdU6tDWC7chlJj',
-        nome: 'Test',
-        email: 'test@mail.com'
-      },
-      messages: [
-        {
-          id: 'm1',
-          message: 'Preciso de ajuda',
-          memberId: 'lucianefalcao',
-          timestamp: 4564654
-        }
-      ]
-    },
-    {
-      id: 'two',
-      visitante: {
-        id: 'lod',
-        nome: 'Lod',
-        email: 'lod@mail.com'
-      },
-      messages: [
-        {
-          id: 'm11',
-          message: 'Oi',
-          memberId: 'lod',
-          timestamp: 4564654
-        }
-      ]
-    }
-  ]
+  chats: any = []
 
   get users () {
     const users = []
     for (const chat of this.chats) {
-      users.push(chat.visitante)
+      if (chat.messages) {
+        users.push(chat.visitante)
+      }
     }
 
     return users
@@ -178,7 +142,7 @@ export default class Chat extends Vue {
   }
 
   getChat (userId: String) {
-    const chat = this.chats.find((chat) => {
+    const chat = this.chats.find((chat: any) => {
       if (chat.visitante.id === userId) {
         return chat.visitante
       }
@@ -210,7 +174,7 @@ export default class Chat extends Vue {
   }
 
   sendMessage () {
-    const chat = this.chats.find(c => c.id === this.selectedChat?.id!)
+    const chat = this.chats.find((c: any) => c.id === this.selectedChat?.id!)
     chat?.messages.push({
       id: 'm11',
       message: this.message as string,
@@ -230,6 +194,18 @@ export default class Chat extends Vue {
         nome: this.currentUser.name,
         email: this.currentUser.email
       })
+  }
+
+  async mounted () {
+    const chatsRef = this.$fire.database.ref('chats')
+
+    await chatsRef.on('value', (snapshot: any) => {
+      this.chats = Object.keys(snapshot.val()).map((s) => {
+        const chats = snapshot.val()[s]
+        chats.id = s
+        return chats
+      })
+    })
   }
 }
 </script>
