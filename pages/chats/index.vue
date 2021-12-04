@@ -28,28 +28,34 @@
     </v-col>
 
     <v-col v-if="isChatSelected">
-      <v-card ref="chat" flat min-height="500px">
+      <v-card flat min-height="500px">
         <v-app-bar dark flat dense color="primary">
           <v-card-title>{{ selectedUser.nome }}</v-card-title>
         </v-app-bar>
         <v-card-text class="chat-container light">
-          <div
+          <v-row
             v-for="message in selectedChat.messages"
-            ref="m"
             :key="message.messageId"
-            :class="{ 'd-flex flex-row-reverse': message.memberId === currentUser.uid ? true : false }"
+            :justify="message.memberId === currentUser.uid ? 'end' : 'start'"
+            align="center"
+            class="ma-2"
           >
-            <v-chip
+            <v-sheet
+              dark
               :color="message.memberId === currentUser.uid ? 'primary' : 'secondary'"
-              class="pa-5 mb-2"
+              class="pa-2 mr-2"
+              :rounded="true"
+              max-width="400"
             >
               {{ message.message }}
-            </v-chip>
+            </v-sheet>
+            <small>{{ getTime(message.timestamp) }}</small>
 
-            <v-row no-gutters justify="center">
-              <span v-if="atendente && atendente.id !== currentUser.uid">{{ atendente.nome }} está atendendo </span>
+            <v-row v-if="atendente && atendente.id !== currentUser.uid" no-gutters justify="center">
+              <span>{{ atendente.nome }} está atendendo </span>
+            </v-row>
+            <v-row v-else-if="!atendente" no-gutters justify="center">
               <v-btn
-                v-else-if="!atendente"
                 small
                 depressed
                 outlined
@@ -60,7 +66,7 @@
                 Entrar no atendimento
               </v-btn>
             </v-row>
-          </div>
+          </v-row>
         </v-card-text>
       </v-card>
       <v-card-text>
@@ -186,6 +192,10 @@ export default class Chat extends Vue {
 
     this.message = ''
     this.scrollToEnd()
+  }
+
+  getTime (timestamp: number) {
+    return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
 
   entrarNoAtendimento () {
