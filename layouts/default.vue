@@ -79,4 +79,5 @@ export default class Default extends Vue {
   margin-left: auto;
   margin-right: auto;
 }
+
 </style>

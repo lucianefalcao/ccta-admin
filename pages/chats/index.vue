@@ -4,12 +4,12 @@
   </v-row>
   <v-row v-else no-gutters>
     <v-col sm="3">
-      <v-card flat class="scrollable">
+      <v-card flat class="scrollable light">
         <v-card-text>
           <v-list subheader rounded>
             <v-subheader>Chats</v-subheader>
 
-            <v-list-item-group v-model="selected">
+            <v-list-item-group v-model="selected" color="secondary">
               <v-list-item v-for="user in users" :key="user.id" @click="selectChat(user)">
                 <v-list-item-icon>
                   <v-icon color="primary">
@@ -32,7 +32,7 @@
         <v-app-bar dark flat dense color="primary">
           <v-card-title>{{ selectedUser.nome }}</v-card-title>
         </v-app-bar>
-        <v-card-text class="chat-container">
+        <v-card-text class="chat-container light">
           <div
             v-for="message in selectedChat.messages"
             :key="message.messageId"
@@ -234,5 +234,24 @@ export default class Chat extends Vue {
     height: calc(80vh - 7rem);
     overflow-y: auto;
     padding: 10px;
+  }
+
+  .light::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  .light::-webkit-scrollbar-track {
+    background: #e6e6e6;
+    border-left: 1px solid #dadada;
+  }
+
+  .light::-webkit-scrollbar-thumb {
+    background: #b0b0b0;
+    border: solid 3px #e6e6e6;
+    border-radius: 7px;
+  }
+
+  .light::-webkit-scrollbar-thumb:hover {
+    background: black;
   }
 </style>
