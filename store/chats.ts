@@ -1,5 +1,6 @@
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators'
 import { requestAndShowPermission } from '@/utils/notification'
+import { userStore } from '@/store'
 
 @Module({ name: 'chats', stateFactory: true, namespaced: true })
 export default class ChatsModule extends VuexModule {
@@ -22,9 +23,17 @@ export default class ChatsModule extends VuexModule {
           return chats
         })
 
+        const changes = chats.filter((data) => {
+          if (data.atendente.uid === userStore.authUser.uid) {
+            return !this.chats.includes(data)
+          }
+
+          return null
+        })
+
         this.context.commit('setChats', chats)
 
-        if (window.location.pathname !== '/chats') {
+        if ((window.location.pathname !== '/chats' || document.visibilityState !== 'visible') && changes.length > 0) {
           requestAndShowPermission()
         }
       }
