@@ -104,6 +104,26 @@ export default class UsersModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  async getOnlineUsers () {
+    const permissionsQuery = await this.store.$fire.firestore.collection('permissions')
+      .where('code', '==', 'gerenciar-usuarios').get()
+
+    const usersWithPermissions = permissionsQuery.docs.map((p: any) => p.data().userUid)
+
+    const statusRef = this.store.$fire.database.ref('status')
+
+    await statusRef.once('value', (snapshot: any) => {
+      const onlineUsers = Object.keys(snapshot.val()).map((snap) => {
+        const user = snapshot.val()[snap]
+        if (usersWithPermissions.includes(snap) && user.isOnline) {
+          return user
+        }
+        return null
+      })
+    })
+  }
+
+  @Action({ rawError: true })
   async onAuthStateChanged ({ authUser }: { authUser: any }): Promise<void> {
     if (authUser) {
       const userInfra = await this.store.$fire.firestore.collection('users').doc(authUser.uid).get()
@@ -114,15 +134,8 @@ export default class UsersModule extends VuexModule {
       this.context.commit('setUserPermissions', userPermissions)
 
       const userStatusDatabaseRef = this.store.$fire.database.ref('/status/' + authUser.uid)
-      const userStatusFirestoreRef = this.store.$fire.firestore.doc(`/users/${authUser.uid}`)
 
       this.store.$fire.database.ref('.info/connected').on('value', async (snapshot: any) => {
-        if (snapshot.val() === false) {
-          userStatusFirestoreRef.set({
-            ...userInfra.data(),
-            isOnline: false
-          })
-        }
         if (snapshot.val() !== false) {
           await userStatusDatabaseRef.onDisconnect().set({
             isOnline: false,
@@ -132,11 +145,6 @@ export default class UsersModule extends VuexModule {
           userStatusDatabaseRef.set({
             isOnline: true,
             last_changed: this.store.$fireModule.database.ServerValue.TIMESTAMP
-          })
-
-          await userStatusFirestoreRef.set({
-            ...userInfra.data(),
-            isOnline: true
           })
         }
       })
