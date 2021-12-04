@@ -34,7 +34,7 @@
         </v-app-bar>
         <v-card-text class="chat-container">
           <div
-            v-for="message in currentMessages"
+            v-for="message in selectedChat.messages"
             :key="message.messageId"
             :class="{ 'd-flex flex-row-reverse': message.memberId === currentUser.uid ? true : false }"
           >
@@ -102,7 +102,7 @@
 
 <script lang="ts">
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import ChatWindow from 'vue-advanced-chat'
 import { isEmpty } from 'lodash'
 import { userStore } from '@/store'
@@ -121,8 +121,6 @@ export default class Chat extends Vue {
   selectedChat: any = {}
 
   message: String = ''
-
-  currentMessages: { messageId: string; name: string; message: string; timestamp: number; }[] = []
 
   chats: any = []
 
@@ -160,8 +158,6 @@ export default class Chat extends Vue {
     this.selectedUser = user
     const chat = this.getChat(user.id)
     this.selectedChat = chat
-    const messages = this.loadMessages(chat)
-    this.currentMessages = messages!
   }
 
   get isChatSelected () {
@@ -173,18 +169,11 @@ export default class Chat extends Vue {
   }
 
   async sendMessage () {
-    const chat = this.chats.find((c: any) => c.id === this.selectedChat?.id!)
-    chat?.messages.push({
-      message: this.message as string,
-      memberId: this.currentUser.uid! as string,
-      timestamp: new Date()
-    })
-
-    const chatRef = this.$fire.database.ref(`chats/${chat.id}`)
+    const chatRef = this.$fire.database.ref(`chats/${this.selectedChat.id}`)
     await chatRef.set({
-      ...chat,
+      ...this.selectedChat,
       messages: [
-        ...chat.messages,
+        ...this.selectedChat.messages,
         {
           message: this.message as string,
           memberId: this.currentUser.uid! as string,
@@ -217,6 +206,18 @@ export default class Chat extends Vue {
         return chats
       })
     })
+  }
+
+  @Watch('chats')
+  updateSelectedChat (newValue: []) {
+    const chat = newValue.find((chat: any) => chat.id === this.selectedChat.id) as any
+    if (!isEmpty(this.selectedChat) && chat) {
+      this.$set(
+        this.selectedChat,
+        'messages',
+        chat.messages
+      )
+    }
   }
 }
 </script>
