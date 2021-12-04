@@ -133,7 +133,6 @@ export default class Chat extends Vue {
         users.push(chat.visitante)
       }
     }
-
     return users
   }
 
@@ -173,13 +172,25 @@ export default class Chat extends Vue {
     return !isEmpty(this.selectedChat.atendente) ? this.selectedChat.atendente : false
   }
 
-  sendMessage () {
+  async sendMessage () {
     const chat = this.chats.find((c: any) => c.id === this.selectedChat?.id!)
     chat?.messages.push({
-      id: 'm11',
       message: this.message as string,
       memberId: this.currentUser.uid! as string,
       timestamp: new Date()
+    })
+
+    const chatRef = this.$fire.database.ref(`chats/${chat.id}`)
+    await chatRef.set({
+      ...chat,
+      messages: [
+        ...chat.messages,
+        {
+          message: this.message as string,
+          memberId: this.currentUser.uid! as string,
+          timestamp: new Date()
+        }
+      ]
     })
 
     this.message = ''
