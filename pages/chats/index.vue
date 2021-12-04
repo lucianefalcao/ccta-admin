@@ -24,7 +24,7 @@
       </v-card>
     </v-col>
 
-    <v-col>
+    <v-col v-if="isChatSelected">
       <v-card flat min-height="500px">
         <v-app-bar dark flat dense color="primary">
           <v-card-title>{{ selectedUser.nome }}</v-card-title>
@@ -86,6 +86,14 @@
         </v-row>
       </v-card-text>
     </v-col>
+
+    <v-col v-else>
+      <v-card flat>
+        <v-col align="center">
+          <v-card-text>Nenhum chat selecionado</v-card-text>
+        </v-col>
+      </v-card>
+    </v-col>
   </v-row>
 </template>
 
@@ -107,11 +115,7 @@ export default class Chat extends Vue {
     nome: ''
   }
 
-  selectedChat = {
-    id: '',
-    visitante: {},
-    atendente: {}
-  }
+  selectedChat = {}
 
   message: String = ''
 
@@ -192,6 +196,10 @@ export default class Chat extends Vue {
     this.selectedChat = chat
     const messages = this.loadMessages(chat)
     this.currentMessages = messages!
+  }
+
+  get isChatSelected () {
+    return !isEmpty(this.selectedChat)
   }
 
   get atendente () {
