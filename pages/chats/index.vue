@@ -28,13 +28,14 @@
     </v-col>
 
     <v-col v-if="isChatSelected">
-      <v-card flat min-height="500px">
+      <v-card ref="chat" flat min-height="500px">
         <v-app-bar dark flat dense color="primary">
           <v-card-title>{{ selectedUser.nome }}</v-card-title>
         </v-app-bar>
         <v-card-text class="chat-container light">
           <div
             v-for="message in selectedChat.messages"
+            ref="m"
             :key="message.messageId"
             :class="{ 'd-flex flex-row-reverse': message.memberId === currentUser.uid ? true : false }"
           >
@@ -158,6 +159,7 @@ export default class Chat extends Vue {
     this.selectedUser = user
     const chat = this.getChat(user.id)
     this.selectedChat = chat
+    this.scrollToEnd()
   }
 
   get isChatSelected () {
@@ -183,6 +185,7 @@ export default class Chat extends Vue {
     })
 
     this.message = ''
+    this.scrollToEnd()
   }
 
   entrarNoAtendimento () {
@@ -194,6 +197,13 @@ export default class Chat extends Vue {
         nome: this.currentUser.name,
         email: this.currentUser.email
       })
+  }
+
+  scrollToEnd () {
+    this.$nextTick(() => {
+      const container = this.$el.querySelector('.chat-container') as HTMLElement
+      container.scrollTop = container.scrollHeight
+    })
   }
 
   async mounted () {
