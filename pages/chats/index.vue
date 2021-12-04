@@ -179,7 +179,7 @@ export default class Chat extends Vue {
         {
           message: this.message as string,
           memberId: this.currentUser.uid! as string,
-          timestamp: new Date()
+          timestamp: new Date().getTime()
         }
       ]
     })
