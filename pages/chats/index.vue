@@ -213,11 +213,13 @@ export default class Chat extends Vue {
     const chatsRef = this.$fire.database.ref('chats')
 
     await chatsRef.on('value', (snapshot: any) => {
-      this.chats = Object.keys(snapshot.val()).map((s) => {
-        const chats = snapshot.val()[s]
-        chats.id = s
-        return chats
-      })
+      if (snapshot.val()) {
+        this.chats = Object.keys(snapshot.val()).map((s) => {
+          const chats = snapshot.val()[s]
+          chats.id = s
+          return chats
+        })
+      }
     })
   }
 
