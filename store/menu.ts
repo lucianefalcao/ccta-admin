@@ -31,16 +31,12 @@ export default class MenuModule extends VuexModule {
     this.context.commit('emptyMenus')
 
     for (const menu of menuPermissionMap) {
-      if (menu.permission.length === 0) {
+      if ((menu.permission.length === 0) || (menu.type === 'secondary' && permissions.includes(menu.permission))) {
         this.context.commit('addItemToSecondaryMenu', menu)
       }
 
       if (menu.type === 'primary' && permissions.includes(menu.permission)) {
         this.context.commit('addItemToPrimaryMenu', menu)
-      }
-
-      if (menu.type === 'secondary' && permissions.includes(menu.permission)) {
-        this.context.commit('addItemToSecondaryMenu', menu)
       }
     }
   }
