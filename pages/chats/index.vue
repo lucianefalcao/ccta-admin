@@ -31,6 +31,10 @@
       <v-card flat min-height="500px">
         <v-app-bar dark flat dense color="primary">
           <v-card-title>{{ selectedUser.nome }}</v-card-title>
+          <v-spacer />
+          <v-btn depressed @click="encerrarChat">
+            Encerrar chat
+          </v-btn>
         </v-app-bar>
         <v-card-text class="chat-container light">
           <v-row
@@ -202,6 +206,13 @@ export default class Chat extends Vue {
         nome: this.currentUser.name
       }
     })
+  }
+
+  async encerrarChat () {
+    const chatRef = this.$fire.database.ref(`chats/${this.selectedChat.id}`)
+    await chatRef.remove()
+    this.selected = null
+    this.selectedChat = {}
   }
 
   scrollToEnd () {
