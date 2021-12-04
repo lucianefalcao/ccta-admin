@@ -16,7 +16,7 @@ export default class EditaisModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAll (): Promise<Edital[]> {
-    const editais = await this.store.$fire.firestore.collection('editais').get()
+    const editais = await this.store.$fire.firestore.collection('editais').orderBy('lastModified', 'desc').get()
     const editaisPosts: Edital[] = []
     for (const editalData of editais.docs) {
       const news = await EditalTransformer.transformInfraToModel(editalData.data(), editalData.id)

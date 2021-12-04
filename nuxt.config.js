@@ -74,22 +74,14 @@ export default {
         initialize: {
           onAuthStateChangedAction: 'users/onAuthStateChanged',
           subscribeManually: false
-        },
-        emulatorPort: process.env.NODE_ENV === 'development' ? 9099 : undefined
+        }
       },
       firestore: {
-        enablePersistence: false,
-        emulatorPort: 8080
+        enablePersistence: false
       },
-      storage: {
-        emulatorPort: 9199
-      },
-      functions: {
-        emulatorPort: 1234
-      },
-      database: {
-        emulatorPort: 9000
-      }
+      storage: true,
+      functions: true,
+      database: true
     }
   },
 

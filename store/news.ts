@@ -16,7 +16,7 @@ export default class NewsModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAllNews (): Promise<News[]> {
-    const news = await this.store.$fire.firestore.collection('news').get()
+    const news = await this.store.$fire.firestore.collection('news').orderBy('lastModified', 'desc').get()
     const newsPosts: News[] = []
     for (const newsData of news.docs) {
       const news = await NewsTransformer.transformInfraToModel(newsData.data(), newsData.id)

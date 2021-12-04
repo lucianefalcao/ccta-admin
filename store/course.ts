@@ -16,7 +16,7 @@ export default class CenterModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAll (): Promise<Course[]> {
-    const courses = await this.store.$fire.firestore.collection('courses').get()
+    const courses = await this.store.$fire.firestore.collection('courses').orderBy('name').get()
     const coursesPosts: Course[] = []
     for (const courseData of courses.docs) {
       const course = await CourseTransformer.transformInfraToModel(courseData.data(), courseData.id)
