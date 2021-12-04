@@ -122,11 +122,6 @@ export default class PermissionDetails extends Vue {
       code: 'gerenciar-info-centro',
       label: 'Gerenciar informações do centro',
       description: 'O usuário com está permissão poderá cadastrar, editar e excluir informações do centro.'
-    },
-    {
-      code: 'gerenciar-configuracoes',
-      label: 'Gerenciar configurações',
-      description: 'O usuário com está permissão poderá alterar a logo no site.'
     }
   ]
 

@@ -55,13 +55,6 @@ const menuPermissionMap: Menu[] = [
     to: '/users',
     type: 'secondary',
     permission: 'gerenciar-usuarios'
-  },
-  {
-    icon: 'mdi-cog-outline',
-    title: 'Configurações do site',
-    to: '/configuracoes',
-    type: 'secondary',
-    permission: 'gerenciar-configuracoes'
   }
 ]
 
