@@ -43,7 +43,6 @@ export const createUser = functions.https.onCall(async (data, context) => {
   }
 
   for (const userData of usersData.docs) {
-    console.log(userData.id);
     await admin.firestore().collection("users").doc(userData.id).update({
       email: userData.data().email,
       name: data.name,

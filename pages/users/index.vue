@@ -130,7 +130,6 @@ export default class Index extends Vue {
     try {
       this.fetchingData = true
       this.users = await userStore.getAll()
-      console.log(this.users)
     } catch (error) {
       this.message = 'Ocorreu um erro ao buscar as notícias. Por favor, tente novamento mais tarde.'
     } finally {
