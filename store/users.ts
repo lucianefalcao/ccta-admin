@@ -2,7 +2,7 @@ import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import UserTransformer from '@/transformers/user-transformer'
 import User from '@/models/domain/User'
 import Permission from '~/models/domain/Permission'
-import { permissionStore } from '~/utils/store-accessor'
+import { permissionStore, chatStore } from '~/utils/store-accessor'
 
 @Module({ name: 'users', stateFactory: true, namespaced: true })
 export default class UsersModule extends VuexModule {
@@ -148,6 +148,8 @@ export default class UsersModule extends VuexModule {
           })
         }
       })
+
+      await chatStore.fetchChats()
     } else {
       this.context.commit('setAuthUser', null)
       this.context.commit('setUserPermissions', [])

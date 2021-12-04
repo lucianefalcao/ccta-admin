@@ -111,7 +111,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import ChatWindow from 'vue-advanced-chat'
 import { isEmpty } from 'lodash'
-import { userStore } from '@/store'
+import { userStore, chatStore } from '@/store'
 
 @Component({
   components: {
@@ -127,8 +127,6 @@ export default class Chat extends Vue {
   selectedChat: any = {}
 
   message: String = ''
-
-  chats: any = []
 
   get users () {
     const users = []
@@ -150,6 +148,10 @@ export default class Chat extends Vue {
 
   get atendente () {
     return !isEmpty(this.selectedChat.atendente) ? this.selectedChat.atendente : false
+  }
+
+  get chats () {
+    return chatStore.chats
   }
 
   getChat (userId: String) {
@@ -206,20 +208,6 @@ export default class Chat extends Vue {
     this.$nextTick(() => {
       const container = this.$el.querySelector('.chat-container') as HTMLElement
       container.scrollTop = container.scrollHeight
-    })
-  }
-
-  async mounted () {
-    const chatsRef = this.$fire.database.ref('chats')
-
-    await chatsRef.on('value', (snapshot: any) => {
-      if (snapshot.val()) {
-        this.chats = Object.keys(snapshot.val()).map((s) => {
-          const chats = snapshot.val()[s]
-          chats.id = s
-          return chats
-        })
-      }
     })
   }
 
