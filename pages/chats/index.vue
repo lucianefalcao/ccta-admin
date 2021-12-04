@@ -41,6 +41,21 @@
             >
               {{ message.message }}
             </v-chip>
+
+            <v-row no-gutters justify="center">
+              <span v-if="atendente && atendente.id !== currentUser.uid">{{ atendente.nome }} está atendendo </span>
+              <v-btn
+                v-else-if="!atendente"
+                small
+                depressed
+                outlined
+                rounded
+                color="secondary"
+                @click="entrarNoAtendimento"
+              >
+                Entrar no atendimento
+              </v-btn>
+            </v-row>
           </div>
         </v-card-text>
       </v-card>
@@ -49,6 +64,7 @@
           <v-col align="center">
             <v-text-field
               v-model="message"
+              :disabled="atendente.id !== currentUser.uid"
               outlined
               dense
               label="Mensagem"
@@ -77,6 +93,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import ChatWindow from 'vue-advanced-chat'
+import { isEmpty } from 'lodash'
 import { userStore } from '@/store'
 
 @Component({
@@ -90,7 +107,11 @@ export default class Chat extends Vue {
     nome: ''
   }
 
-  selectedChat = ''
+  selectedChat = {
+    id: '',
+    visitante: {},
+    atendente: {}
+  }
 
   message: String = ''
 
@@ -99,20 +120,16 @@ export default class Chat extends Vue {
   chats = [
     {
       id: 'one',
-      members: [
-        {
-          id: 'lucianefalcao',
-          nome: 'Luciane Falcão',
-          email: 'luciane@mail.com',
-          tipo: 'visitante'
-        },
-        {
-          id: 'KJkyIGH3DxqSLa1pm6wbSE3wPqt3',
-          nome: 'Test',
-          email: 'test@mail.com',
-          tipo: 'admin'
-        }
-      ],
+      visitante: {
+        id: 'lucianefalcao',
+        nome: 'Luciane Falcão',
+        email: 'luciane@mail.com'
+      },
+      atendente: {
+        id: 'sJG736FxJevQoQFdU6tDWC7chlJj',
+        nome: 'Test',
+        email: 'test@mail.com'
+      },
       messages: [
         {
           id: 'm1',
@@ -124,14 +141,11 @@ export default class Chat extends Vue {
     },
     {
       id: 'two',
-      members: [
-        {
-          id: 'lod',
-          nome: 'Lod',
-          email: 'lod@mail.com',
-          tipo: 'visitante'
-        }
-      ],
+      visitante: {
+        id: 'lod',
+        nome: 'Lod',
+        email: 'lod@mail.com'
+      },
       messages: [
         {
           id: 'm11',
@@ -146,8 +160,7 @@ export default class Chat extends Vue {
   get users () {
     const users = []
     for (const chat of this.chats) {
-      const chatMembers = chat.members.find(m => m.tipo === 'visitante')
-      users.push(chatMembers)
+      users.push(chat.visitante)
     }
 
     return users
@@ -159,7 +172,11 @@ export default class Chat extends Vue {
 
   getChat (userId: String) {
     const chat = this.chats.find((chat) => {
-      return chat.members.find(m => m.id === userId)
+      if (chat.visitante.id === userId) {
+        return chat.visitante
+      }
+
+      return null
     })
 
     return chat
@@ -172,13 +189,17 @@ export default class Chat extends Vue {
   selectChat (user: any) {
     this.selectedUser = user
     const chat = this.getChat(user.id)
-    this.selectedChat = chat?.id!
+    this.selectedChat = chat
     const messages = this.loadMessages(chat)
     this.currentMessages = messages!
   }
 
+  get atendente () {
+    return !isEmpty(this.selectedChat.atendente) ? this.selectedChat.atendente : false
+  }
+
   sendMessage () {
-    const chat = this.chats.find(c => c.id === this.selectedChat)
+    const chat = this.chats.find(c => c.id === this.selectedChat?.id!)
     chat?.messages.push({
       id: 'm11',
       message: this.message as string,
@@ -187,6 +208,17 @@ export default class Chat extends Vue {
     })
 
     this.message = ''
+  }
+
+  entrarNoAtendimento () {
+    this.$set(
+      this.selectedChat,
+      'atendente',
+      {
+        id: this.currentUser.uid,
+        nome: this.currentUser.name,
+        email: this.currentUser.email
+      })
   }
 }
 </script>
