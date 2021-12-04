@@ -1,5 +1,8 @@
 <template>
-  <v-row no-gutters>
+  <v-row v-if="users.length === 0" no-gutters justify="center">
+    Nenhum atendimento
+  </v-row>
+  <v-row v-else no-gutters>
     <v-col sm="3">
       <v-card flat class="scrollable">
         <v-card-text>
