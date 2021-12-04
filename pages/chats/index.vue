@@ -32,7 +32,7 @@
         <v-app-bar dark flat dense color="primary">
           <v-card-title>{{ selectedUser.nome }}</v-card-title>
           <v-spacer />
-          <v-btn depressed @click="encerrarChat">
+          <v-btn depressed small color="secondary" @click="encerrarChat">
             Encerrar chat
           </v-btn>
         </v-app-bar>
