@@ -22,11 +22,6 @@
         {{ center.about }}
       </v-card-text>
 
-      <v-card-title>Localização</v-card-title>
-      <v-card-text>
-        {{ center.location }}
-      </v-card-text>
-
       <v-card-title>Cursos</v-card-title>
       <v-card-text>
         <v-data-table
@@ -123,8 +118,7 @@ export default class Index extends Vue {
   courses: Course[] = []
   center: Center = {
     uid: undefined,
-    about: '',
-    location: ''
+    about: ''
   }
 
   message: String = 'Nenhum curso cadastrado'

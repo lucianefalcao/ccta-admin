@@ -7,16 +7,6 @@
       <h3>{{ pageTitle }}</h3>
     </v-card-title>
     <v-card-text>
-      <v-text-field
-        v-model="location"
-        label="Localização"
-        :rules="[rules.location.required]"
-        maxlength="200"
-        counter
-        required
-        outlined
-        class="mb-5"
-      />
       <v-textarea
         v-model="about"
         label="Sobre o centro"
@@ -60,13 +50,9 @@ export default class CenterInfo extends Vue {
   @Prop({ type: Center!, default: null })
   center!: Center
 
-  location: String = ''
   about: String = ''
 
   rules = {
-    location: {
-      required: (value: String) => !!value || 'Por favor, adicione um endereço.'
-    },
     about: {
       required: (value: String) => !!value || 'Por favor, adicione uma breve descrição.',
       length: (value: String) => value.length < 400 || 'Máximo 400 caracteres'
@@ -74,7 +60,7 @@ export default class CenterInfo extends Vue {
   }
 
   get canSave (): Boolean {
-    return (this.location.length > 0) && (this.about.length > 0)
+    return (this.about.length > 0)
   }
 
   publish (): void {
@@ -85,7 +71,6 @@ export default class CenterInfo extends Vue {
   createCenterInfo (): Center {
     return {
       uid: this.center?.uid ?? undefined,
-      location: this.location,
       lastModified: Date.now(),
       user: userStore.authUser,
       about: this.about
@@ -94,7 +79,6 @@ export default class CenterInfo extends Vue {
 
   mounted () {
     if (this.center) {
-      this.location = this.center.location!
       this.about = this.center.about!
     }
   }

@@ -43,8 +43,7 @@ export default class Edit extends Vue {
 
   center: Center = {
     uid: undefined,
-    about: undefined,
-    location: undefined
+    about: undefined
   }
 
   setSnackbar (snackbar: Boolean): void {

@@ -9,8 +9,7 @@ export default class CenterTransformer {
       uid: centerUid,
       about: center.about,
       lastModified: center.lastModified,
-      user,
-      location: center.location
+      user
     }
   }
 
@@ -18,8 +17,7 @@ export default class CenterTransformer {
     return {
       about: center.about!,
       lastModified: center.lastModified!,
-      userUid: center.user!.uid!,
-      location: center.location!
+      userUid: center.user!.uid!
     }
   }
 }

@@ -18,7 +18,7 @@ export default class CenterModule extends VuexModule {
     const centerFirestore = await this.store.$fire.firestore.collection('center').get()
     const centerData: any = centerFirestore.docs[0]
 
-    return centerData ? await CenterTransformer.transformInfraToModel(centerData.data(), centerData.id) : { about: '', location: '' }
+    return centerData ? await CenterTransformer.transformInfraToModel(centerData.data(), centerData.id) : { about: '' }
   }
 
   @Action({ rawError: true })
