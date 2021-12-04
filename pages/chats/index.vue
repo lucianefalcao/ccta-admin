@@ -144,6 +144,14 @@ export default class Chat extends Vue {
     return userStore.authUser
   }
 
+  get isChatSelected () {
+    return !isEmpty(this.selectedChat)
+  }
+
+  get atendente () {
+    return !isEmpty(this.selectedChat.atendente) ? this.selectedChat.atendente : false
+  }
+
   getChat (userId: String) {
     const chat = this.chats.find((chat: any) => {
       if (chat.visitante.id === userId) {
@@ -156,10 +164,6 @@ export default class Chat extends Vue {
     return chat
   }
 
-  loadMessages (chat: any) {
-    return chat.messages
-  }
-
   selectChat (user: any) {
     this.selectedUser = user
     const chat = this.getChat(user.id)
@@ -167,18 +171,9 @@ export default class Chat extends Vue {
     this.scrollToEnd()
   }
 
-  get isChatSelected () {
-    return !isEmpty(this.selectedChat)
-  }
-
-  get atendente () {
-    return !isEmpty(this.selectedChat.atendente) ? this.selectedChat.atendente : false
-  }
-
   async sendMessage () {
     const chatRef = this.$fire.database.ref(`chats/${this.selectedChat.id}`)
-    await chatRef.set({
-      ...this.selectedChat,
+    await chatRef.update({
       messages: [
         ...this.selectedChat.messages,
         {
