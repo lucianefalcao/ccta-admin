@@ -50,22 +50,21 @@
               {{ message.message }}
             </v-sheet>
             <small>{{ getTime(message.timestamp) }}</small>
-
-            <v-row v-if="atendente && atendente.id !== currentUser.uid" no-gutters justify="center">
-              <span>{{ atendente.nome }} está atendendo </span>
-            </v-row>
-            <v-row v-else-if="!atendente" no-gutters justify="center">
-              <v-btn
-                small
-                depressed
-                outlined
-                rounded
-                color="secondary"
-                @click="entrarNoAtendimento"
-              >
-                Entrar no atendimento
-              </v-btn>
-            </v-row>
+          </v-row>
+          <v-row v-if="atendente && atendente.id !== currentUser.uid" no-gutters justify="center">
+            <span>{{ atendente.nome }} está atendendo </span>
+          </v-row>
+          <v-row v-else-if="!atendente" no-gutters justify="center">
+            <v-btn
+              small
+              depressed
+              outlined
+              rounded
+              color="secondary"
+              @click="entrarNoAtendimento"
+            >
+              Entrar no atendimento
+            </v-btn>
           </v-row>
         </v-card-text>
       </v-card>
@@ -198,15 +197,14 @@ export default class Chat extends Vue {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
 
-  entrarNoAtendimento () {
-    this.$set(
-      this.selectedChat,
-      'atendente',
-      {
+  async entrarNoAtendimento () {
+    const chatRef = this.$fire.database.ref(`chats/${this.selectedChat.id}`)
+    await chatRef.update({
+      atendente: {
         id: this.currentUser.uid,
-        nome: this.currentUser.name,
-        email: this.currentUser.email
-      })
+        nome: this.currentUser.name
+      }
+    })
   }
 
   scrollToEnd () {
@@ -232,11 +230,7 @@ export default class Chat extends Vue {
   updateSelectedChat (newValue: []) {
     const chat = newValue.find((chat: any) => chat.id === this.selectedChat.id) as any
     if (!isEmpty(this.selectedChat) && chat) {
-      this.$set(
-        this.selectedChat,
-        'messages',
-        chat.messages
-      )
+      this.selectedChat = chat
     }
   }
 }
