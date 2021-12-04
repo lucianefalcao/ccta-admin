@@ -39,7 +39,7 @@
             :class="{ 'd-flex flex-row-reverse': message.memberId === currentUser.uid ? true : false }"
           >
             <v-chip
-              color="primary"
+              :color="message.memberId === currentUser.uid ? 'primary' : 'secondary'"
               class="pa-5 mb-2"
             >
               {{ message.message }}
