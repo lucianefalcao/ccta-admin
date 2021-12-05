@@ -17,14 +17,16 @@ export default class ChatsModule extends VuexModule {
 
     await chatsRef.on('value', (snapshot: any) => {
       if (snapshot.val()) {
-        const chats = Object.keys(snapshot.val()).map((s) => {
-          const chats = snapshot.val()[s]
-          chats.id = s
-          return chats
+        const chats: any = Object.keys(snapshot.val()).map((s) => {
+          const chat: any = snapshot.val()[s]
+          chat.id = s
+          return chat
         })
 
-        const changes = chats.filter((data) => {
-          if (data.atendente.uid === userStore.authUser.uid) {
+        console.log(chats)
+
+        const changes = chats.filter((data: any) => {
+          if (data.atendente && (data.atendente.uid === userStore.authUser.uid)) {
             return !this.chats.includes(data)
           }
 

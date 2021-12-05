@@ -36,7 +36,7 @@
             Encerrar chat
           </v-btn>
         </v-app-bar>
-        <v-card-text class="chat-container light">
+        <v-card-text ref="chat" class="chat-container light">
           <v-row
             v-for="message in selectedChat.messages"
             :key="message.messageId"
@@ -136,9 +136,10 @@ export default class Chat extends Vue {
     const users = []
     for (const chat of this.chats) {
       if (chat.messages) {
-        users.push(chat.visitante)
+        users.push(...Object.values(chat.visitante))
       }
     }
+
     return users
   }
 
@@ -160,8 +161,8 @@ export default class Chat extends Vue {
 
   getChat (userId: String) {
     const chat = this.chats.find((chat: any) => {
-      if (chat.visitante.id === userId) {
-        return chat.visitante
+      if (chat.visitante[userId]) {
+        return chat
       }
 
       return null
@@ -178,16 +179,11 @@ export default class Chat extends Vue {
   }
 
   async sendMessage () {
-    const chatRef = this.$fire.database.ref(`chats/${this.selectedChat.id}`)
-    await chatRef.update({
-      messages: [
-        ...this.selectedChat.messages,
-        {
-          message: this.message as string,
-          memberId: this.currentUser.uid! as string,
-          timestamp: new Date().getTime()
-        }
-      ]
+    const chatRef = this.$fire.database.ref(`chats/${this.selectedChat.id}/messages`)
+    await chatRef.push({
+      message: this.message as string,
+      memberId: this.currentUser.uid! as string,
+      timestamp: new Date().getTime()
     })
 
     this.message = ''
@@ -213,6 +209,7 @@ export default class Chat extends Vue {
     await chatRef.remove()
     this.selected = null
     this.selectedChat = {}
+    console.log(this.users)
   }
 
   scrollToEnd () {
