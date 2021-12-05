@@ -23,8 +23,6 @@ export default class ChatsModule extends VuexModule {
           return chat
         })
 
-        console.log(chats)
-
         const changes = chats.filter((data: any) => {
           if (data.atendente && (data.atendente.uid === userStore.authUser.uid)) {
             return !this.chats.includes(data)
@@ -38,6 +36,8 @@ export default class ChatsModule extends VuexModule {
         if ((window.location.pathname !== '/chats' || document.visibilityState !== 'visible') && changes.length > 0) {
           requestAndShowPermission()
         }
+      } else {
+        this.context.commit('setChats', [])
       }
     })
   }

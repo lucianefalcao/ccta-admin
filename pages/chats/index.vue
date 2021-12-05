@@ -209,7 +209,6 @@ export default class Chat extends Vue {
     await chatRef.remove()
     this.selected = null
     this.selectedChat = {}
-    console.log(this.users)
   }
 
   scrollToEnd () {
