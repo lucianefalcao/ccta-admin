@@ -21,7 +21,7 @@
               label="Email"
             />
 
-            <v-text-field
+            <!-- <v-text-field
               v-model="password"
               :rules="rules.password"
               :type="isPasswordVisible ? 'text' : 'password'"
@@ -30,7 +30,7 @@
               outlined
               label="Nova senha"
               @click:append="isPasswordVisible = !isPasswordVisible"
-            />
+            /> -->
           </v-col>
 
           <v-col cols="12" sm="6">
@@ -39,11 +39,11 @@
         </v-row>
       </v-card-text>
 
-      <v-card-actions>
+      <!-- <v-card-actions>
         <v-btn depressed color="primary" :disabled="!canUpdate" @click="update">
           Salvar
         </v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
     <snackbar
       v-if="snackbar"

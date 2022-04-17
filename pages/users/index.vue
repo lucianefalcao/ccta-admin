@@ -3,7 +3,7 @@
     <v-card class="pa-5">
       <v-card-title>Usuários</v-card-title>
 
-      <v-card-actions>
+      <!-- <v-card-actions>
         <v-spacer />
         <v-btn color="primary" @click="registerUser">
           <v-icon left>
@@ -11,7 +11,7 @@
           </v-icon>
           Cadastrar usuário
         </v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
 
       <v-card-text>
         <v-data-table
