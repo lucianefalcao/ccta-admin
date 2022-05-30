@@ -1,5 +1,5 @@
 export default interface CenterFirebase {
-  lastModified: number,
-  userUid: String,
-  about: String
+  ultimaModificacao: number,
+  usuario: String,
+  sobre: String
 }

@@ -4,30 +4,30 @@ import { userStore } from '@/store'
 
 export default class CourseTransformer {
   static async transformInfraToModel (course: CourseFirebase, courseUid: String): Promise<Course> {
-    const user = await userStore.getUserByUid(course.userUid)
+    const user = await userStore.getUserByUid(course.usuario)
     return {
       uid: courseUid,
-      name: course.name,
-      type: course.type,
-      lastModified: course.lastModified,
+      name: course.nome,
+      type: course.tipo,
+      lastModified: course.ultimaModificacao,
       user,
-      description: course.description,
-      nrPeriods: course.nrPeriods,
+      description: course.descricao,
+      nrPeriods: course.nrPeriodos,
       turno: course.turno,
-      subType: course.subType
+      subType: course.subtipo
     }
   }
 
   static transformModelToInfra (course: Course): CourseFirebase {
     return {
-      name: course.name!,
-      lastModified: course.lastModified!,
-      userUid: course.user!.uid!,
-      type: course.type!,
-      description: course.description!,
-      nrPeriods: course.nrPeriods!,
+      nome: course.name!,
+      ultimaModificacao: course.lastModified!,
+      usuario: course.user!.uid!,
+      tipo: course.type!,
+      descricao: course.description!,
+      nrPeriodos: course.nrPeriods!,
       turno: course.turno!,
-      subType: course.subType!
+      subtipo: course.subType!
     }
   }
 }

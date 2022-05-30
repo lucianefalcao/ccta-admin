@@ -47,7 +47,7 @@ export default class CenterInfo extends Vue {
   @Prop({ type: String, required: true })
   pageTitle!: String
 
-  @Prop({ type: Center!, default: null })
+  @Prop({ type: Object! as () => Center, default: null })
   center!: Center
 
   about: String = ''

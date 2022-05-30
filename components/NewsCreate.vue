@@ -75,7 +75,7 @@ export default class NewsCreate extends Vue {
 
   coverName: String = ''
 
-  @Prop({ type: News!, default: null })
+  @Prop({ type: Object! as () => News, default: null })
   news!: News
 
   title: String = ''

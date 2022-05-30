@@ -120,7 +120,7 @@ export default class CourseFields extends Vue {
   @Prop({ type: String, required: true })
   pageTitle!: String
 
-  @Prop({ type: Course!, default: null })
+  @Prop({ type: Object! as () => Course, default: null })
   courseProps!: Course
 
   course: Course = {

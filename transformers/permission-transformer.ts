@@ -4,18 +4,18 @@ import { userStore } from '@/store'
 
 export default class PermissionTransformer {
   static async transformInfraToModel (permission: PermissionFirebase, userUid: String): Promise<Permission> {
-    const user = await userStore.getUserByUid(permission.userUid!)
+    const user = await userStore.getUserByUid(permission.usuario!)
     return {
       uid: userUid,
-      code: permission.code,
+      code: permission.codigo,
       user
     }
   }
 
   static transformModelToInfra (permission: Permission): PermissionFirebase {
     return {
-      code: permission.code!,
-      userUid: permission.user!.uid!
+      codigo: permission.code!,
+      usuario: permission.user!.uid!
     }
   }
 }

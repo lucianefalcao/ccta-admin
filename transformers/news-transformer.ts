@@ -4,26 +4,29 @@ import { userStore } from '@/store'
 
 export default class NewsTransformer {
   static async transformInfraToModel (news: NewsFirebase, newsUid: String): Promise<News> {
-    const user = await userStore.getUserByUid(news.userUid)
+    const user = await userStore.getUserByUid(news.criadoPor)
     return {
       uid: newsUid,
-      title: news.title,
-      newsText: news.newsText,
-      state: news.state,
-      lastModified: news.lastModified,
+      title: news.titulo,
+      newsText: news.texto,
+      state: news.estado,
+      lastModified: news.publicadoEm,
       user,
-      coverPath: news.coverPath
+      coverPath: news.capa
     }
   }
 
   static transformModelToInfra (news: News): NewsFirebase {
     return {
-      title: news.title!,
-      newsText: news.newsText!,
-      state: news.state!,
-      lastModified: news.lastModified!,
-      userUid: news.user!.uid!,
-      coverPath: news.coverPath!
+      titulo: news.title!,
+      texto: news.newsText!,
+      estado: news.state!,
+      publicadoEm: news.lastModified!,
+      criadoPor: news.user!.uid!,
+      criadoEm: news.lastModified!,
+      editadoPor: undefined,
+      editadoEm: undefined,
+      capa: news.coverPath!
     }
   }
 }

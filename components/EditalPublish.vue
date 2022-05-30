@@ -59,7 +59,7 @@ export default class EditalPublish extends Vue {
 
   documentName: String = ''
 
-  @Prop({ type: Edital!, default: null })
+  @Prop({ type: Object! as () => Edital, default: null })
   edital!: Edital
 
   title: String = ''

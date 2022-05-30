@@ -1,10 +1,10 @@
 export default interface CourseFirebase {
-  lastModified: number,
-  userUid: String,
-  name: String,
-  type: String,
-  subType: String,
-  nrPeriods: number,
+  ultimaModificacao: number,
+  nome: String,
+  tipo: String,
+  subtipo: String,
+  nrPeriodos: number,
   turno: String,
-  description: String
+  descricao: String,
+  usuario: String
 }

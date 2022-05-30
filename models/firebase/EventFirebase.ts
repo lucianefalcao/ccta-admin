@@ -1,7 +1,7 @@
 export default interface EventFirebase {
-  title: String,
-  date: number,
-  lastModified: number,
-  userUid: String,
-  description: String
+  titulo: String,
+  data: number,
+  criadoEm: number,
+  criadoPor: String,
+  descricao: String
 }

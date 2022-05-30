@@ -4,22 +4,22 @@ import { userStore } from '@/store'
 
 export default class EditalTransformer {
   static async transformInfraToModel (edital: EditalFirebase, editalUid: String): Promise<Edital> {
-    const user = await userStore.getUserByUid(edital.userUid)
+    const user = await userStore.getUserByUid(edital.criadoPor)
     return {
       uid: editalUid,
-      title: edital.title,
-      lastModified: edital.lastModified,
+      title: edital.titulo,
+      lastModified: edital.criadoEm,
       user,
-      documentPath: edital.documentPath
+      documentPath: edital.documento
     }
   }
 
   static transformModelToInfra (edital: Edital): EditalFirebase {
     return {
-      title: edital.title!,
-      lastModified: edital.lastModified!,
-      userUid: edital.user!.uid!,
-      documentPath: edital.documentPath!
+      titulo: edital.title!,
+      criadoEm: edital.lastModified!,
+      criadoPor: edital.user!.uid!,
+      documento: edital.documentPath!
     }
   }
 }

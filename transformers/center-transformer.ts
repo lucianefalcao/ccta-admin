@@ -4,20 +4,20 @@ import { userStore } from '@/store'
 
 export default class CenterTransformer {
   static async transformInfraToModel (center: CenterFirebase, centerUid: String): Promise<Center> {
-    const user = await userStore.getUserByUid(center.userUid)
+    const user = await userStore.getUserByUid(center.usuario)
     return {
       uid: centerUid,
-      about: center.about,
-      lastModified: center.lastModified,
+      about: center.sobre,
+      lastModified: center.ultimaModificacao,
       user
     }
   }
 
   static transformModelToInfra (center: Center): CenterFirebase {
     return {
-      about: center.about!,
-      lastModified: center.lastModified!,
-      userUid: center.user!.uid!
+      sobre: center.about!,
+      ultimaModificacao: center.lastModified!,
+      usuario: center.user!.uid!
     }
   }
 }

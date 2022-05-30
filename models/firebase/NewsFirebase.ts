@@ -1,8 +1,11 @@
 export default interface NewsFirebase {
-  title: String,
-  newsText: String,
-  state: String,
-  lastModified: number,
-  userUid: String,
-  coverPath: String
+  titulo: String,
+  texto: String,
+  estado: String,
+  capa: String,
+  criadoEm: number,
+  criadoPor: String,
+  editadoEm?: number,
+  editadoPor?: String,
+  publicadoEm?: number,
 }

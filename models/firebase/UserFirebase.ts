@@ -1,6 +1,6 @@
 export default interface UserFirebase {
   uid?: String,
   email?: String,
-  name?: String,
-  state: String
+  nome?: String,
+  estado: String
 }
