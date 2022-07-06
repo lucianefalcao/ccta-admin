@@ -8,29 +8,14 @@
         <v-row>
           <v-col cols="12" sm="6" align-self="center">
             <v-text-field
-              v-model="name"
+              v-model="nome"
               dense
               outlined
               label="Nome"
             />
 
-            <v-text-field
-              v-model="email"
-              dense
-              outlined
-              label="Email"
-            />
-
-            <!-- <v-text-field
-              v-model="password"
-              :rules="rules.password"
-              :type="isPasswordVisible ? 'text' : 'password'"
-              :append-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-              dense
-              outlined
-              label="Nova senha"
-              @click:append="isPasswordVisible = !isPasswordVisible"
-            /> -->
+            <campo-email dense :valor-inicial="email" @email="getEmail" @emailValido="getEmailValido" />
+            <campo-senha dense label="Nova senha" @senha="getSenha" @senhaValida="getSenhaValida" />
           </v-col>
 
           <v-col cols="12" sm="6">
@@ -39,18 +24,18 @@
         </v-row>
       </v-card-text>
 
-      <!-- <v-card-actions>
-        <v-btn depressed color="primary" :disabled="!canUpdate" @click="update">
+      <v-card-actions>
+        <v-btn depressed color="primary" :disabled="!podeAtualizar" @click="atualizar">
           Salvar
         </v-btn>
-      </v-card-actions> -->
+      </v-card-actions>
     </v-card>
     <snackbar
       v-if="snackbar"
-      :color="snackbarColor"
+      :color="snackbarCor"
       :snackbar="snackbar"
-      :message="errorMessage"
-      @closeSnackbar="setSnackbar"
+      :mensagem="mensagemErro"
+      @fecharSnackbar="setSnackbar"
     />
   </v-col>
 </template>
@@ -58,53 +43,77 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { userStore } from '@/store'
-import Snackbar from '@/components/Snackbar.vue'
+import { usuarioStore } from '~/store'
+import Snackbar from '~/components/Snackbar.vue'
+import CampoSenha from '~/components/auth/CampoSenha.vue'
+import CampoEmail from '~/components/auth/CampoEmail.vue'
 
 @Component({
   components: {
-    Snackbar
+    Snackbar,
+    CampoSenha,
+    CampoEmail
   }
 })
 export default class Perfil extends Vue {
-  name: String = userStore.authUser.name!
-  email: String = userStore.authUser.email!
-  password: String = ''
+  nome: string = usuarioStore.usuario.getNome()
+  email: string = usuarioStore.usuario.getEmail()
+  senha = ''
+  usuario = usuarioStore.usuario
 
-  snackbar: Boolean = false
-  isPasswordVisible: Boolean = false
-  snackbarColor: String = ''
-  errorMessage: String = ''
+  snackbar = false
+  senhaEstaVisivel = false
+  snackbarCor = ''
+  mensagemErro = ''
+  emailValido = false
+  senhaValida = false
 
-  rules = {
-    password: [
-      (value: String) => value.length >= 6 || 'A senha deve conter 6 caracteres.']
+  getEmail (email: string): void {
+    this.email = email
   }
 
-  async update () {
+  getSenha (senha: string): void {
+    this.senha = senha
+  }
+
+  getEmailValido (emailValido: boolean): void {
+    this.emailValido = emailValido
+  }
+
+  getSenhaValida (senhaValida: boolean): void {
+    this.senhaValida = senhaValida
+  }
+
+  async atualizar (): Promise<void> {
     try {
-      await userStore.update({
-        name: this.name,
-        email: this.email,
-        password: this.password
+      if (this.nome !== this.usuario.getNome()) {
+        this.usuario.mudarNome(this.nome)
+      }
+
+      if (this.email !== this.usuario.getEmail()) {
+        this.usuario.mudarEmail(this.email)
+      }
+
+      await usuarioStore.atualizar({
+        usuario: this.usuario,
+        senha: this.senha
       })
 
-      this.errorMessage = 'Suas informações foram atualizadas.'
-      this.snackbarColor = 'green'
+      this.mensagemErro = 'Suas informações foram atualizadas.'
+      this.snackbarCor = 'green'
       this.snackbar = true
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao atualizar suas informações, por favor tente novamente.'
-      this.snackbarColor = 'red'
+      this.mensagemErro = 'Ocorreu um erro ao atualizar suas informações, por favor tente novamente.'
+      this.snackbarCor = 'red'
       this.snackbar = true
     }
   }
 
-  get canUpdate (): Boolean {
-    const password = this.rules.password.every((element: Function) => element(this.password) === true)
-    return password
+  get podeAtualizar (): boolean {
+    return this.emailValido && this.senhaValida && this.nome.length > 0
   }
 
-  setSnackbar (snackbar: Boolean): void {
+  setSnackbar (snackbar: boolean): void {
     this.snackbar = snackbar
   }
 }

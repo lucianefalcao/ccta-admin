@@ -1,83 +1,67 @@
-import { Action, Module, VuexModule } from 'vuex-module-decorators'
-import { userStore } from '@/store'
-import Edital from '@/models/domain/Edital'
-import EditalTransformer from '@/transformers/edital-transformer'
+import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import firebase from 'firebase/compat'
+import Edital from '~/src/aplicacao/editais/entidade/edital'
+import EditalRepositorio from '~/src/infra/editais/edital-repositorio'
 
 @Module({ name: 'editais', stateFactory: true, namespaced: true })
 export default class EditaisModule extends VuexModule {
-  @Action({ rawError: true })
-  async save (edital: Edital): Promise<Edital> {
-    const editalFirebase = EditalTransformer.transformModelToInfra(edital)
-    const editalRef = await this.store.$fire.firestore.collection('editais').doc()
-    await editalRef.set(editalFirebase)
-    edital.uid = editalRef.id
-    return edital
+  ultimoDocumento: firebase.firestore.QuerySnapshot
+  editalSelecionado: Edital
+
+  @Mutation
+  setUltimoDocumento (documento: firebase.firestore.QuerySnapshot): void {
+    this.ultimoDocumento = documento
+  }
+
+  @Mutation
+  setEditalSelecionado (edital: Edital): void {
+    this.editalSelecionado = edital
   }
 
   @Action({ rawError: true })
-  async getAll (): Promise<Edital[]> {
-    const editais = await this.store.$fire.firestore.collection('editais').orderBy('lastModified', 'desc').get()
-    const editaisPosts: Edital[] = []
-    for (const editalData of editais.docs) {
-      const news = await EditalTransformer.transformInfraToModel(editalData.data(), editalData.id)
-      editaisPosts.push(news)
-    }
-
-    return editaisPosts
+  async criar ({ edital, documento }: {edital: Edital, documento: File}): Promise<void> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    await repositorio.criarEvento(edital, documento)
   }
 
   @Action({ rawError: true })
-  async getEditalByUid (uid: String): Promise<Edital> {
-    const edital = await this.store.$fire.firestore.collection('editais').doc(uid).get()
-    const user = await userStore.getUserByUid(edital.data().userUid)
-    return {
-      uid: edital.id,
-      title: edital.data().title,
-      lastModified: edital.data().lastModified,
-      user,
-      documentPath: edital.data().documentPath
-    }
+  async getEditalPorId (id: string): Promise<Edital> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    return await repositorio.get(id)
   }
 
   @Action({ rawError: true })
-  async update (edital: Edital): Promise<Edital> {
-    const editalFirebase = EditalTransformer.transformModelToInfra(edital)
-    const editalRef = await this.store.$fire.firestore.collection('editais').doc(edital.uid)
-    await editalRef.update(editalFirebase)
-
-    return edital
+  async getItens ({ paginaAtual, paginaAnterior, itensPorPagina }: { paginaAtual: number, paginaAnterior: number, itensPorPagina: number }): Promise<Edital[]> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    return await repositorio.getItensPaginados(
+      paginaAtual,
+      paginaAnterior,
+      itensPorPagina,
+      this.context.rootState.editais.ultimoDocumento
+    )
   }
 
   @Action({ rawError: true })
-  async addDocument (document: File): Promise<String> {
-    const storageRef = this.store.$fire.storage.ref().child(`/editais/${document.name}`)
-    await storageRef.put(document)
-
-    return await storageRef.getDownloadURL()
+  async atualizar ({ edital, novoDocumento }: {edital: Edital, novoDocumento: File|null}): Promise<void> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    await repositorio.atualizarEvento(edital, novoDocumento)
   }
 
   @Action({ rawError: true })
-  async getDocument (documentPath: String): Promise<String> {
-    const storageRef = this.store.$fire.storage.ref().child(documentPath)
-    return await storageRef.getDownloadURL()
+  async deletar (edital: Edital): Promise<void> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    await repositorio.deletar(edital)
   }
 
   @Action({ rawError: true })
-  async delete (edital: Edital): Promise<Edital[]> {
-    const editalFirebase = EditalTransformer.transformModelToInfra(edital)
-
-    if (edital.documentPath!.length > 0) {
-      await this.deleteDocument(edital.documentPath!)
-    }
-
-    const editalRef = await this.store.$fire.firestore.collection('editais').doc(edital.uid)
-    await editalRef.delete(editalFirebase)
-    return await this.getAll()
+  async getDocumentoLink (documento: string): Promise<string> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    return await repositorio.baixarDocumento(documento)
   }
 
   @Action({ rawError: true })
-  async deleteDocument (documentPath: String): Promise<void> {
-    const storageRef = this.store.$fire.storage.ref().child(documentPath)
-    return await storageRef.delete()
+  async deletarDocumento (documento: string): Promise<void> {
+    const repositorio = new EditalRepositorio(this.store.$fire)
+    await repositorio.deletarDocumento(documento)
   }
 }

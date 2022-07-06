@@ -21,29 +21,41 @@ export const createUser = functions.https.onCall(async (data, context) => {
   }
 
   const usersData = await admin.firestore()
-      .collection("users")
+      .collection("usuarios")
       .where("email", "==", data.email)
-      .where("state", "==", "X")
+      .where("estado", "==", "I")
       .get();
 
   if (usersData.empty) {
     const newUser = await admin.auth().createUser({
+      uid: data.id as string,
       disabled: false,
       email: data.email as string,
       displayName: data.name as string,
     });
 
-    await admin.firestore().collection("users").doc(newUser.uid).set({
+    const usuariosRef = admin.firestore().collection("usuarios")
+        .doc(newUser.uid);
+    const contadoresRef = admin.firestore().collection("contadores")
+        .doc("usuarios");
+    const batch = admin.firestore().batch();
+
+    batch.set(usuariosRef, {
       email: newUser.email,
-      name: newUser.displayName,
-      state: "A",
+      nome: newUser.displayName,
+      estado: "A",
     });
+    batch.update(contadoresRef, {
+      total: admin.firestore.FieldValue.increment(1),
+    });
+
+    await batch.commit();
 
     return {uid: newUser.uid};
   }
 
   for (const userData of usersData.docs) {
-    await admin.firestore().collection("users").doc(userData.id).update({
+    await admin.firestore().collection("usuarios").doc(userData.id).update({
       email: userData.data().email,
       name: data.name,
       state: "A",
@@ -62,7 +74,7 @@ export const createUser = functions.https.onCall(async (data, context) => {
   return {};
 });
 
-export const removeUser = functions.https.onCall(async (data, context) => {
+export const inactivateUser = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
         "unauthenticated",
@@ -70,15 +82,28 @@ export const removeUser = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const users = await admin.auth().getUsers([{email: data.email}]);
+  admin.auth().updateUser(data.id, {
+    disabled: true,
+  });
 
-  for (const user of users.users) {
-    await admin.auth().deleteUser(user.uid);
-  }
+  const usuariosRef = admin.firestore().collection("usuarios")
+      .doc(data.id);
+  const contadoresRef = admin.firestore().collection("contadores")
+      .doc("usuarios");
+  const batch = admin.firestore().batch();
+
+  batch.update(usuariosRef, {
+    estado: "I",
+  });
+  batch.update(contadoresRef, {
+    total: admin.firestore.FieldValue.increment(-1),
+  });
+
+  await batch.commit();
 });
 
 export const updateUser = functions.https.onCall(async (data) => {
-  return await admin.auth().updateUser(data.uid, {
+  return await admin.auth().updateUser(data.id, {
     password: data.password,
   });
 });

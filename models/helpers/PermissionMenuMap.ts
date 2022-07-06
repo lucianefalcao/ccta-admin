@@ -1,60 +1,61 @@
+import { Permissao } from '~/src/aplicacao/usuarios/entidade/usuario'
+
 type Menu = {
-  icon: String,
-  title: String,
-  to: String,
-  type: String,
-  permission: String
+  icone: string,
+  titulo: string,
+  to: string,
+  tipo: string,
+  permissao?: Permissao
 }
 
 const menuPermissionMap: Menu[] = [
   {
-    icon: 'mdi-newspaper-variant-outline',
-    title: 'Notícias',
-    to: '/news',
-    type: 'primary',
-    permission: 'gerenciar-noticias'
+    icone: 'mdi-newspaper-variant-outline',
+    titulo: 'Notícias',
+    to: '/noticias',
+    tipo: 'primario',
+    permissao: Permissao.GERENCIAR_NOTICIAS
   },
   {
-    icon: 'mdi-calendar',
-    title: 'Eventos',
-    to: '/events',
-    type: 'primary',
-    permission: 'gerenciar-eventos'
+    icone: 'mdi-calendar',
+    titulo: 'Eventos',
+    to: '/eventos',
+    tipo: 'primario',
+    permissao: Permissao.GERENCIAR_EVENTOS
   },
   {
-    icon: 'mdi-bullhorn-outline',
-    title: 'Editais',
+    icone: 'mdi-bullhorn-outline',
+    titulo: 'Editais',
     to: '/editais',
-    type: 'primary',
-    permission: 'gerenciar-editais'
+    tipo: 'primario',
+    permissao: Permissao.GERENCIAR_EDITAIS
   },
   {
-    icon: 'mdi-chat-alert-outline',
-    title: 'Atendimento',
-    to: '/chats',
-    type: 'primary',
-    permission: 'gerenciar-chat'
+    icone: 'mdi-chat-alert-outline',
+    titulo: 'Atendimento',
+    to: '/atendimento',
+    tipo: 'primario',
+    permissao: Permissao.GERENCIAR_CHAT
   },
   {
-    icon: 'mdi-office-building-outline',
-    title: 'Informações do centro',
+    icone: 'mdi-office-building-outline',
+    titulo: 'Informações do centro',
     to: '/info-centro',
-    type: 'primary',
-    permission: 'gerenciar-info-centro'
+    tipo: 'primario',
+    permissao: Permissao.GERENCIAR_CENTRO
   },
   {
-    icon: 'mdi-account-outline',
-    title: 'Perfil',
+    icone: 'mdi-account-outline',
+    titulo: 'Perfil',
     to: '/perfil',
-    type: 'secondary',
-    permission: ''
+    tipo: 'secundario'
   },
   {
-    icon: 'mdi-tune-variant',
-    title: 'Gerenciar usuários',
-    to: '/users',
-    type: 'secondary',
-    permission: 'gerenciar-usuarios'
+    icone: 'mdi-tune-variant',
+    titulo: 'Gerenciar usuários',
+    to: '/usuarios',
+    tipo: 'secundario',
+    permissao: Permissao.GERENCIAR_USUARIOS
   }
 ]
 

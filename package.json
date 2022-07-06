@@ -8,28 +8,27 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
-    "lint": "npm run lint:js"
+    "lint": "npm run lint:js",
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test:verbose": "jest --passWithNoTests --runInBand",
+    "test:unit": "npm test -- --watchAll -c jest-unit-config.js"
   },
   "dependencies": {
-    "@mdi/js": "^6.4.95",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/firebase": "^8.0.0",
     "@tinymce/tinymce-vue": "^3.2.8",
-    "@types/lodash": "^4.14.177",
+    "babel-plugin-transform-decorators": "^6.24.1",
     "core-js": "^3.15.1",
     "dotenv": "^10.0.0",
     "firebase": "^9.4.1",
-    "lodash": "^4.17.21",
     "nuxt": "^2.15.7",
-    "vee-validate": "^3.4.14",
-    "vue-advanced-chat": "^1.4.2",
+    "uuid": "^8.3.2",
+    "validator": "^13.7.0",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
     "vuetify": "^2.5.5",
     "vuetify-datetime-picker": "^2.1.1",
-    "vuex": "^3.6.2",
-    "vuex-module-decorators": "^1.0.1",
-    "vuexfire": "^3.2.5"
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
@@ -38,8 +37,15 @@
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/vuetify": "^1.12.1",
-    "eslint": "^7.29.0",
+    "@types/jest": "^28.1.1",
+    "@types/uuid": "^8.3.4",
+    "@types/validator": "^13.7.3",
+    "eslint": "^7.32.0",
     "eslint-plugin-nuxt": "^2.0.0",
-    "eslint-plugin-vue": "^7.12.1"
+    "eslint-plugin-vue": "^7.12.1",
+    "jest": "^28.1.1",
+    "ts-jest": "^28.0.4",
+    "vue-eslint-parser": "^9.0.2",
+    "vuex-module-decorators": "1.2"
   }
 }
