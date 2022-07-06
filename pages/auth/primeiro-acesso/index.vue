@@ -3,19 +3,12 @@
     <v-row justify="space-around">
       <v-col align="center">
         <v-card class="auth-card" width="400">
-          <v-alert v-if="showAlert" text :type="alertType">
-            {{ alertMessage }}
+          <v-alert v-if="exibirAlerta" text :type="tipoAlerta">
+            {{ mensagemAlerta }}
           </v-alert>
 
           <v-card-title class="d-flex align-center justify-center">
-            <v-img
-              src="/logo.svg"
-              max-height="30px"
-              max-width="30px"
-              alt="logo"
-              class="me-3"
-              contain
-            />
+            <logo-site />
             <p class="text-2xl font-weight-medium mb-0">
               Primeiro acesso
             </p>
@@ -23,61 +16,25 @@
 
           <v-card-text>
             <p class="mb-2">
-              {{ instructionMessage }}
+              {{ mensagemInstrucao }}
             </p>
           </v-card-text>
 
           <v-card-text>
-            <validation-observer
-              ref="observer"
-              v-slot="{invalid}"
-            >
-              <v-form @submit.prevent="buttonAction">
-                <validation-provider
-                  v-if="!emailVerified"
-                  v-slot="{ errors }"
-                  name="Email"
-                  rules="required|email"
-                >
-                  <v-text-field
-                    v-model="email"
-                    outlined
-                    label="Email"
-                    required
-                    :error-messages="errors"
-                  />
-                </validation-provider>
-
-                <validation-provider
-                  v-else
-                  v-slot="{ errors }"
-                  name="Password"
-                  rules="required|min:6"
-                >
-                  <v-text-field
-                    v-model="password"
-                    label="Criar senha"
-                    class="mb-3"
-                    outlined
-                    required
-                    :type="isPasswordVisible ? 'text' : 'password'"
-                    :append-icon="isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                    :error-messages="errors"
-                    @click:append="isPasswordVisible = !isPasswordVisible"
-                  />
-                </validation-provider>
-
-                <v-btn
-                  block
-                  color="primary"
-                  class="mt-6"
-                  type="submit"
-                  :disabled="invalid"
-                >
-                  {{ buttonName }}
-                </v-btn>
-              </v-form>
-            </validation-observer>
+            <v-form @submit.prevent="acaoBotao">
+              <campo-email v-if="!emailVerificado" @email="getEmail" @emailValido="getEmailValido" />
+              <campo-senha v-else label="Criar senha" @senha="getSenha" @senhaValida="getSenhaValida" />
+              <v-btn
+                block
+                color="primary"
+                class="mt-4"
+                type="submit"
+                :disabled="carregando"
+                :loading="carregando"
+              >
+                {{ textoBotao }}
+              </v-btn>
+            </v-form>
           </v-card-text>
         </v-card>
       </v-col>
@@ -89,108 +46,130 @@
 
 import { Vue, Component } from 'vue-property-decorator'
 import { FirebaseError } from '@firebase/util'
-import { required, email, min } from 'vee-validate/dist/rules'
-import { extend, ValidationProvider, ValidationObserver } from 'vee-validate'
-import { userStore } from '@/store/index'
-import User from '~/models/domain/User'
-
-extend('required', {
-  ...required,
-  message: 'Este campo não pode ser vazio.'
-})
-
-extend('min', {
-  ...min,
-  message: 'A senha precisa de no mínimo 6 dígitos.'
-})
-
-extend('email', {
-  ...email,
-  message: 'Por favor, adicione um email válido.'
-})
+import { AuthErrorCodes } from '@firebase/auth'
+import { usuarioStore } from '~/store/'
+import CampoEmail from '~/components/auth/CampoEmail.vue'
+import CampoSenha from '~/components/auth/CampoSenha.vue'
+import Usuario from '~/src/aplicacao/usuarios/entidade/usuario'
+import LogoSite from '~/components/LogoSite.vue'
 
 @Component({
   layout: 'empty',
   components: {
-    ValidationProvider,
-    ValidationObserver
+    CampoEmail,
+    CampoSenha,
+    LogoSite
   }
 })
 export default class PrimeiroAcesso extends Vue {
-  email: String = ''
-  password: String = ''
-  errorMessage: String = ''
-  successMessage: String = ''
-  alertType: String = 'error'
-  emailVerified: Boolean = false
-  isPasswordVisible: Boolean = false
-  user: User = {
-    uid: undefined,
-    email: undefined,
-    name: undefined,
-    state: 'A'
+  email = ''
+  senha = ''
+  mensagemErro = ''
+  mensagemSucesso = ''
+  tipoAlerta = 'error'
+  emailVerificado = false
+  emailValido = false
+  senhaValida = false
+  carregando = false
+  usuario: Usuario
+
+  get textoBotao (): string {
+    return this.emailVerificado ? 'Salvar' : 'Verificar email'
   }
 
-  get buttonName () {
-    return this.emailVerified ? 'Salvar' : 'Verificar email'
+  get exibirAlerta (): boolean {
+    return this.mensagemErro.length !== 0 || this.mensagemSucesso.length !== 0
   }
 
-  get showAlert () {
-    return this.errorMessage.length !== 0 || this.successMessage.length !== 0
+  get mensagemAlerta (): string {
+    return this.mensagemErro.length !== 0 ? this.mensagemErro : this.mensagemSucesso
   }
 
-  get alertMessage () {
-    return this.errorMessage.length !== 0 ? this.errorMessage : this.successMessage
+  get mensagemInstrucao (): string {
+    return this.emailVerificado ? 'Por favor, crie uma senha' : 'Por favor, informe seu email'
   }
 
-  get instructionMessage () {
-    return this.emailVerified ? 'Por favor, crie uma senha' : 'Por favor, informe seu email'
+  getEmail (email: string): void {
+    this.email = email
   }
 
-  async buttonAction () {
-    if (this.emailVerified) {
-      await this.createPassword()
+  getSenha (senha: string): void {
+    this.senha = senha
+  }
+
+  getEmailValido (emailValido: boolean): void {
+    this.emailValido = emailValido
+  }
+
+  getSenhaValida (senhaValida: boolean): void {
+    this.senhaValida = senhaValida
+  }
+
+  async acaoBotao (): Promise<void> {
+    if (this.emailVerificado) {
+      await this.criarSenha()
     } else {
-      await this.verifyEmail()
+      await this.verificarEmail()
     }
   }
 
-  async createPassword () {
+  async criarSenha (): Promise<void> {
     try {
-      const u = this.user.uid!
-      await userStore.createPassword({ password: this.password, uid: u })
-      await userStore.signIn({ email: this.email, password: this.password })
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        if (e.code === 'auth/user-not-found') {
-          this.errorMessage = 'Usuário não encontrado. Entre em contato com o administrador do sistema.'
-        } else if (e.code === 'auth/wrong-password') {
-          this.errorMessage = 'Senha incorreta.'
-        }
-        this.errorMessage = 'Não foi possível criar uma nova senha. Por favor, tente novamente.'
-        this.alertType = 'error'
-      } else {
-        this.errorMessage = 'Não foi possível criar uma nova senha. Por favor, tente novamente.'
-        this.alertType = 'error'
-      }
-    }
-  }
-
-  async verifyEmail () {
-    try {
-      const users = await userStore.verifyEmail(this.email)
-
-      if (users.length === 0) {
-        this.errorMessage = 'O seu email não está cadastrado. Por favor, contate o administrador do sistema.'
+      if (this.usuario === null) {
+        this.mensagemErro = 'O usuário não está definido.'
         return
       }
 
-      this.user = users[0]
-      this.emailVerified = true
-      this.successMessage = 'Seu email foi verificado. Por favor, crie uma senha para o acesso.'
-      this.alertType = 'success'
+      if (!this.emailValido) {
+        this.mensagemErro = 'Por favor, informe um e-mail válido.'
+        return
+      }
+
+      if (!this.senhaValida) {
+        this.mensagemErro = 'A senha é obrigatória e deve possuir no mínimo 6 caracteres.'
+        return
+      }
+
+      await usuarioStore.criarSenha({ uid: this.usuario.getId(), senha: this.senha })
+      await usuarioStore.login({ email: this.email, senha: this.senha })
+      this.$router.push('/')
     } catch (e) {
-      this.errorMessage = 'Não foi possível verificar seu email. Por favor, tente novamente.'
+      if (e instanceof FirebaseError) {
+        if (e.code === AuthErrorCodes.USER_DELETED) {
+          this.mensagemErro = 'Usuário não encontrado. Entre em contato com o administrador do sistema.'
+        } else if (e.code === AuthErrorCodes.INVALID_PASSWORD) {
+          this.mensagemErro = 'Senha incorreta.'
+        }
+        this.mensagemErro = 'Não foi possível criar uma nova senha. Por favor, tente novamente.'
+        this.tipoAlerta = 'error'
+      } else {
+        this.mensagemErro = 'Não foi possível criar uma nova senha. Por favor, tente novamente.'
+        this.tipoAlerta = 'error'
+      }
+    }
+  }
+
+  async verificarEmail (): Promise<void> {
+    try {
+      this.mensagemErro = ''
+      if (!this.emailValido) {
+        this.mensagemErro = 'Por favor, informe um e-mail válido.'
+        return
+      }
+
+      this.carregando = true
+      this.usuario = await usuarioStore.verificarEmail(this.email)
+      if (this.usuario === null) {
+        this.mensagemErro = 'O seu email não está cadastrado. Por favor, contate o administrador do sistema.'
+        return
+      }
+      this.emailVerificado = true
+      this.mensagemSucesso = 'Seu email foi verificado. Por favor, crie uma senha para o acesso.'
+      this.tipoAlerta = 'success'
+    } catch (e) {
+      this.mensagemErro = 'Não foi possível verificar seu email. Por favor, tente novamente.'
+    } finally {
+      this.carregando = false
     }
   }
 }

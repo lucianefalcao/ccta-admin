@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
+    "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Node",
     "lib": [
@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "allowJs": true,
     "sourceMap": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
@@ -20,19 +20,21 @@
         "./*"
       ],
       "@/*": [
-        "./*"
+        "./pages"
       ]
     },
     "types": [
       "@nuxt/types",
       "@nuxtjs/axios",
       "@types/node",
+      "@types/jest",
       "@nuxtjs/firebase"
-    ]
+    ],
+    "jsx": "preserve"
   },
   "exclude": [
-    "node_modules",
-    ".nuxt",
-    "dist"
+    "./src/**/*.spec.ts",
+    "./src/**/*.test.ts",
+    "./node_modules"
   ]
 }

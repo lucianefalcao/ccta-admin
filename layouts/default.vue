@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <vertical-nav-menu :is-drawer-open.sync="isDrawerOpen" />
+    <vertical-nav-menu :menu-aberto="menuAberto" />
 
     <v-app-bar
       app
@@ -11,18 +11,18 @@
       <v-row class="boxed-container w-full d-flex align-center mx-6">
         <v-app-bar-nav-icon
           class="d-block d-lg-none me-2"
-          @click="isDrawerOpen = !isDrawerOpen"
+          @click="menuAberto = !menuAberto"
         />
         <v-spacer />
-        <v-avatar size="40" color="primary" class="mr-5">
-          <span class="white--text text-h5">{{ userName[0] }}</span>
+        <v-avatar v-if="nomeUsuario" size="40" color="primary" class="mr-5">
+          <span class="white--text text-h5">{{ nomeUsuario[0] }}</span>
         </v-avatar>
         <v-btn
           color="secondary"
           outlined
           small
           depressed
-          @click="logout"
+          @click="sair"
         >
           Sair
         </v-btn>
@@ -40,8 +40,8 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { userStore } from '@/store'
-import VerticalNavMenu from '@/components/VerticalNavMenu.vue'
+import { usuarioStore } from '~/store'
+import VerticalNavMenu from '~/components/menu/VerticalNavMenu.vue'
 
 @Component({
   components: {
@@ -49,15 +49,15 @@ import VerticalNavMenu from '@/components/VerticalNavMenu.vue'
   }
 })
 export default class Default extends Vue {
-  get userName (): String {
-    return userStore.authUser?.name!
+  get nomeUsuario (): string {
+    return usuarioStore.usuario ? usuarioStore.usuario.getNome() : null
   }
 
-  isDrawerOpen: Boolean = true
+  menuAberto = true
 
-  async logout () {
+  async sair (): Promise<void> {
     await this.$fire.auth.signOut()
-    this.$router.push('/auth/signIn')
+    this.$router.push('/auth/login')
   }
 }
 </script>
@@ -79,4 +79,5 @@ export default class Default extends Vue {
   margin-left: auto;
   margin-right: auto;
 }
+
 </style>

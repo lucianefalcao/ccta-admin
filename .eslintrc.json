@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    "vue",
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:vue/essential",
+    "plugin:@typescript-eslint/recommended",
+    "@nuxtjs/eslint-config-typescript"
+  ],
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "sourceType": "module"
+  },
+  "rules": {
+    "@typescript-eslint/no-empty-interface": "off",
+    "no-useless-constructor": "off",
+    "import/named": "off"
+  }
+}

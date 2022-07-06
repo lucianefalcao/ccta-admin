@@ -1,32 +1,32 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
-import userModule from '@/store/users'
-import newsModule from '@/store/news'
-import editaisModule from '@/store/editais'
-import eventsModule from '@/store/events'
-import centerModule from '@/store/center'
-import courseModule from '@/store/course'
-import permissionModule from '@/store/permission'
-import menuModule from '@/store/menu'
+import UsuariosModule from '~/store/usuarios'
+import MenuModule from '~/store/menu'
+import EventosModule from '~/store/eventos'
+import EditaisModule from '~/store/editais'
+import CentroModule from '~/store/centro'
+import CursosModule from '~/store/cursos'
+import MoticiasModule from '~/store/noticias'
+import ChatsModule from '~/store/chats'
 
-let userStore: userModule
-let newsStore: newsModule
-let editaisStore: editaisModule
-let eventsStore: eventsModule
-let centerStore: centerModule
-let courseStore: courseModule
-let permissionStore: permissionModule
-let menuStore: menuModule
+let usuarioStore: UsuariosModule
+let menuStore: MenuModule
+let eventoStore: EventosModule
+let editalStore: EditaisModule
+let centroStore: CentroModule
+let cursoStore: CursosModule
+let noticiaStore: MoticiasModule
+let chatStore: ChatsModule
 
 function initialiseStores (store: Store<any>): void {
-  userStore = getModule(userModule, store)
-  newsStore = getModule(newsModule, store)
-  editaisStore = getModule(editaisModule, store)
-  eventsStore = getModule(eventsModule, store)
-  centerStore = getModule(centerModule, store)
-  courseStore = getModule(courseModule, store)
-  permissionStore = getModule(permissionModule, store)
-  menuStore = getModule(menuModule, store)
+  usuarioStore = getModule(UsuariosModule, store)
+  menuStore = getModule(MenuModule, store)
+  eventoStore = getModule(EventosModule, store)
+  editalStore = getModule(EditaisModule, store)
+  centroStore = getModule(CentroModule, store)
+  cursoStore = getModule(CursosModule, store)
+  noticiaStore = getModule(MoticiasModule, store)
+  chatStore = getModule(ChatsModule, store)
 }
 
-export { initialiseStores, userStore, newsStore, editaisStore, eventsStore, centerStore, courseStore, permissionStore, menuStore }
+export { initialiseStores, usuarioStore, menuStore, eventoStore, editalStore, centroStore, cursoStore, noticiaStore, chatStore }
