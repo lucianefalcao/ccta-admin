@@ -1,11 +1,11 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
-  mode: 'spa',
+  ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - ccta-admin',
-    title: 'ccta-admin',
+    title: 'CCTA',
     htmlAttrs: {
       lang: 'en'
     },
@@ -26,19 +26,15 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    {
-      src: '@/plugins/firebase.ts'
-    },
-    {
-      src: '@/plugins/datetime-picker.ts'
-    }
+    '~/plugins/firebase',
+    '~/plugins/datetime-picker'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
   router: {
-    middleware: ['auth-middleware', 'permission-middleware']
+    middleware: ['autenticacao-middleware']
   },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
@@ -72,20 +68,24 @@ export default {
     services: {
       auth: {
         initialize: {
-          onAuthStateChangedAction: 'users/onAuthStateChanged',
+          onAuthStateChangedAction: 'usuarios/onAuthStateChanged',
           subscribeManually: false
         },
-        emulatorPort: process.env.NODE_ENV === 'development' ? 9099 : undefined
+        emulatorPort: process.env.ENV === 'dev' ? 9099 : null
       },
       firestore: {
         enablePersistence: false,
-        emulatorPort: 8080
+        emulatorPort: process.env.ENV === 'dev' ? 8082 : null
       },
       storage: {
-        emulatorPort: 9199
+        emulatorPort: process.env.ENV === 'dev' ? 9199 : null
       },
       functions: {
-        emulatorPort: 1234
+        location: 'us-central1',
+        emulatorPort: process.env.ENV === 'dev' ? 1234 : null
+      },
+      database: {
+        emulatorPort: process.env.ENV === 'dev' ? 9001 : null
       }
     }
   },
@@ -107,10 +107,5 @@ export default {
         }
       }
     }
-  },
-
-  // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
-    transpile: ['vee-validate/dist/rules']
   }
 }

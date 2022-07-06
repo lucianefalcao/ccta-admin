@@ -6,12 +6,15 @@
   "storage": {
     "rules": "storage.rules"
   },
+  "database": {
+    "rules": "database.rules"
+  },
   "emulators": {
     "auth": {
       "port": 9099
     },
     "firestore": {
-      "port": 8080
+      "port": 8082
     },
     "storage": {
       "port": 9199
@@ -21,6 +24,9 @@
     },
     "functions": {
       "port": 1234
+    },
+    "database": {
+      "port": 9001
     }
   },
   "functions": {
@@ -28,6 +34,14 @@
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint",
       "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
     ]
   }
 }

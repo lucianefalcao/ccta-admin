@@ -1,17 +1,11 @@
 <template>
   <v-col align-self="start">
-    <div v-if="fetchingData" class="text-center">
-      <v-progress-circular
-        color="primary"
-        indeterminate
-      />
-    </div>
     <v-card class="pa-5">
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" @click="publishEdital">
+        <v-btn color="primary" @click="publicar">
           <v-icon left>
-            {{ icons.mdiPlus }}
+            mdi-plus
           </v-icon>
           Publicar Edital
         </v-btn>
@@ -19,14 +13,17 @@
 
       <v-card-text>
         <v-data-table
+          :loading="buscandoDados"
+          :options.sync="opcoes"
+          loading-text="Carregando..."
           :headers="headers"
           :items="editais"
           :items-per-page="10"
-          :no-data-text="message"
+          :no-data-text="mensagem"
+          :server-items-length="totalItens"
           :footer-props="{
-            itemsPerPageAllText: 'Todas',
             itemsPerPageText: 'Items por página',
-            itemsPerPageOptions: [10, 15, 20, -1]
+            itemsPerPageOptions: [10, 15, 20]
           }"
         >
           <template #item.actions="{ item }">
@@ -36,7 +33,7 @@
                 depressed
                 outlined
                 color="secondary"
-                :loading="downloadingDocument && item.uid === uid"
+                :loading="baixandoDocumento && item.getId() === uid"
                 @click="download(item)"
               >
                 Donwload
@@ -45,51 +42,51 @@
               <v-btn
                 icon
                 color="secondary"
-                @click="editar(item.uid)"
+                @click="editar(item)"
               >
                 <v-icon>
-                  {{ icons.mdiPencil }}
+                  mdi-pencil
                 </v-icon>
               </v-btn>
               <v-btn
                 icon
                 class="text-right"
                 color="red"
-                :loading="isDeleting && item.uid === uid"
-                @click="deleteEdital(item)"
+                :loading="estaDeletando && item.getId() === uid"
+                @click="deletar(item)"
               >
                 <v-icon>
-                  {{ icons.mdiDelete }}
+                  mdi-delete
                 </v-icon>
               </v-btn>
             </div>
           </template>
         </v-data-table>
       </v-card-text>
+
+      <snackbar
+        v-if="snackbar"
+        :snackbar="snackbar"
+        :mensagem="mensagemErro"
+        @fecharSnackbar="setSnackbar"
+      />
     </v-card>
   </v-col>
 </template>
 
 <script lang="ts">
 
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
-import { editaisStore } from '@/store'
-import Edital from '@/models/domain/Edital'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { editalStore } from '~/store'
+import Edital from '~/src/aplicacao/editais/entidade/edital'
 
 @Component
 export default class Index extends Vue {
-  icons = {
-    mdiDelete,
-    mdiPencil,
-    mdiPlus
-  }
-
   headers = [
     {
       text: 'Título',
       align: 'start',
-      value: 'title'
+      value: 'titulo'
     },
     {
       text: 'Opções',
@@ -101,66 +98,93 @@ export default class Index extends Vue {
     }
   ]
 
-  fetchingData: Boolean = false
-  isDeleting: Boolean = false
-  downloadingDocument: Boolean = false
-  snackbar: Boolean = false
+  opcoes = {}
+  totalItens = 0
+
+  buscandoDados = false
+  estaDeletando = false
+  baixandoDocumento = false
+  snackbar = false
   editais: Edital[] = []
-  message: String = 'Nenhum edital cadastrado'
-  uid: String = ''
-  errorMessage: String = ''
+  mensagem = 'Nenhum edital cadastrado'
+  uid = ''
+  mensagemErro = ''
 
-  publishEdital (): void {
-    this.$router.push('/editais/publish')
+  publicar (): void {
+    this.$router.push('/editais/publicar')
   }
 
-  editar (uid: String): void {
-    this.$router.push(`/editais/edit/${uid}`)
+  editar (edital: Edital): void {
+    editalStore.context.commit('setEditalSelecionado', edital)
+    this.$router.push(`/editais/editar/${edital.getId()}`)
   }
 
-  async deleteEdital (item: Edital): Promise<void> {
+  setSnackbar (snackbar: boolean): void {
+    this.snackbar = snackbar
+  }
+
+  async deletar (item: Edital): Promise<void> {
     try {
-      this.uid = item.uid!
-      this.isDeleting = true
-      this.editais = await editaisStore.delete(item)
+      this.uid = item.getId()
+      this.estaDeletando = true
+      await editalStore.deletar(item)
+      this.editais = this.editais.filter(e => e.getId() !== item.getId())
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao deletar o edital.'
+      this.mensagemErro = 'Ocorreu um erro ao deletar o edital.'
       this.snackbar = true
     } finally {
       this.uid = ''
-      this.isDeleting = false
+      this.estaDeletando = false
     }
   }
 
   async download (item: Edital): Promise<void> {
     try {
-      this.uid = item.uid!
-      this.downloadingDocument = true
-      const documentUrl = await editaisStore.getDocument(item.documentPath!)
+      this.uid = item.getId()
+      this.baixandoDocumento = true
+      const documentoUrl = await editalStore.getDocumentoLink(item.getDocumento())
 
       const link = document.createElement('a') as HTMLAnchorElement
-      link.href = documentUrl as string
-      link.download = item.documentPath!.split('/')[1]
+      link.href = documentoUrl
+      link.download = item.getDocumento().split('/')[1]
       link.target = '_blank'
       link.click()
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro baixar o edital.'
+      this.mensagemErro = 'Ocorreu um erro baixar o edital.'
       this.snackbar = true
     } finally {
       this.uid = ''
-      this.downloadingDocument = false
+      this.baixandoDocumento = false
     }
   }
 
   async mounted (): Promise<void> {
     try {
-      this.fetchingData = true
-      this.editais = await editaisStore.getAll()
+      this.buscandoDados = true
+      const docSnap = await this.$fire.firestore.collection('contadores').doc('editais').get()
+      if (docSnap.exists) {
+        this.totalItens = docSnap.data().total
+      }
     } catch (error) {
-      this.message = 'Ocorreu um erro ao buscar os editais. Por favor, tente novamento mais tarde.'
+      console.log(error)
+      this.mensagem = 'Ocorreu um erro ao buscar os editais. Por favor, tente novamento mais tarde.'
     } finally {
-      this.fetchingData = false
+      this.buscandoDados = false
     }
+  }
+
+  async buscarItens (paginaAtual: number, itensPorPagina: number, paginaAnterior: number): Promise<void> {
+    this.buscandoDados = true
+    this.editais = await editalStore.getItens({ paginaAtual, paginaAnterior, itensPorPagina })
+    this.buscandoDados = false
+  }
+
+  @Watch('opcoes', { deep: true })
+  async onOpcoesChanged (
+    { page, itemsPerPage }: {page: number, itemsPerPage: number},
+    anterior: any
+  ): Promise<void> {
+    await this.buscarItens(page, itemsPerPage, anterior.page ?? 1)
   }
 }
 </script>

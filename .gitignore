@@ -91,3 +91,5 @@ sw.*
 
 # Firebase files
 .firebaserc
+
+firebase-data/

@@ -1,45 +1,50 @@
 <template>
   <v-col align-self="start">
     <v-card class="pa-5">
-      <v-card-actions>
-        <v-btn color="primary" @click="updateCenterInfo">
-          <v-icon left>
-            {{ icons.mdiPlus }}
-          </v-icon>
-          {{ centerInfoButtonText }}
-        </v-btn>
+      <v-card-title>
+        Sobre
         <v-spacer />
-        <v-btn color="primary" @click="publishCourse">
+        <v-btn small color="primary" @click="atualizarCentroInfo">
           <v-icon left>
-            {{ icons.mdiPlus }}
+            mdi-plus
+          </v-icon>
+          {{ centroInfoBotaoTexto }}
+        </v-btn>
+      </v-card-title>
+      <v-card-text>
+        {{ descricaoCentro }}
+      </v-card-text>
+
+      <v-card-title>
+        Cursos
+        <v-spacer />
+        <v-btn small color="primary" @click="publicarCurso">
+          <v-icon left>
+            mdi-plus
           </v-icon>
           Cadastrar curso
         </v-btn>
-      </v-card-actions>
-
-      <v-card-title>Sobre</v-card-title>
-      <v-card-text>
-        {{ center.about }}
-      </v-card-text>
-
-      <v-card-title>Localização</v-card-title>
-      <v-card-text>
-        {{ center.location }}
-      </v-card-text>
-
-      <v-card-title>Cursos</v-card-title>
+      </v-card-title>
       <v-card-text>
         <v-data-table
+          :loading="carregandoDados"
+          :options.sync="opcoes"
           :headers="headers"
-          :items="courses"
+          :items="cursos"
           :items-per-page="10"
-          :no-data-text="message"
+          :no-data-text="mensagem"
+          :server-items-length="totalItens"
           :footer-props="{
-            itemsPerPageAllText: 'Todas',
             itemsPerPageText: 'Items por página',
-            itemsPerPageOptions: [10, 15, 20, -1]
+            itemsPerPageOptions: [10, 15, 20]
           }"
         >
+          <template #item.tipo="{ item }">
+            {{ tipo(item) }}
+          </template>
+          <template #item.subtipo="{ item }">
+            {{ subtipo(item) }}
+          </template>
           <template #item.actions="{ item }">
             <div class="text-end">
               <v-btn
@@ -47,7 +52,7 @@
                 depressed
                 outlined
                 color="secondary"
-                @click="showCourse(item.uid)"
+                @click="exibirCurso(item)"
               >
                 Ver
               </v-btn>
@@ -55,21 +60,21 @@
               <v-btn
                 icon
                 color="secondary"
-                @click="editCourse(item.uid)"
+                @click="editarCurso(item)"
               >
                 <v-icon>
-                  {{ icons.mdiPencil }}
+                  mdi-pencil
                 </v-icon>
               </v-btn>
               <v-btn
                 icon
                 class="text-right"
                 color="red"
-                :loading="isDeleting && item.uid === uid"
-                @click="deleteCourse(item)"
+                :loading="estaDeletando && item.getId() === uid"
+                @click="deletarCurso(item)"
               >
                 <v-icon>
-                  {{ icons.mdiDelete }}
+                  mdi-delete
                 </v-icon>
               </v-btn>
             </div>
@@ -82,33 +87,27 @@
 
 <script lang="ts">
 
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiPlus, mdiDelete, mdiPencil } from '@mdi/js'
-import { centerStore, courseStore } from '@/store'
-import Center from '~/models/domain/Center'
-import Course from '~/models/domain/Course'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { centroStore, cursoStore } from '~/store'
+import Centro from '~/src/aplicacao/centro/entidade/centro'
+import Curso from '~/src/aplicacao/cursos/entidade/curso'
+import { subtiposLegiveis, tiposLegiveis } from '~/utils/cursoHelper'
 
 @Component
 export default class Index extends Vue {
-  icons = {
-    mdiPlus,
-    mdiDelete,
-    mdiPencil
-  }
-
   headers = [
     {
       text: 'Curso',
       align: 'start',
-      value: 'name'
+      value: 'nome'
     },
     {
       text: 'Tipo',
-      value: 'type'
+      value: 'tipo'
     },
     {
       text: 'Subtipo',
-      value: 'subType'
+      value: 'subtipo'
     },
     {
       text: 'Opções',
@@ -120,73 +119,105 @@ export default class Index extends Vue {
     }
   ]
 
-  courses: Course[] = []
-  center: Center = {
-    uid: undefined,
-    about: '',
-    location: ''
+  cursos: Curso[] = []
+  centro: Centro = null
+
+  opcoes = {}
+  totalItens = 0
+
+  mensagem = 'Nenhum curso cadastrado'
+  uid = ''
+  mensagemErro = ''
+  snackbar = false
+
+  carregandoDados = false
+  estaDeletando = false
+
+  get existeInfoCentro (): boolean {
+    return this.centro?.getId() !== undefined
   }
 
-  message: String = 'Nenhum curso cadastrado'
-  uid: String = ''
-  errorMessage: String = ''
-  snackbar: Boolean = false
-
-  fetchingData: Boolean = false
-  isDeleting: Boolean = false
-
-  get existeInfoCentro (): Boolean {
-    return this.center.uid !== undefined
-  }
-
-  get centerInfoButtonText (): String {
+  get centroInfoBotaoTexto (): string {
     return this.existeInfoCentro ? 'Editar informações do centro' : 'Cadastrar informações do centro'
   }
 
-  updateCenterInfo (): void {
+  get descricaoCentro (): string {
+    return this.existeInfoCentro ? this.centro?.getDescricao() : 'Nenhuma informação cadastrada.'
+  }
+
+  atualizarCentroInfo (): void {
     if (this.existeInfoCentro) {
-      this.$router.push(`/info-centro/edit/${this.center.uid}`)
+      centroStore.context.commit('setCentro', this.centro)
+      this.$router.push(`/info-centro/editar/${this.centro.getId()}`)
     } else {
-      this.$router.push('/info-centro/publish')
+      this.$router.push('/info-centro/publicar')
     }
   }
 
-  publishCourse (): void {
-    this.$router.push('/info-centro/courses/publish')
+  publicarCurso (): void {
+    this.$router.push('/info-centro/cursos/publicar')
   }
 
-  editCourse (uid: String): void {
-    this.$router.push(`/info-centro/courses/edit/${uid}`)
+  editarCurso (item: Curso): void {
+    cursoStore.context.commit('setCursoSelecionado', item)
+    this.$router.push(`/info-centro/cursos/editar/${item.getId()}`)
   }
 
-  showCourse (uid: String): void {
-    this.$router.push(`/info-centro/courses/${uid}`)
+  exibirCurso (item: Curso): void {
+    cursoStore.context.commit('setCursoSelecionado', item)
+    this.$router.push(`/info-centro/cursos/${item.getId()}`)
   }
 
-  async deleteCourse (item: Course): Promise<void> {
+  tipo (item: Curso): string {
+    return tiposLegiveis[item.getTipo()]
+  }
+
+  subtipo (item: Curso): string {
+    return subtiposLegiveis[item.getSubtipo()]
+  }
+
+  async deletarCurso (item: Curso): Promise<void> {
     try {
-      this.uid = item.uid!
-      this.isDeleting = true
-      this.courses = await courseStore.delete(item)
+      this.uid = item.getId()
+      this.estaDeletando = true
+      await cursoStore.deletar(item.getId())
+      this.cursos = this.cursos.filter(c => c.getId() !== item.getId())
     } catch (error) {
-      this.errorMessage = 'Ocorreu um erro ao deletar o edital.'
+      this.mensagemErro = 'Ocorreu um erro ao deletar o edital.'
       this.snackbar = true
     } finally {
       this.uid = ''
-      this.isDeleting = false
+      this.estaDeletando = false
     }
   }
 
-  async mounted (): Promise<void> {
+  async beforeCreate (): Promise<void> {
     try {
-      this.fetchingData = true
-      this.center = await centerStore.getCenterInfo()
-      this.courses = await courseStore.getAll()
+      this.carregandoDados = true
+      this.centro = await centroStore.getCentro()
+      const docSnap = await this.$fire.firestore.collection('contadores').doc('cursos').get()
+      if (docSnap.exists) {
+        this.totalItens = docSnap.data().total
+      }
     } catch (error) {
-      this.message = 'Ocorreu um erro ao buscar os eventos. Por favor, tente novamento mais tarde.'
+      this.mensagem = 'Ocorreu um erro ao buscar as informações. Por favor, tente novamento mais tarde.'
     } finally {
-      this.fetchingData = false
+      this.carregandoDados = false
     }
+  }
+
+  async buscarItens (paginaAtual: number, itensPorPagina: number, paginaAnterior: number): Promise<void> {
+    this.carregandoDados = true
+    this.cursos = await cursoStore.getItens({ paginaAtual, paginaAnterior, itensPorPagina })
+    this.carregandoDados = false
+  }
+
+  @Watch('opcoes', { deep: true })
+  async onOpcoesChanged (
+    { page, itemsPerPage }: {page: number, itemsPerPage: number},
+    anterior: any
+  ): Promise<void> {
+    await this.buscarItens(page, itemsPerPage, anterior.page ?? 1)
   }
 }
 </script>

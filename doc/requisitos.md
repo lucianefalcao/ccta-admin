@@ -108,7 +108,7 @@ A aplicação deverá ser implementada utilizando a arquitetura SPA.
 A implementação utilizará os frameworks Vue.js, Vuetify e NuxtJS, os três na versão mínima 2.0. A linguagem TypeScript na versão mínima 4.3. Para gerenciamento do estado, deve-se utilizar o Vuex Module Decorator na versão 1.0.
 
 - **[RNF015] Testes automatizados**
-A implementação deverá conter testes automatizados utilizando o pacote Jest\footnote{https://jestjs.io/pt-BR/docs/getting-started.
+A implementação deverá conter testes automatizados utilizando o pacote Jest.
 
 ### Interoperabilidade
 

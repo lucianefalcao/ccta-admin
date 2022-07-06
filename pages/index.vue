@@ -5,6 +5,3 @@
     </span>
   </v-col>
 </template>
-
-<style lang="scss" scoped>
-</style>

@@ -1,47 +1,40 @@
 import { Action, Module, VuexModule, Mutation } from 'vuex-module-decorators'
-import { permissionStore, userStore } from '@/store'
-import { Menu, menuPermissionMap } from '@/models/helpers/PermissionMenuMap'
+import { Menu, menuPermissionMap } from '~/models/helpers/PermissionMenuMap'
+import Usuario from '~/src/aplicacao/usuarios/entidade/usuario'
 
 @Module({ name: 'menu', stateFactory: true, namespaced: true })
 export default class MenuModule extends VuexModule {
-  primary: Menu[] = []
-  secondary: Menu[] = []
+  menuPrimario: Menu[] = []
+  menuSecundario: Menu[] = []
 
   @Mutation
-  addItemToPrimaryMenu (item: Menu) {
-    this.primary.push(item)
+  atualiarMenuSecundario (itens: Menu[]): void {
+    this.menuSecundario = itens
   }
 
   @Mutation
-  addItemToSecondaryMenu (item: Menu) {
-    this.secondary.push(item)
-  }
-
-  @Mutation
-  emptyMenus () {
-    this.primary = []
-    this.secondary = []
+  atualizarMenuPrimario (itens: Menu[]): void {
+    this.menuPrimario = itens
   }
 
   @Action({ rawError: true })
-  async defineMenus (userUid: String) {
-    const userPermissions = await permissionStore.getPermissionsByUserUid(userUid)
-    userStore.updateUserPermissions(userPermissions)
-    const permissions = userPermissions.map(item => item.code)
-    this.context.commit('emptyMenus')
+  definirItensMenu (usuario: Usuario): void {
+    const permissoes = usuario.getPermissoes()
+
+    const menuPrimario = []
+    const menuSecundario = []
 
     for (const menu of menuPermissionMap) {
-      if (menu.permission.length === 0) {
-        this.context.commit('addItemToSecondaryMenu', menu)
+      if ((!menu.permissao) || (menu.tipo === 'secundario' && permissoes.includes(menu.permissao))) {
+        menuSecundario.push(menu)
       }
 
-      if (menu.type === 'primary' && permissions.includes(menu.permission)) {
-        this.context.commit('addItemToPrimaryMenu', menu)
-      }
-
-      if (menu.type === 'secondary' && permissions.includes(menu.permission)) {
-        this.context.commit('addItemToSecondaryMenu', menu)
+      if (menu.tipo === 'primario' && permissoes.includes(menu.permissao)) {
+        menuPrimario.push(menu)
       }
     }
+
+    this.context.commit('atualizarMenuPrimario', menuPrimario)
+    this.context.commit('atualiarMenuSecundario', menuSecundario)
   }
 }

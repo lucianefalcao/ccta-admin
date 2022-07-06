@@ -1,0 +1,11 @@
+{
+  "rules": {
+    ".read": "now < 1656990000000",  // 2022-7-5
+    ".write": "now < 1656990000000",  // 2022-7-5
+    "mensagens": {
+      "$mensagemId": {
+        ".indexOn": "timestamp"
+      }
+    }
+  }
+}

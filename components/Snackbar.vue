@@ -1,11 +1,11 @@
 <template>
   <v-snackbar
     v-model="snackbar"
-    :color="color"
+    :color="cor"
     :timeout="-1"
     :multi-line="true"
   >
-    {{ message }}
+    {{ mensagem }}
 
     <template #action="{ attrs }">
       <v-btn
@@ -27,16 +27,16 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component
 export default class Snackbar extends Vue {
   @Prop({ type: Boolean, required: true })
-  snackbar!: Boolean
+  snackbar: boolean
 
   @Prop({ type: String, required: true })
-  message!: String
+  mensagem: string
 
   @Prop({ type: String, default: 'red' })
-  color!: String
+  cor: string
 
   close (): void {
-    this.$emit('closeSnackbar', false)
+    this.$emit('fecharSnackbar', false)
   }
 }
 </script>
